@@ -1,0 +1,20 @@
+.tog_btn_table {
+    border-radius: 100%;
+    color: red;
+}
+
+.tog_btn_player {
+    border-radius: 10px;
+}
+
+.tog_btn_table:hover {
+    background-color: yellow;
+}
+
+.tog_btn_table:active {
+    background-color: red;
+}
+
+.tog_btn_table:checked {
+    background-color: blue;
+}
