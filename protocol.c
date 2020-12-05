@@ -45,6 +45,12 @@ void setMessageResponse(Response *msg){
     case SYNTAX_ERROR:
         strcpy(msg->message, "Syntax error");
       break;
+    case USERNAME_EXISTED:
+      strcpy(msg->message, "Username existed! Please choose another!");
+      break;
+    case LOGIN_SUCCESS:
+      strcpy(msg->message, "Login successfully!");
+      break;
     default:
       break;
     }

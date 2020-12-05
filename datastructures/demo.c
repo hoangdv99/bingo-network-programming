@@ -5,6 +5,7 @@
 int main() {
 
     user acc;
+    listnodeptr *user;
 
     // Creat a new player----------------------------------------
     acc = makenode("Batman", 123);
@@ -52,6 +53,8 @@ int main() {
     printroomplayerboard(foundPtr, "Flash");
     //printroomplayer(findroom(rooms, 2));
     //insertlast(&accounts, acc);
+
+    user = findnode(&accounts, "Batman");
     
 
     return 0;

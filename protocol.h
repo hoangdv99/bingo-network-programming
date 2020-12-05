@@ -3,10 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "gameplay.h"
-#include "helper.h"
 #define MAX_LENGTH 255
-typedef enum{
+typedef enum REQ_OPCODE{
     LOGIN,
     BACKTOMENU,
     MAKEROOM,
@@ -22,27 +20,26 @@ typedef enum{
     BINGO,
     QUITGAME,
     CLOSE
-}OPCODE;
+}REQ_OPCODE; 
 
-typedef enum{
+typedef enum RES_OPCODE{
     SYNTAX_ERROR,
     USERNAME_EXISTED,
     LOGIN_SUCCESS 
-}MESSAGE_STATUS;
+}RES_OPCODE;
 
 typedef struct Request
 {
-    OPCODE code;
+    REQ_OPCODE code;
     char message[MAX_LENGTH];
-}Request;
+} Request;
 
 typedef struct Response
 {   
-    MESSAGE_STATUS code;
-    GAMEPLAY_STATUS status;
-    char message[50];
-    char data[50];
-}Response;
+    RES_OPCODE code;
+    char message[MAX_LENGTH];
+    char data[MAX_LENGTH]
+} Response;
 
 int recvReq(int socket, Request *buff, int size, int flags);
 int sendReq(int socket, Request *buff, int size, int flags);
