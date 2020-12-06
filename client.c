@@ -42,8 +42,7 @@ int main(int argc, char const *argv[])
     // Gio ta se giao tiep voi server qua clientSocket
     // Gui mot message den servser
     //char message[100];
-    req->code = LOGIN;
-    strcpy(req->message, "hello");
+    req->code = DETAIL;
     
         int n_sent = send(sockfd, req, sizeof(Request), 0);
         if (n_sent == -1) // Gui loi

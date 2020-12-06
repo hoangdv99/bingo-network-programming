@@ -6,26 +6,24 @@
 #define MAX_LENGTH 255
 typedef enum REQ_OPCODE{
     LOGIN,
-    BACKTOMENU,
-    MAKEROOM,
-    JOIN,
-    QUICKJOIN,
-    ACCEPT,
-    REFUSE,
-    BACKTOLOBBY,
-    START,
-    INVITE,
-    KICK,
-    SELECT,
-    BINGO,
-    QUITGAME,
-    CLOSE
+    DETAIL,
+    PLAY,
+    BACK_TO_MENU,
+    CREATE_ROOM,
+    QUICKJOIN
 }REQ_OPCODE; 
 
 typedef enum RES_OPCODE{
     SYNTAX_ERROR,
     USERNAME_EXISTED,
-    LOGIN_SUCCESS 
+    LOGIN_SUCCESS,
+    UNAUTH,
+    RES_DETAIL,
+    RES_PLAY,
+    RES_BACK_TO_MENU,
+    RES_CREATE_ROOM,
+    QUICKJOIN_FAIL,
+    QUICKJOIN_SUCCESS
 }RES_OPCODE;
 
 typedef struct Request

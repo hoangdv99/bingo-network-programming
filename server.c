@@ -11,10 +11,11 @@
 #include "handle.h"
 #define MAX_LENGTH 255
 #define MAX_CLIENT 20
+
 int main(int argc, char *argv[])
 {
-
-    Request *req;
+    USER *userListHead = NULL;
+    ROOM *roomListHead = NULL;
     char *port_char = argv[1];
     int port_number = atoi(port_char);
     struct sockaddr_in servaddr, clieaddr;
@@ -108,8 +109,8 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        Request *req = (Request*)malloc(sizeof(Request));
-                        Response *res = (Response*)malloc(sizeof(Response));
+                        Request *req = (Request *)malloc(sizeof(Request));
+                        Response *res = (Response *)malloc(sizeof(Response));
                         printf("Receive data in socket %d\n", i);
                         int nrecv = recv(i, req, sizeof(Request), 0);
                         if (nrecv == -1)
@@ -120,17 +121,29 @@ int main(int argc, char *argv[])
                         }
                         else if (nrecv != 0)
                         {
-                    
-                            switch(req->code){
-                                case LOGIN:
-                                {
-                                    
-                                    login(i, req, res);
-                                    
-                                }
+                            switch (req->code)
+                            {
+                            case LOGIN:
+                                login(userListHead, i, req, res);
+                                break;
+                            case DETAIL:
+                                sendDetail(userListHead, i, req, res);
+                                break;
+                            case PLAY:
+                                goToLobby(userListHead, i, req, res);
+                                break;
+                            case BACK_TO_MENU:
+                                backToMenu(userListHead, i, req, res);
+                                break;
+                            case CREATE_ROOM:
+                                createRoom(userListHead, roomListHead, i, req, res);
+                                break;
+                            case QUICKJOIN:
+                                quickjoin(userListHead, roomListHead, i, req, res);
+                                break;
+                            default:
+                                break;
                             }
-                            
-                            
                         }
                         else
                         {
@@ -148,4 +161,3 @@ int main(int argc, char *argv[])
     } while (1);
     return 0;
 }
-

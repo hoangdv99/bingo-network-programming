@@ -7,6 +7,13 @@
 #define MAX_CLIENT 20
 #define MAX_LENGTH 255
 #include "protocol.h"
-void login(int socket, Request *req, Response *res);
+#include "list.h"
  
+void login(USER *userListHead, int clientfd, Request *req, Response *res);
+void sendDetail(USER *userListHead, int clientfd, Request *req, Response *res);
+void goToLobby(USER *userListHead, int clientfd, Request *req, Response *res);
+void backToMenu(USER *userListHead, int clientfd, Request * req, Response *res);
+void createRoom(USER *userListHead, ROOM *roomListHead, int clientfd, Request *req, Response *res);
+void quickjoin(USER *userListHead, ROOM *roomListHead, int clientfd, Request *req, Response *res);
+
 #endif

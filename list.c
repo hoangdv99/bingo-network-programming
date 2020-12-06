@@ -1,7 +1,8 @@
 #include "list.h"
 // Function --------------------------------------=======-----------------------------------
 // USER FUNCTION
-void printUser(USER *acc) 
+
+void printUser(USER *userListHead, USER *acc) 
 {
     printf("%s-%d || %d\n------------------------------------\n",
            acc->username, acc->clientfd, acc->status);
@@ -16,12 +17,12 @@ void printUser(USER *acc)
     printf("------------------------------------\n");
 }
 
-USER* insertUser(char *username, int clientfd)
+USER* insertUser(USER *userListHead, char *username, int clientfd)
 {
     USER* user = (USER *)malloc(sizeof(USER));
     strcpy(user->username, username);
     user->clientfd = clientfd;
-    user->status = LOBBY;
+    user->status = MENU;
     for (int i = 0; i < SIZE; i++)
     {
         for (int j = 0; j < SIZE; j++)
@@ -34,7 +35,7 @@ USER* insertUser(char *username, int clientfd)
     return user;
 }
 
-void printListUser()
+void printListUser(USER *userListHead)
 {
     USER *ptr = userListHead;
     while (ptr != NULL)
@@ -44,7 +45,7 @@ void printListUser()
     }
 }
 
-USER *findUser(char *username)
+USER *findUserByUsername(USER *userListHead, char *username)
 {
 
     USER *curr = userListHead;
@@ -62,7 +63,23 @@ USER *findUser(char *username)
     return curr;
 }
 
-USER *deleteUser(char *username)
+USER *findUserByClientfd(USER *userListHead, int clientfd){
+    USER *curr = userListHead;
+    if (userListHead == NULL)
+        return NULL;
+    while (curr->clientfd != clientfd)
+    {
+        if (curr->next == NULL)
+            return NULL;
+        else
+        {
+            curr = curr->next;
+        }
+    }
+    return curr;
+}
+
+USER *deleteUser(USER *userListHead, char *username)
 {
     USER *cur = userListHead;
     USER *prev = NULL;
@@ -91,7 +108,7 @@ USER *deleteUser(char *username)
 
 // ROOM FUNCTION
 
-void insertRoom(int id, USER *host)
+void insertRoom(ROOM *roomListHead, int id, USER *host)
 {
     ROOM *newRoom = (ROOM *)malloc(sizeof(ROOM));
     newRoom->id = id;
@@ -102,7 +119,7 @@ void insertRoom(int id, USER *host)
     roomListHead = newRoom;
 }
 
-ROOM *findRoom(int id)
+ROOM *findRoom(ROOM *roomListHead, int id)
 {
     ROOM *curr = roomListHead;
     if (curr == NULL)
@@ -119,9 +136,9 @@ ROOM *findRoom(int id)
     return curr;
 }
 
-int insertPlayer(int id, USER *player)
+int insertPlayer(ROOM *roomListHead, int id, USER *player)
 {
-    ROOM *room = findRoom(id);
+    ROOM *room = findRoom(roomListHead, id);
 
     if (room != NULL && room->playerAmount < ROOM_MAX)
     {
@@ -130,21 +147,17 @@ int insertPlayer(int id, USER *player)
         room->playerAmount++;
         return 1;
     }
-    else
-    {
-        printf("Room is full!\n");
-        return 0;
-    }
+    return 0;
 }
 
-int quickJoin(USER *player)
+int quickJoin(ROOM *roomListHead, USER *player)
 {
     ROOM *room = roomListHead;
     while (room != NULL)
     {
         if (room->playerAmount < ROOM_MAX)
         {
-            insertPlayer(room->id, player);
+            insertPlayer(roomListHead, room->id, player);
             return room->id;
         }
         room = room->next;
@@ -153,6 +166,23 @@ int quickJoin(USER *player)
     return -1;
 }
 
+int countRoom(ROOM* roomListHead){
+    int count = 0;
+    ROOM *curr = roomListHead;
+    if(curr == NULL)    return 0;
+    while (curr != NULL)
+    {
+        if(curr->next == NULL)  return count;
+        else
+        {
+            curr = curr->next;
+            count++;
+            return count;
+        }
+        
+    }
+    
+}
 
 // void printroomplayerboard(listroomptr roomPtr, char *name)
 // {
@@ -181,9 +211,9 @@ int quickJoin(USER *player)
 
 // PLAY FUNCTION
 
-void playgame(int id)
+void playgame(ROOM *roomListHead, int id)
 {
-    ROOM *room = findRoom(id);
+    ROOM *room = findRoom(roomListHead, id);
     if (room == NULL)
     {
         printf("Room not exit");
