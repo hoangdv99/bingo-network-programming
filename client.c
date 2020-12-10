@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "protocol.h"
+#include "helper.h"
 #define BUFF_SIZE 255
 
 int main(int argc, char const *argv[])
@@ -42,34 +43,33 @@ int main(int argc, char const *argv[])
     // Gio ta se giao tiep voi server qua clientSocket
     // Gui mot message den servser
     //char message[100];
-    req->code = DETAIL;
+    req->code = LOGIN;
+    strcpy(req->message, "hoang@123");
+    int n_sent = send(sockfd, req, sizeof(Request), 0);
+    if (n_sent == -1) // Gui loi
+    {
+        perror("SEND");
+        exit(0);
+    }
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    //Doi server   gui lai
+    Response *res = (Response *)malloc(sizeof(Response));
+    int n_recv = recv(sockfd, res, sizeof(Response), 0);
+    if (n_recv == -1)
+    {
+        perror("RECEIVE");
+        exit(0);
+    }
+    if (n_recv == 0)
+    {
+    }
+    printf("Received string with leng : %d\n", res->code);
+    printf("Received string with leng : %s\n", res->message);
+    while (1)
+    {
+        /* code */
+    }
     
-        int n_sent = send(sockfd, req, sizeof(Request), 0);
-        if (n_sent == -1) // Gui loi
-        {
-            perror("SEND");
-            exit(0);
-        }
-        printf("Sent %d bytes to server\n", n_sent);
-        printf("Waiting for reply\n");
-        //Doi server   gui lai
-        Response *res = (Response*)malloc(sizeof(Response));
-        int n_recv = recv(sockfd, res, sizeof(Response), 0);
-        if (n_recv == -1)
-        {
-            perror("RECEIVE");
-            exit(0);
-        }
-        if (n_recv == 0)
-        {
-        }
-        printf("Received string with leng : %d\n",res->code);
-        printf("Received string with leng : %s\n",res->message);
-        while (1)
-        {
-            /* code */
-        }
-        
     return 0;
 }
-

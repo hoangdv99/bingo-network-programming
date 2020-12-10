@@ -5,23 +5,26 @@
 #include <stdio.h>
 #define MAX_LENGTH 255
 typedef enum REQ_OPCODE{
+    REGISTER,
     LOGIN,
     DETAIL,
-    PLAY,
-    BACK_TO_MENU,
+    LOGOUT,
     CREATE_ROOM,
     QUICKJOIN
 }REQ_OPCODE; 
 
 typedef enum RES_OPCODE{
     SYNTAX_ERROR,
+    REGISTER_INPUT_WRONG,
     USERNAME_EXISTED,
+    REGISTER_SUCCESS,
+    USERNAME_NOT_EXISTED,
     LOGIN_SUCCESS,
-    UNAUTH,
+    LOGOUT_SUCCESS,
+    WRONG_PASSWORD,
+    ACCOUNT_BUSY,
     RES_DETAIL,
-    RES_PLAY,
-    RES_BACK_TO_MENU,
-    RES_CREATE_ROOM,
+    CREATE_ROOM_SUCCESS,
     QUICKJOIN_FAIL,
     QUICKJOIN_SUCCESS
 }RES_OPCODE;
@@ -39,7 +42,7 @@ typedef struct Response
     char data[MAX_LENGTH]
 } Response;
 
-int recvReq(int socket, Request *buff, int size, int flags);
+int recvReq(int socket, Request *buff, int size, int flags); 
 int sendReq(int socket, Request *buff, int size, int flags);
 
 int sendRes(int socket, Response *msg, int size, int flags);

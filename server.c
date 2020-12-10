@@ -12,10 +12,14 @@
 #define MAX_LENGTH 255
 #define MAX_CLIENT 20
 
+USER *userListHead = NULL;
+ROOM *roomListHead = NULL;
+ACCOUNT *accountListHead = NULL;
+
 int main(int argc, char *argv[])
 {
-    USER *userListHead = NULL;
-    ROOM *roomListHead = NULL;
+    readAccountFile();
+    printListAccount();
     char *port_char = argv[1];
     int port_number = atoi(port_char);
     struct sockaddr_in servaddr, clieaddr;
@@ -123,23 +127,23 @@ int main(int argc, char *argv[])
                         {
                             switch (req->code)
                             {
+                            case REGISTER:
+                                signUp(i, req, res);
+                                break;
                             case LOGIN:
-                                login(userListHead, i, req, res);
+                                logIn(i, req, res);
                                 break;
                             case DETAIL:
-                                sendDetail(userListHead, i, req, res);
+                                sendDetail(i, req, res);
                                 break;
-                            case PLAY:
-                                goToLobby(userListHead, i, req, res);
-                                break;
-                            case BACK_TO_MENU:
-                                backToMenu(userListHead, i, req, res);
+                            case LOGOUT:
+                                logOut(i, req, res);
                                 break;
                             case CREATE_ROOM:
-                                createRoom(userListHead, roomListHead, i, req, res);
+                                createRoom(i, req, res);
                                 break;
                             case QUICKJOIN:
-                                quickjoin(userListHead, roomListHead, i, req, res);
+                                quickjoin(i, req, res);
                                 break;
                             default:
                                 break;

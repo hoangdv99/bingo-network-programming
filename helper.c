@@ -1,5 +1,4 @@
 #include "helper.h"
-
 void splitMessage(char *input, char *code, char *data)
 {
 	int i, codeLength = 0, dataLength = 0;
