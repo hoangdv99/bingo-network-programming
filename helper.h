@@ -9,5 +9,4 @@
 //split message
 void splitMessage(char *input, char *code, char *data);
 void splitMessageData(char *input, char *data1, char *data2);
-
 #endif

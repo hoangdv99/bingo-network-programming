@@ -13,7 +13,6 @@ int recvReq(int socket, Request *buff, int size, int flags){
 int sendReq(int socket, Request *buff, int size, int flags)
 {
   int n;
-
   n = send(socket, buff, size, flags);
   if (n < 0)
     perror("Error: ");
@@ -43,25 +42,36 @@ void setMessageResponse(Response *msg){
     switch (msg->code)
     {
     case SYNTAX_ERROR:
-        strcpy(msg->message, "Syntax error");
+      strcpy(msg->message, "Syntax error");
+      break;
+    case REGISTER_INPUT_WRONG:
+      strcpy(msg->message, "Wrong input. Try again!");
       break;
     case USERNAME_EXISTED:
       strcpy(msg->message, "Username existed! Please choose another!");
       break;
+    case REGISTER_SUCCESS:
+      strcpy(msg->message, "Register successfully!");
+      break;
+    case USERNAME_NOT_EXISTED:
+      strcpy(msg->message, "This account is not registered!");
+      break;
+    case ACCOUNT_BUSY:
+      strcpy(msg->message, "This account is using by other player!");
+      break;
     case LOGIN_SUCCESS:
       strcpy(msg->message, "Login successfully!");
+      break;
+    case WRONG_PASSWORD:
+      strcpy(msg->message, "Wrong password!");
+      break;
+    case LOGOUT_SUCCESS:
+      strcpy(msg->message, "Logout successfully!");
       break;
     case RES_DETAIL:
       strcpy(msg->message, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
       break;
-    case RES_PLAY:
-      break;
-    case RES_BACK_TO_MENU:
-      break;
-    case UNAUTH:
-      strcpy(msg->message, "Please login!");
-      break;
-    case RES_CREATE_ROOM:
+    case CREATE_ROOM_SUCCESS:
       strcpy(msg->message, "New room is created!");
       break;
     case QUICKJOIN_FAIL:
@@ -90,17 +100,10 @@ void readMessageReponse(Response *msg){
     case USERNAME_EXISTED:
       printf("%s\n", msg->message);
       break;
-    case UNAUTH:
-      printf("%s\n", msg->message);
-      break;
     case RES_DETAIL:
       printf("%s\n", msg->message);
       break;
-    case RES_PLAY:
-      break;
-    case RES_BACK_TO_MENU:
-      break;
-    case RES_CREATE_ROOM:
+    case CREATE_ROOM_SUCCESS:
       printf("%s\n", msg->message);
     case QUICKJOIN_FAIL:
       printf("%s\n", msg->message);
@@ -121,12 +124,8 @@ void setOpcodeRequest(Request *req, char *input){
   strcpy(req->message, data);
   if (strcmp(code, "LOGIN") == 0)
     req->code = LOGIN;
-  else if (strcmp(code, "BACK_TO_MENU") == 0)
-    req->code = BACK_TO_MENU;
   else if (strcmp(code, "DETAIL") == 0)
     req->code = DETAIL;
-  else if (strcmp(code, "PLAY") == 0)
-    req->code = PLAY;
   else if (strcmp(code, "CREATE_ROOM") == 0)
     req->code = CREATE_ROOM;
   else if (strcmp(code, "QUICKJOIN") == 0)

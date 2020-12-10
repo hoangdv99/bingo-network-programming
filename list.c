@@ -1,8 +1,93 @@
 #include "list.h"
-// Function --------------------------------------=======-----------------------------------
-// USER FUNCTION
+extern ACCOUNT *accountListHead;
+extern USER *userListHead;
+extern ROOM *roomListHead;
 
-void printUser(USER *userListHead, USER *acc) 
+void printListAccount()
+{
+    ACCOUNT *ptr = accountListHead;
+    while (ptr != NULL)
+    {
+        printf("%s-%s\n", ptr->username, ptr->password);
+        ptr = ptr->next;
+    }
+}
+
+
+void insertAcc(char* username, char *password, int status){
+    ACCOUNT *acc = (ACCOUNT*)malloc(sizeof(ACCOUNT));
+    strcpy(acc->username, username);
+    strcpy(acc->password, password);
+    acc->status = status;
+    if(accountListHead == NULL){
+        accountListHead = acc;
+    }else{
+        acc->next = accountListHead;
+        accountListHead = acc;
+    }
+}
+
+ACCOUNT *findAccount(char *username)
+{
+    ACCOUNT *curr = accountListHead;
+    if (accountListHead == NULL)
+        return NULL;
+    while (strcmp(curr->username, username) != 0)
+    {
+        if (curr->next == NULL)
+            return NULL;
+        else
+        {
+            curr = curr->next;
+        }
+    }
+    return curr;
+}
+
+void readAccountFile()
+{
+    FILE *f;
+    char username[255], password[255];
+    int status;
+
+    if ((f = fopen("accounts.txt", "r")) == NULL)
+    {
+        printf("Cannot open file\n");
+        return;
+    }
+    while (fscanf(f, "%s\t%s\t%d\n", username, password, &status) != EOF)
+    {
+        insertAcc(username, password, status);
+    }
+    fclose(f);
+}
+
+
+void writeToAccountFile()
+{
+    // Open account file for reading
+    FILE *file;
+    if ((file = fopen("accounts.txt", "w")) == NULL)
+    {
+        printf("File not found!\n");
+        return;
+    }
+
+    // Loop for list to write node to file
+    ACCOUNT *tmp = accountListHead;
+    while (tmp != NULL)
+    {
+        fprintf(file, "%s  %s  %d\n", tmp->username, tmp->password, tmp->status);
+        tmp = tmp->next;
+    }
+
+    // Close file
+    fclose(file);
+}
+
+//---------------------------------------------------
+
+void printUser(USER *acc)
 {
     printf("%s-%d || %d\n------------------------------------\n",
            acc->username, acc->clientfd, acc->status);
@@ -17,25 +102,33 @@ void printUser(USER *userListHead, USER *acc)
     printf("------------------------------------\n");
 }
 
-USER* insertUser(USER *userListHead, char *username, int clientfd)
+
+USER *insertUser(char *username, int clientfd)
 {
-    USER* user = (USER *)malloc(sizeof(USER));
-    strcpy(user->username, username);
-    user->clientfd = clientfd;
-    user->status = MENU;
-    for (int i = 0; i < SIZE; i++)
+    if (findUserByUsername(username) != NULL)
     {
-        for (int j = 0; j < SIZE; j++)
-        {
-            user->board[i][j] = 0;
-        }
+        return NULL;
     }
-    user->next = userListHead;
-    userListHead = user;
-    return user;
+    else
+    {
+        USER *user = (USER *)malloc(sizeof(USER));
+        strcpy(user->username, username);
+        user->clientfd = clientfd;
+        user->status = LOBBY;
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                user->board[i][j] = 0;
+            }
+        }
+        user->next = userListHead;
+        userListHead = user;
+        return user;
+    }
 }
 
-void printListUser(USER *userListHead)
+void printListUser()
 {
     USER *ptr = userListHead;
     while (ptr != NULL)
@@ -45,7 +138,7 @@ void printListUser(USER *userListHead)
     }
 }
 
-USER *findUserByUsername(USER *userListHead, char *username)
+USER *findUserByUsername(char *username)
 {
 
     USER *curr = userListHead;
@@ -63,7 +156,8 @@ USER *findUserByUsername(USER *userListHead, char *username)
     return curr;
 }
 
-USER *findUserByClientfd(USER *userListHead, int clientfd){
+USER *findUserByClientfd(int clientfd)
+{
     USER *curr = userListHead;
     if (userListHead == NULL)
         return NULL;
@@ -79,7 +173,7 @@ USER *findUserByClientfd(USER *userListHead, int clientfd){
     return curr;
 }
 
-USER *deleteUser(USER *userListHead, char *username)
+USER *deleteUserByUsername(char *username)
 {
     USER *cur = userListHead;
     USER *prev = NULL;
@@ -106,9 +200,36 @@ USER *deleteUser(USER *userListHead, char *username)
     return cur;
 }
 
+USER *deleteUserByClientfd(int clientfd)
+{
+    USER *cur = userListHead;
+    USER *prev = NULL;
+    if (userListHead == NULL)
+        return NULL;
+    while (cur->clientfd != clientfd)
+    {
+        if (cur->next == NULL)
+            return NULL;
+        else
+        {
+            prev = cur;
+            cur = cur->next;
+        }
+    }
+    if (cur == userListHead)
+    {
+        userListHead = userListHead->next;
+    }
+    else
+    {
+        prev->next = cur->next;
+    }
+    return cur;
+}
+
 // ROOM FUNCTION
 
-void insertRoom(ROOM *roomListHead, int id, USER *host)
+void insertRoom(int id, USER *host)
 {
     ROOM *newRoom = (ROOM *)malloc(sizeof(ROOM));
     newRoom->id = id;
@@ -119,7 +240,7 @@ void insertRoom(ROOM *roomListHead, int id, USER *host)
     roomListHead = newRoom;
 }
 
-ROOM *findRoom(ROOM *roomListHead, int id)
+ROOM *findRoom(int id)
 {
     ROOM *curr = roomListHead;
     if (curr == NULL)
@@ -136,9 +257,9 @@ ROOM *findRoom(ROOM *roomListHead, int id)
     return curr;
 }
 
-int insertPlayer(ROOM *roomListHead, int id, USER *player)
+int insertPlayer(int id, USER *player)
 {
-    ROOM *room = findRoom(roomListHead, id);
+    ROOM *room = findRoom(id);
 
     if (room != NULL && room->playerAmount < ROOM_MAX)
     {
@@ -150,14 +271,14 @@ int insertPlayer(ROOM *roomListHead, int id, USER *player)
     return 0;
 }
 
-int quickJoin(ROOM *roomListHead, USER *player)
+int quickJoin(USER *player)
 {
     ROOM *room = roomListHead;
     while (room != NULL)
     {
         if (room->playerAmount < ROOM_MAX)
         {
-            insertPlayer(roomListHead, room->id, player);
+            insertPlayer(room->id, player);
             return room->id;
         }
         room = room->next;
@@ -166,22 +287,23 @@ int quickJoin(ROOM *roomListHead, USER *player)
     return -1;
 }
 
-int countRoom(ROOM* roomListHead){
+int countRoom()
+{
     int count = 0;
     ROOM *curr = roomListHead;
-    if(curr == NULL)    return 0;
+    if (curr == NULL)
+        return 0;
     while (curr != NULL)
     {
-        if(curr->next == NULL)  return count;
+        if (curr->next == NULL)
+            return count;
         else
         {
             curr = curr->next;
             count++;
             return count;
         }
-        
     }
-    
 }
 
 // void printroomplayerboard(listroomptr roomPtr, char *name)
@@ -211,9 +333,9 @@ int countRoom(ROOM* roomListHead){
 
 // PLAY FUNCTION
 
-void playgame(ROOM *roomListHead, int id)
+void playgame(int id)
 {
-    ROOM *room = findRoom(roomListHead, id);
+    ROOM *room = findRoom(id);
     if (room == NULL)
     {
         printf("Room not exit");
