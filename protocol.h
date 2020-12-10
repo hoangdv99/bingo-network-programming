@@ -36,7 +36,7 @@ typedef struct Response
 {   
     RES_OPCODE code;
     char message[MAX_LENGTH];
-    char data[MAX_LENGTH]
+    char data[MAX_LENGTH];
 } Response;
 
 int recvReq(int socket, Request *buff, int size, int flags);

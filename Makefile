@@ -10,8 +10,8 @@ server: server.o protocol.o helper.o handle.o list.o
 server.o: server.c
 	${CC} ${CFLAGS} server.c
 
-client: client.o protocol.o helper.o
-	${CC} protocol.o helper.o client.o -o client
+client: client.o protocol.o helper.o client_handle.o
+	${CC} protocol.o helper.o client_handle.o client.o -o client
 
 client.o: client.c 
 	${CC} ${CFLAGS} client.c
@@ -25,6 +25,8 @@ helper.o: helper.c
 handle.o: handle.c 
 	${CC} ${CFLAGS} handle.c 
 
+client_handle.o: client_handle.c
+	${CC} ${CFLAGS} client_handle.c
 list.o: list.c
 	${CC} ${CFLAGS} list.c
 clean:
