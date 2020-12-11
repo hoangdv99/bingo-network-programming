@@ -677,14 +677,10 @@
             <property name="orientation">vertical</property>
             <property name="spacing">10</property>
             <child>
-              <object class="GtkButton" id="btn_menu_title">
-                <property name="label" translatable="yes">BINGO</property>
+              <object class="GtkLabel" id="lbl_menu_title">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <signal name="clicked" handler="on_btn_menu_title_clicked" swapped="no"/>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">BINGO</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -766,6 +762,8 @@
                           <object class="GtkEntry" id="entry_menu_log_pas">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">*</property>
                             <property name="placeholder_text" translatable="yes">Password</property>
                           </object>
                           <packing>
@@ -891,6 +889,8 @@
                           <object class="GtkEntry" id="entry_menu_reg_pas">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">*</property>
                             <property name="placeholder_text" translatable="yes">Password</property>
                           </object>
                           <packing>
@@ -916,6 +916,8 @@
                           <object class="GtkEntry" id="entry_menu_reg_con_ pas">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">*</property>
                             <property name="placeholder_text" translatable="yes">Confirm password</property>
                           </object>
                           <packing>

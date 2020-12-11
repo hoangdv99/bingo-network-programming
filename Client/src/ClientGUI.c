@@ -8,10 +8,10 @@
 #define NUMBER_CONTAINER 4
 #define TABLE_NUMBER 25
 #define ROOM_PLAYER 5
-#define GAME_RULE_FILE "res/GameRule.txt"
-#define ABOUT_FILE "res/AboutUs.txt"
-#define GLADE_FILE_NAME "glade/test.glade"
-#define GLADE_CSS "style.css"
+#define GAME_RULE_FILE "Client/res/GameRule.txt"
+#define ABOUT_FILE "Client/res/AboutUs.txt"
+#define GLADE_FILE_NAME "Client/glade/test.glade"
+#define GLADE_CSS "Client/style.css"
 //ID Window
 #define WINDOW_NAME "window_main"
 #define WINDOW_ERR "window_error"
@@ -100,14 +100,13 @@ int number_button = sizeof(btn_all_name)/(sizeof(char)*MAX_STRING),
     number_window = sizeof(window_all_name)/(sizeof(char)*MAX_STRING);
 
 static void load_css(void);
-bool checkString(char *string);
 int showError(char* mesError, GtkLabel *lbl_err, GtkWidget *err_window);
 int showBingo(char* mesBingo, GtkLabel *lbl_bingo, GtkWidget *bingo_window);
 int showInvite(char* mesInvite, GtkLabel *lbl_invite, GtkWidget *invite_window);
 
-int main(int argc, char *argv[]) {
+int clientGUI() {
     app_widgets *widgets = g_slice_new(app_widgets);
-    gtk_init(&argc, &argv);
+    gtk_init(NULL, NULL);
     load_css();
     builder = gtk_builder_new_from_file(GLADE_FILE_NAME);
 
@@ -205,7 +204,7 @@ void on_btn_menu_login_clicked(GtkButton *button, app_widgets *app_wdgts) {
     char username[MAX_STRING], password[MAX_STRING];
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_menu_log_user));
     strcpy(password, gtk_entry_get_text(app_wdgts->w_entry_menu_log_pas));
-    if (!checkString(username) || !checkString(password)) showError(MES_ERR_USER, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+    if (false) showError(MES_ERR_USER, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
     else {
         app_wdgts->currUser = strdup(username);
         app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
@@ -219,7 +218,7 @@ void on_btn_menu_reg_clicked(GtkButton *button, app_widgets *app_wdgts) {
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_user));
     strcpy(password, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_pas));
     strcpy(con_pas, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_con_pas));
-    if (!checkString(username) || !checkString(password) || !checkString(con_pas) || strcmp(password, con_pas) != 0) showError(MES_ERR_USER, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+    if (false) showError(MES_ERR_USER, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
     else {
         app_wdgts->currUser = strdup(username);
         app_wdgts->currentWindow = app_wdgts->currentWindow + 1;

@@ -20,7 +20,7 @@
 }
 
 .tog_btn_table:checked {
-    background: rgb(255, 0, 0);
+    background: red;
     color: white;
 }
 
@@ -49,6 +49,7 @@
 
 .entry {
     font-family: "Libre Baskerville", serif;
+    letter-spacing: 2px;
     border-radius: 10px;
     font-size: 16px;
 }
@@ -61,21 +62,10 @@
 .title1 {
     font-family: "Great Vibes", cursive;
     background: white;
-    outline: none;
-    border: none;
-    box-shadow: none;
     font-size: 4em;
     font-weight: normal;
     text-shadow: 0 1px 1px #fff; 
     margin-top: 1em;
-}
-
-.title1:hover {
-    color: red;
-}
-
-.title1:active {
-    color: blue;
 }
 
 .title2 {
