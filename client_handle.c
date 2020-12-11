@@ -8,6 +8,15 @@ void inputRequest(char *sendbuff){
     sendbuff[strlen(sendbuff) - 1] = '\0';
 }
 
+void registerAccount(int clientfd ,Request *req, Response *res){
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    int n_recv = recvRes(clientfd, res, sizeof(Response), 0);
+    printf("Received string with length : %d\n",res->code);
+    printf("Received string with length : %s\n",res->message);
+}
+
 void login(int clientfd ,Request *req, Response *res){
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     printf("Sent %d bytes to server\n", n_sent);
@@ -26,16 +35,7 @@ void seeDetail(int clientfd, Request *req, Response *res){
     printf("Received string with length : %s\n",res->message);
 }
 
-void play(int clientfd, Request *req, Response *res){
-    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
-    int n_recv = recvRes(clientfd, res, sizeof(Response), 0);
-    printf("Received string with length : %d\n",res->code);
-    printf("Received string with length : %s\n",res->message);
-}
-
-void backToMenu(int clientfd, Request *req, Response *res){
+void logOut(int clientfd, Request *req, Response *res){
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     printf("Sent %d bytes to server\n", n_sent);
     printf("Waiting for reply\n");

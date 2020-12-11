@@ -121,6 +121,7 @@ void setOpcodeRequest(Request *req, char *input){
   char code[BUFF_SIZE], data[BUFF_SIZE];
 
   splitMessage(input, code, data);
+  printf("\n%s-%s\n", code, data);
   strcpy(req->message, data);
   if (strcmp(code, "LOGIN") == 0)
     req->code = LOGIN;

@@ -62,13 +62,16 @@ int main(int argc, char const *argv[])
         switch (req->code)
         {
         case REGISTER:
-            
+            registerAccount(sockfd, req, res);
             break;
         case LOGIN:
             login(sockfd, req, res);
             break;
         case DETAIL:
             seeDetail(sockfd, req, res);
+            break;
+        case LOGOUT:
+            logOut(sockfd, req, res);
             break;
         case CREATE_ROOM:
             createRoom(sockfd, req, res);

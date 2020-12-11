@@ -7,10 +7,10 @@
 #include "protocol.h"
 
 void inputRequest(char *sendbuff);
+void registerAccount(int clientfd, Request *req, Response *res);
 void login(int clientfd ,Request *req, Response *res);
 void seeDetail(int clientfd, Request *req, Response *res);
-void play(int clientfd, Request *req, Response *res);
-void backToMenu(int clientfd, Request *req, Response *res);
+void logOut(int clientfd, Request *req, Response *res);
 void createRoom(int clientfd, Request *req, Response *res);
 void quickJoin(int clientfd, Request *req, Response *res);
 #endif
