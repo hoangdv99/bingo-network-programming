@@ -12,6 +12,8 @@
 #include "client_handle.h"
 #define BUFF_SIZE 255
 
+int clientGUI();
+
 int main(int argc, char const *argv[])
 {
     // catch wrong input
@@ -51,6 +53,7 @@ int main(int argc, char const *argv[])
     // Gui mot message den servser
     //char message[100];
     char sendbuff[BUFF_SIZE];
+    clientGUI();
     while (1)
     {
         memset(sendbuff, '\0', BUFF_SIZE); //initialize buffer
