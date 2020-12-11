@@ -69,7 +69,7 @@ void setMessageResponse(Response *msg){
       strcpy(msg->message, "Logout successfully!");
       break;
     case RES_DETAIL:
-      strcpy(msg->message, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+      strcpy(msg->message, "Luật chơi: Mỗi người có một bảng 5x5 random số từ 1 đến 25.\nMỗi phòng chơi tối thiểu 2 và tối đa 5 người, lần lượt chọn số cho cả phòng (số đó chưa được chọn).\nNgười chiến thắng là người đầu tiên có 1 hàng/cột/đường chéo 5 ô đã được chọn.");
       break;
     case CREATE_ROOM_SUCCESS:
       strcpy(msg->message, "New room is created!");

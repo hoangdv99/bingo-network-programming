@@ -14,7 +14,8 @@ typedef enum USER_STATUS
 {
     LOBBY,
     INROOM,
-    READY
+    READY,
+    INGAME
 } USER_STATUS;
 
 typedef enum ROOM_STATE

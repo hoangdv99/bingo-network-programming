@@ -1,5 +1,6 @@
 #include "handle.h"
 #define FILE_SIZE 1024
+#define MAX_LENGTH 255
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -10,8 +11,8 @@ void signUp(int clientfd, Request *req, Response *res){
     username = strtok(req->message, "@");
     password = strtok(NULL, "@");
     confirmPassword = strtok(NULL, "\0");
-
-    if(strcmp(username, "") == 0 || strcmp(password, "") ==0 
+    
+    if(username == NULL || password == NULL || confirmPassword == NULL || strcmp(username, "") == 0 || strcmp(password, "") ==0 
     || strcmp(confirmPassword, "") == 0 || strcmp(password, confirmPassword) != 0){
         res->code = REGISTER_INPUT_WRONG;
         setMessageResponse(res);
@@ -38,7 +39,6 @@ void logIn(int clientfd ,Request *req, Response *res) //neu username da ton tai 
 
     username = strtok(req->message, "@");
     password = strtok(NULL, "\0");
-    printf("xxx%sxxx%sxxx\n", username, password);
     acc = findAccount(username);
     if(acc == NULL){
         res->code = USERNAME_NOT_EXISTED;
