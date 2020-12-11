@@ -4,7 +4,7 @@ OPT = -O0
 WARN = -Wall
 PTHREAD = -pthread
 GTKLIB = `pkg-config --cflags --libs gtk+-3.0`
-CFLAGS = $(DEBUG) $(OPT) $(WARN) $(PTHREAD) -pipe
+CFLAGS = $(DEBUG) $(OPT) $(WARN) $(PTHREAD) -pipe -fPIE
 
 all: client server 
 
