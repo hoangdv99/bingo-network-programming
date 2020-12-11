@@ -61,6 +61,9 @@ int main(int argc, char const *argv[])
         printf("\n%d-%s-%s\n", req->code, req->message, sendbuff);
         switch (req->code)
         {
+        case REGISTER:
+            
+            break;
         case LOGIN:
             login(sockfd, req, res);
             break;
