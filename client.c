@@ -9,12 +9,19 @@
 #include <stdio.h>
 #include "protocol.h"
 #include "helper.h"
+#include "client_handle.h"
 #define BUFF_SIZE 255
 
 int main(int argc, char const *argv[])
 {
+    // catch wrong input
+	if(argc!=3){
+		printf("Please input IP address and port number\n");
+		return 0;
+	}
     int servPort;
     Request *req = (Request *)malloc(sizeof(Request));
+    Response *res = (Response*)malloc(sizeof(Response));
     struct sockaddr_in servaddr;
     //Tạo TCP socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -43,33 +50,34 @@ int main(int argc, char const *argv[])
     // Gio ta se giao tiep voi server qua clientSocket
     // Gui mot message den servser
     //char message[100];
-    req->code = LOGIN;
-    strcpy(req->message, "hoang@123");
-    int n_sent = send(sockfd, req, sizeof(Request), 0);
-    if (n_sent == -1) // Gui loi
-    {
-        perror("SEND");
-        exit(0);
-    }
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
-    //Doi server   gui lai
-    Response *res = (Response *)malloc(sizeof(Response));
-    int n_recv = recv(sockfd, res, sizeof(Response), 0);
-    if (n_recv == -1)
-    {
-        perror("RECEIVE");
-        exit(0);
-    }
-    if (n_recv == 0)
-    {
-    }
-    printf("Received string with leng : %d\n", res->code);
-    printf("Received string with leng : %s\n", res->message);
+    char sendbuff[BUFF_SIZE];
     while (1)
     {
-        /* code */
+        memset(sendbuff, '\0', BUFF_SIZE); //initialize buffer
+        memset(res->data, '\0', BUFF_SIZE); //clear buff in res->data
+        memset(res->message, '\0', BUFF_SIZE); //clear buff in res->message
+        inputRequest(sendbuff);
+        setOpcodeRequest(req, sendbuff);
+        printf("\n%d-%s-%s\n", req->code, req->message, sendbuff);
+        switch (req->code)
+        {
+        case LOGIN:
+            login(sockfd, req, res);
+            break;
+        case DETAIL:
+            seeDetail(sockfd, req, res);
+            break;
+        case CREATE_ROOM:
+            createRoom(sockfd, req, res);
+            break;
+        case QUICKJOIN:
+            quickJoin(sockfd, req, res);
+            break;
+        default:
+            break;
+        }
     }
     
     return 0;
 }
+
