@@ -3,14 +3,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define MAX_LENGTH 255
+#define MAX_LENGTH 1024
+
 typedef enum REQ_OPCODE{
     REGISTER,
     LOGIN,
     DETAIL,
     LOGOUT,
     CREATE_ROOM,
-    QUICKJOIN
+    INVITE,
+    KICK,
+    QUICKJOIN,
+    JOIN,
+    OUT_ROOM,
+    EXIT_GAME
 }REQ_OPCODE; 
 
 typedef enum RES_OPCODE{
@@ -25,8 +31,20 @@ typedef enum RES_OPCODE{
     ACCOUNT_BUSY,
     RES_DETAIL,
     CREATE_ROOM_SUCCESS,
+    INVITATION,
+    INVITE_SUCCESS,
+    INVITE_FAIL,
     QUICKJOIN_FAIL,
-    QUICKJOIN_SUCCESS
+    QUICKJOIN_SUCCESS,
+    JOIN_SUCCESS,
+    JOIN_FAIL,
+    ROOM_FULL,
+    NEW_HOST,
+    OUT_ROOM_SUCCESS,
+    KICK_SUCCESS,
+    KICK_FAIL,
+    ACCEPT,
+    EXIT_GAME_SUCCESS
 }RES_OPCODE;
 
 typedef struct Request

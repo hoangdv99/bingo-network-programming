@@ -14,7 +14,8 @@ typedef enum USER_STATUS
 {
     LOBBY,
     INROOM,
-    READY
+    READY,
+    INGAME
 } USER_STATUS;
 
 typedef enum ROOM_STATE
@@ -70,11 +71,15 @@ USER *deleteUserByUsername(char *username);
 USER *deleteUserByClientfd(int clientfd);
 
 // Room init
-void insertRoom(int id, USER *host); // create a new room with host name and id - return 1 if success | 0 if fail
-ROOM *findRoom(int id);              // find a room with it's id - return room node
+void insertRoom(ROOM *room); // create a new room with host name and id - return 1 if success | 0 if fail
+ROOM *findRoom(int id);
+ROOM *findRoomByClientfd(int clientfd);             
 int insertPlayer(int id, USER *player);  // insert a player to a known room - return 1 if success | 0 if room is full
 int quickJoin(USER *player);             // auto insert a player to a room - return room id - return that room's id
 void printRoomPlayer(int id);        // print all player of a room
 void printRoomPlayerBoard(int id, char *name);
 int countRoom();
+ROOM *deleteRoom(int id);
+void printListRoom();
+void detelePlayerFromRoom(ROOM *room, USER *user);
 #endif

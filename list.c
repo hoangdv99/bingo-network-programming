@@ -1,4 +1,5 @@
 #include "list.h"
+#include "helper.h"
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -133,7 +134,7 @@ void printListUser()
     USER *ptr = userListHead;
     while (ptr != NULL)
     {
-        printf("%s %d", ptr->username, ptr->clientfd);
+        printf("%s %d\n", ptr->username, ptr->clientfd);
         ptr = ptr->next;
     }
 }
@@ -229,15 +230,14 @@ USER *deleteUserByClientfd(int clientfd)
 
 // ROOM FUNCTION
 
-void insertRoom(int id, USER *host)
+void insertRoom(ROOM *room)
 {
-    ROOM *newRoom = (ROOM *)malloc(sizeof(ROOM));
-    newRoom->id = id;
-    newRoom->host = host;
-    newRoom->status = NOTSTARTED;
-    newRoom->playerAmount = 0;
-    newRoom->next = roomListHead;
-    roomListHead = newRoom;
+    if(roomListHead == NULL){
+        roomListHead = room;
+    }else{
+        room->next = roomListHead;
+        roomListHead = room;
+    }
 }
 
 ROOM *findRoom(int id)
@@ -257,6 +257,18 @@ ROOM *findRoom(int id)
     return curr;
 }
 
+ROOM *findRoomByClientfd(int clientfd){
+    ROOM *curr = roomListHead;
+    if(curr == NULL){
+        return NULL;
+    }
+    while((findInArray(clientfd, curr->player, curr->playerAmount)) == 0){
+        if(curr->next == NULL)  return NULL;
+        else    curr = curr->next;
+    }
+    return curr;
+}
+
 int insertPlayer(int id, USER *player)
 {
     ROOM *room = findRoom(id);
@@ -269,6 +281,22 @@ int insertPlayer(int id, USER *player)
         return 1;
     }
     return 0;
+}
+
+void detelePlayerFromRoom(ROOM *room, USER* user){
+    int i;
+
+    for(i = 0; i < room->playerAmount; i++){
+        if(room->player[i] == user) break;
+    }
+    if(i < room->playerAmount){
+        room->playerAmount = room->playerAmount - 1;
+        for (int j = i; j < room->playerAmount; j++)
+        {
+            room->player[j] = room->player[j+1];
+        }
+    }
+    user->status = LOBBY;
 }
 
 int quickJoin(USER *player)
@@ -287,6 +315,18 @@ int quickJoin(USER *player)
     return -1;
 }
 
+void printRoomPlayer(int roomID)
+{
+    ROOM *room = findRoom(roomID);
+    printf("---------------------------\n");
+    printf("Room %d: ", roomID);
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        printf("%s ", room->player[i]->username);
+    }
+    printf("\n-----------------------\n");
+}
+
 int countRoom()
 {
     int count = 0;
@@ -303,6 +343,43 @@ int countRoom()
             count++;
             return count;
         }
+    }
+    return 0;
+}
+
+ROOM *deleteRoom(int id){
+    ROOM *cur = roomListHead;
+    ROOM *prev = NULL;
+    if (roomListHead == NULL)
+        return NULL;
+    while (cur->id != id)
+    {
+        if (cur->next == NULL)
+            return NULL;
+        else
+        {
+            prev = cur;
+            cur = cur->next;
+        }
+    }
+    if (cur == roomListHead)
+    {
+        roomListHead = roomListHead->next;
+    }
+    else
+    {
+        prev->next = cur->next;
+    }
+    return cur;
+}
+
+void printListRoom(){
+    ROOM *ptr = roomListHead;
+    while (ptr != NULL)
+    {
+        printf("%d-%s-%d\n", ptr->id, ptr->host->username, ptr->playerAmount);
+        printRoomPlayer(ptr->id);
+        ptr = ptr->next;
     }
 }
 
