@@ -21,4 +21,4 @@ client: $(OBJ_CLIENT)
 	${CC} -o $@ $^ $(CFLAGS) ${GTKLIB} -export-dynamic
 
 clean:
-	rm -f *.o *~
+	rm -f *.o client server
