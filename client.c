@@ -12,8 +12,6 @@
 #include "client_handle.h"
 #define BUFF_SIZE 255
 
-//int clientGUI();
-
 int main(int argc, char const *argv[])
 {
     // catch wrong input
@@ -53,58 +51,39 @@ int main(int argc, char const *argv[])
     // Gui mot message den servser
     //char message[100];
     char sendbuff[BUFF_SIZE];
-    //clientGUI();
-    while (1)
-    {
-        memset(sendbuff, '\0', BUFF_SIZE); //initialize buffer
-        memset(res->data, '\0', BUFF_SIZE); //clear buff in res->data
-        memset(res->message, '\0', BUFF_SIZE); //clear buff in res->message
-        
-        inputRequest(sendbuff);
-        setOpcodeRequest(req, sendbuff);
-        printf("\n%d-%s-%s\n", req->code, req->message, sendbuff);
-        switch (req->code)
-        {
-        case REGISTER:
-            registerAccount(sockfd, req, res);
-            break;
-        case LOGIN:
-            login(sockfd, req, res);
-            break;
-        case DETAIL:
-            seeDetail(sockfd, req, res);
-            break;
-        case LOGOUT:
-            logOut(sockfd, req, res);
-            break;
-        case CREATE_ROOM:
-            createRoom(sockfd, req, res);
-            break;
-        case JOIN:
-            joinClie(sockfd, req, res);
-            break;
-        case QUICKJOIN:
-            quickJoinClie(sockfd, req, res);
-            break;
-        case INVITE:
-            inviteClie(sockfd, req, res);
-            break;
-        case KICK:
-            kickClie(sockfd, req, res);
-            break;
-        case OUT_ROOM:
-            outRoomClie(sockfd, req, res);
-            break;
-        case ACCEPT:
-            acceptInviteClie(sockfd, req, res);
-            break;
-        case EXIT_GAME:
-            exitGameClie(sockfd, req, res);
-            break;
-        default:
-            break;
-        }
-    }
+    clientGUI();
+    // while (1)
+    // {
+    //     memset(sendbuff, '\0', BUFF_SIZE); //initialize buffer
+    //     memset(res->data, '\0', BUFF_SIZE); //clear buff in res->data
+    //     memset(res->message, '\0', BUFF_SIZE); //clear buff in res->message
+    //     inputRequest(sendbuff);
+    //     setOpcodeRequest(req, sendbuff);
+    //     printf("\n%d-%s-%s\n", req->code, req->message, sendbuff);
+    //     switch (req->code)
+    //     {
+    //     case REGISTER:
+    //         registerAccount(sockfd, req, res);
+    //         break;
+    //     case LOGIN:
+    //         login(sockfd, req, res);
+    //         break;
+    //     case DETAIL:
+    //         seeDetail(sockfd, req, res);
+    //         break;
+    //     case LOGOUT:
+    //         logOut(sockfd, req, res);
+    //         break;
+    //     case CREATE_ROOM:
+    //         createRoom(sockfd, req, res);
+    //         break;
+    //     case QUICKJOIN:
+    //         quickJoin(sockfd, req, res);
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
     
     return 0;
 }

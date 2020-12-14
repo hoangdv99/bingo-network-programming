@@ -160,10 +160,14 @@ void setOpcodeRequest(Request *req, char *input){
   splitMessage(input, code, data);
   printf("\n%s-%s\n", code, data);
   strcpy(req->message, data);
-  if (strcmp(code, "LOGIN") == 0)
+  if (strcmp(code, "REGISTER") == 0)
+    req->code = REGISTER;
+  else if (strcmp(code, "LOGIN") == 0)
     req->code = LOGIN;
   else if (strcmp(code, "DETAIL") == 0)
     req->code = DETAIL;
+  else if (strcmp(code, "LOGOUT") == 0)
+    req->code = LOGOUT;
   else if (strcmp(code, "CREATE_ROOM") == 0)
     req->code = CREATE_ROOM;
   else if (strcmp(code, "QUICKJOIN") == 0)
