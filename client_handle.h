@@ -15,5 +15,5 @@ int login(int clientfd, Request *req, Response *res);
 int seeDetail(int clientfd, Request *req, Response *res);
 int logOut(int clientfd, Request *req, Response *res);
 int createRoom(int clientfd, Request *req, Response *res);
-int quickJoin(int clientfd, Request *req, Response *res);
+int quickJoinClie(int clientfd, Request *req, Response *res);
 #endif
