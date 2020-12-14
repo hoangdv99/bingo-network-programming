@@ -2,3 +2,5 @@
 *.o Client/*.o
 # Ignore all compile files
 client server
+# Ignore use case
+*.drawio
