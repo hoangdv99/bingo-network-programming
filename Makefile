@@ -21,4 +21,4 @@ client: $(OBJ_CLIENT)
 	${CC} -o $@ $^ $(CFLAGS) ${GTKLIB} -export-dynamic
 
 clean:
-	rm -f *.o client server *~
+	rm -f *.o client server main test *~
