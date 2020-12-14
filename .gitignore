@@ -1,1 +1,10 @@
+# Ignore all .o
 *.o
+Client/*.o
+# Ignore all compile files
+client
+server
+main
+test
+# Ignore use case
+*.drawio
