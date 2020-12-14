@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define MAX_LENGTH 255
 #include "protocol.h"
 
 void inputRequest(char *sendbuff);
@@ -12,5 +11,11 @@ void login(int clientfd ,Request *req, Response *res);
 void seeDetail(int clientfd, Request *req, Response *res);
 void logOut(int clientfd, Request *req, Response *res);
 void createRoom(int clientfd, Request *req, Response *res);
-void quickJoin(int clientfd, Request *req, Response *res);
+void quickJoinClie(int clientfd, Request *req, Response *res);
+void inviteClie(int clientfd, Request *req, Response *res);
+void joinClie(int clientfd, Request *req, Response *res);
+void outRoomClie(int clientfd, Request *req, Response *res);
+void kickClie(int clientfd, Request *req, Response *res);
+void acceptInviteClie(int clientfd, Request *req, Response *res);
+void exitGameCLie(int clientfd, Request *req, Response *res);
 #endif

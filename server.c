@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "protocol.h"
 #include "handle.h"
-#define MAX_LENGTH 255
+#define MAX_LENGTH 2048
 #define MAX_CLIENT 20
 
 USER *userListHead = NULL;
@@ -142,10 +142,29 @@ int main(int argc, char *argv[])
                             case CREATE_ROOM:
                                 createRoom(i, req, res);
                                 break;
+                            case INVITE:
+                                sendInvite(i, req, res);
+                                break;
+                            case KICK:
+                                kick(i, req, res);
+                                break;
                             case QUICKJOIN:
                                 quickjoin(i, req, res);
                                 break;
+                            case JOIN:
+                                join(i, req, res);
+                                break;
+                            case OUT_ROOM:
+                                outRoom(i, req, res);
+                                break;
+                            case ACCEPT:
+                                //acceptInvite(i, req, res);
+                                break;
+                            case EXIT_GAME:
+                                exitGame(i, req, res);
+                                break;
                             default:
+                               
                                 break;
                             }
                         }
