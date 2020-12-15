@@ -131,3 +131,6 @@ void createLogOutRequest(char *opcode, Request *req){
     strcat(sendbuff, "logOut");
     setOpcodeRequest(req, sendbuff);
 }
+void test(){
+    printf("\nTest commit\n");
+}
