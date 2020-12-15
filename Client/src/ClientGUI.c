@@ -218,7 +218,7 @@ void on_btn_menu_login_clicked(GtkButton *button, app_widgets *app_wdgts) {
     createLoginRequest("LOGIN", username, password, req);
     int check = login(app_wdgts->clientfd, req, res);
     if (check < 0 || check == 4 || check == 7 || check == 8) 
-        showError(MES_ERR_USER, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+        showError(res->message, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
     else {
         app_wdgts->currUser = strdup(username);
         app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
@@ -237,7 +237,7 @@ void on_btn_menu_reg_clicked(GtkButton *button, app_widgets *app_wdgts) {
     createRegisterRequest("REGISTER", username, password, con_pas, req);
     int check = registerAccount(app_wdgts->clientfd, req, res);
     if (check < 0 || check == 1 || check == 2) //Wrong input 
-        showError(MES_ERR_USER, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+        showError(res->message, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
     else {
         app_wdgts->currUser = strdup(username);
         app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
