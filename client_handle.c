@@ -80,7 +80,7 @@ int createRoom(int clientfd, Request *req, Response *res){
     return res->code;
 }
 
-int quickJoinClie(int clientfd, Request *req, Response *res){
+int quickJoinClient(int clientfd, Request *req, Response *res){
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
