@@ -24,18 +24,15 @@ int registerAccount(int clientfd, Request *req, Response *res){
     return res->code;
 }
 
-int login(int clientfd, Request *req, Response *res){
+int login(int clientfd, char* username, char* password){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createLoginRequest("LOGIN", username, password, req);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
-        return n_sent;
+        return 0;
     printf("Sent %d bytes to server\n", n_sent);
     printf("Waiting for reply\n");
-    int n_recv = recvRes(clientfd, res, sizeof(Response), 0);
-    if (n_recv < 0)
-        return n_recv;
-    printf("Received string with length : %d\n",res->code);
-    printf("Received string with length : %s\n",res->message);
-    return res->code;
+    return 1;
 }
 
 int seeDetail(int clientfd, Request *req, Response *res){

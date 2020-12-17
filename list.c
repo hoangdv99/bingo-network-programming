@@ -1,5 +1,6 @@
 #include "list.h"
 #include "helper.h"
+#define ROOM_MAX 100
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;

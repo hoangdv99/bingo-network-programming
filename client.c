@@ -12,6 +12,8 @@
 #include "client_handle.h"
 #define BUFF_SIZE 255
 
+int clientGUI(int serverfd);
+
 int main(int argc, char const *argv[])
 {
     // catch wrong input
@@ -20,8 +22,6 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
     int servPort;
-    Request *req = (Request *)malloc(sizeof(Request));
-    Response *res = (Response*)malloc(sizeof(Response));
     struct sockaddr_in servaddr;
     //Tạo TCP socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -47,9 +47,6 @@ int main(int argc, char const *argv[])
         perror("CONNECT");
         exit(0);
     }
-    // Gio ta se giao tiep voi server qua clientSocket
-    // Gui mot message den servser
-    char sendbuff[BUFF_SIZE];
     clientGUI(sockfd);
     close(sockfd);
     return 0;

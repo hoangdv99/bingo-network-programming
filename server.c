@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "protocol.h"
 #include "handle.h"
-#define MAX_LENGTH 2048
+#define MAX_LENGTH 1024
 #define MAX_CLIENT 20
 
 USER *userListHead = NULL;
@@ -77,9 +77,9 @@ int main(int argc, char *argv[])
     FD_ZERO(&readfds);
     FD_SET(sockfd, &masterfds); // add serverSock vào tập masterfds.
     int max_fd = sockfd;
-    struct timeval timeout;
-    timeout.tv_sec = 90; // Server sẽ lắng nghe trong 90s, nếu tham số timeout = NULL thì select sẽ chạy mãi.
-    timeout.tv_usec = 0;
+    // struct timeval timeout;
+    // timeout.tv_sec = 90; // Server sẽ lắng nghe trong 90s, nếu tham số timeout = NULL thì select sẽ chạy mãi.
+    // timeout.tv_usec = 0;
     int n_select;
     do
     {
@@ -157,9 +157,9 @@ int main(int argc, char *argv[])
                             case OUT_ROOM:
                                 outRoom(i, req, res);
                                 break;
-                            case ACCEPT:
-                                //acceptInvite(i, req, res);
-                                break;
+                            // case ACCEPT:
+                            //     //acceptInvite(i, req, res);
+                            //     break;
                             case EXIT_GAME:
                                 exitGame(i, req, res);
                                 break;
