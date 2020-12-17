@@ -9,7 +9,10 @@
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [
+                "`pkg-config --cflags --libs gtk+-3.0`"
+            ]
         }
     ],
     "version": 4

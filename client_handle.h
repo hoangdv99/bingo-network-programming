@@ -11,7 +11,7 @@ void createRegisterRequest(char *opcode, char *username, char *pass, char *confi
 void createDetailRequest(char *opcode, Request *req);
 void createLogOutRequest(char *opcode, Request *req);
 int registerAccount(int clientfd, Request *req, Response *res);
-int login(int clientfd, Request *req, Response *res);
+int login(int clientfd, char* username, char* password);
 int seeDetail(int clientfd, Request *req, Response *res);
 int logOut(int clientfd, Request *req, Response *res);
 int createRoom(int clientfd, Request *req, Response *res);
