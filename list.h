@@ -49,6 +49,8 @@ typedef struct ROOM
     ROOM_STATE status;
     int playerAmount;
     USER *player[ROOM_PLAYER_MAX];
+    int picked[SIZE*SIZE];
+    int pickedAmount;
     struct ROOM *next;
 } ROOM;
 
@@ -60,7 +62,8 @@ void printListAccount();
 void writeToAccountFile();
 void insertAcc(char* username, char* password, int status);
 
-// User init                       // create new player
+// User init                       
+USER *makenode(char *username, int clientfd);   // create new player
 void printUser(USER *acc);                       // print player information
 USER* insertUser(char *username, int clientfd);   // insert player to user list - return 1 if insert success | 0 if player already in list
 void printListUser();                            // print player list
@@ -71,7 +74,7 @@ USER *deleteUserByUsername(char *username);
 USER *deleteUserByClientfd(int clientfd);
 
 // Room init
-void insertRoom(ROOM *room); // create a new room with host name and id - return 1 if success | 0 if fail
+void insertRoom(int id, USER *host); // create a new room with host name and id - return 1 if success | 0 if fail
 ROOM *findRoom(int id);
 ROOM *findRoomByClientfd(int clientfd);             
 int insertPlayer(int id, USER *player);  // insert a player to a known room - return 1 if success | 0 if room is full
@@ -82,4 +85,9 @@ int countRoom();
 ROOM *deleteRoom(int id);
 void printListRoom();
 void detelePlayerFromRoom(ROOM *room, USER *user);
+int startGame(int id);                  // Start game and gennerrate board for player
+int pickNumber(int roomid, int pick);   // Pick number
+int checkBingo(int roomid, char *name); // Check Bingo
+int BINGOTEST(int roomid, char *name, int choice, int place);  // TEST IF BINGO  --- choice 1 = col; 2 = row; 3 = cross
+int playGame(int roomid, fd_set readfds, int master_socket, int max_sd); 
 #endif

@@ -89,6 +89,19 @@ void writeToAccountFile()
 
 //---------------------------------------------------
 
+USER *makenode(char *username, int clientfd) {
+    USER *acc = (USER *)malloc(sizeof(USER));
+    strcpy(acc->username, username);
+    acc->clientfd = clientfd;
+    acc->status = LOBBY;
+    for(int i = 0; i < SIZE; i++) {
+        for(int j = 0; j < SIZE; j++) {
+            acc->board[i][j] = 0;
+        }
+    }
+    return acc;
+}
+
 void printUser(USER *acc)
 {
     printf("%s-%d || %d\n------------------------------------\n",
@@ -231,14 +244,17 @@ USER *deleteUserByClientfd(int clientfd)
 
 // ROOM FUNCTION
 
-void insertRoom(ROOM *room)
+void insertRoom(int id, USER *host)
 {
-    if(roomListHead == NULL){
-        roomListHead = room;
-    }else{
-        room->next = roomListHead;
-        roomListHead = room;
-    }
+    ROOM *newRoom = (ROOM *)malloc(sizeof(ROOM));
+    newRoom->id = id;
+    newRoom->host = host;
+    newRoom->status = NOTSTARTED;
+    newRoom->player[0] = host;
+    newRoom->playerAmount = 1;
+    newRoom->pickedAmount = 0;
+    newRoom->next = roomListHead;
+    roomListHead = newRoom;
 }
 
 ROOM *findRoom(int id)
@@ -316,16 +332,41 @@ int quickJoin(USER *player)
     return -1;
 }
 
-void printRoomPlayer(int roomID)
-{
-    ROOM *room = findRoom(roomID);
-    printf("---------------------------\n");
-    printf("Room %d: ", roomID);
-    for (int i = 0; i < room->playerAmount; i++)
-    {
-        printf("%s ", room->player[i]->username);
+void printRoomPlayer(int id) {
+    ROOM *room = findRoom(id);
+    if(room != NULL) {
+        printf("Room[%d] player\n----\n", id);
+        for(int i = 0; i < room->playerAmount; i++) {
+            printf("Player[%d]: %s\n", i+1, room->player[i]->username);
+        }
+    }   
+    else {
+        printf("Room not exist!\n");
     }
-    printf("\n-----------------------\n");
+}
+
+void printRoomPlayerBoard(int id, char *name)
+{
+    ROOM *room = findRoom(id);
+    if(room != NULL) {
+    //printf(" %d Player\n", room->playerAmount);
+        for(int i = 0; i < room->playerAmount; i++) {           
+            if(strcmp(name, room->player[i]->username) == 0) {
+                printf("---------\nPlayer %s's board\n", room->player[i]->username);
+                int j,k;
+                for(j = 0; j < SIZE; j++) {
+                    for(k = 0; k < SIZE; k++) {
+                        printf("%d\t", room->player[i]->board[j][k]);
+                    }
+                    printf("\n");
+                }
+            }
+        }
+    }
+    else {
+        printf("Room not exist!\n");
+    }
+    
 }
 
 int countRoom()
@@ -384,77 +425,192 @@ void printListRoom(){
     }
 }
 
-// void printroomplayerboard(listroomptr roomPtr, char *name)
-// {
-//     if (roomPtr == NULL)
-//     {
-//         printf("Room has not created!\n");
-//         return;
-//     }
-//     printf("Player %s --\n-------\n", name);
-//     for (int i = 0; i < roomPtr->playernumber; i++)
-//     {
-//         if (strcmp(roomPtr->player[i].username, name) == 0)
-//         {
-//             for (int k = 0; k < SIZE; k++)
-//             {
-//                 for (int j = 0; j < SIZE; j++)
-//                 {
-//                     printf("%3d\t", roomPtr->player[i].board[k][j]);
-//                 }
-//                 printf("\n");
-//             }
-//         }
-//     }
-//     printf("\n");
-// }
-
 // PLAY FUNCTION
 
-void playgame(int id)
+int startGame(int id)
 {
     ROOM *room = findRoom(id);
     if (room == NULL)
     {
         printf("Room not exit");
+        return 0;
     }
     else
     {
-        int i = 0;
-        srand(time(0));
-        for (i = 0; i < room->playerAmount; i++)
+        printf("Board generating!\n");
+        int n = 0;
+        srand(time(NULL));
+        for (n = 0; n < room->playerAmount; n++)
         {
+            int a[SIZE*SIZE],i,j,x,y;
+            x = 0;
+            y = 0;
+            int temp;
 
-            for (int j = 0; j < SIZE; j++)
-            {
-                //printf(" %d ", rand());
+            
+            for(i = 0; i < SIZE*SIZE; i++) {
+                temp = rand()%(SIZE*SIZE)+1;
+                for(j = 0; j < i; j++) {
+                    if(temp == a[j]) {
+                        break;
+                    }
+                }
+                if(i == j) {
+                    a[i] = temp;
+                }
+                else {
+                    i--;
+                }
+            }
+            //printf("\n  %s  \n", room->player[n]->username);
+            for(i=0;i<SIZE*SIZE;i++) {
+                room->player[n]->board[x][y] = a[i]; 
+                if((i+1) % 5 == 0) {
+                    x++;
+                    y = 0;
+                    //printf("%d", x);
+                }
+                else {
+                    y++;
+                }
+            }
 
-                for (int k = 0; k < SIZE; k++)
+        }
+        printf("Board generated!\n");
+        return 1;
+    }
+}
+
+int pickNumber(int roomid, int pick) {
+    ROOM *room = findRoom(roomid);
+    if (room == NULL)
+    {
+        printf("Room not exit");
+        return 0;
+    }
+    else {
+        int picked = 0;
+        if(room->pickedAmount == 25) {
+            printf("Out of choice!\n");
+            return 0;
+        } 
+        else {
+            int i;
+            for(i = 0; i < room->pickedAmount; i++) {
+                if (pick == room->picked[i]) {
+                    return 0;
+                }
+            }
+            room->picked[room->pickedAmount] = pick;
+            room->pickedAmount++;
+            
+            for(int i = 0; i < room->playerAmount; i++) {          
+                int j,k;
+                for(j = 0; j < SIZE; j++) {
+                    for(k = 0; k < SIZE; k++) {
+                        if (room->player[i]->board[j][k] == pick) {
+                            room->player[i]->board[j][k] = 0;
+                            picked++;
+                        }
+                    }
+                    
+                }
+                
+            }
+        }
+        return picked;
+    }    
+}
+
+int checkBingo(int roomid, char *name) {
+    ROOM *room = findRoom(roomid);
+    if(room != NULL) {
+    
+        for(int i = 0; i < room->playerAmount; i++) {           
+            if(strcmp(name, room->player[i]->username) == 0) {
+                int j,k;
+                int sum_row, sum_col;
+                int cross_1 = 0; 
+                int cross_2 = 0;
+                
+                for(j = 0; j < SIZE; j++) {
+                    sum_row = 0;
+                    sum_col = 0;
+                    for(k = 0; k < SIZE; k++) {
+                        //printf("%d\t", room->player[i]->board[j][k]);
+                        sum_row += room->player[i]->board[j][k];
+                        sum_col += room->player[i]->board[k][j];
+                        if(j == k) {
+                            cross_1 += room->player[i]->board[j][k];
+                        }
+                        if((j+k) == 4) {
+                            cross_2 += room->player[i]->board[j][k];
+                        }
+                    }
+                    if((sum_col == 0) || (sum_row == 0) || (cross_1 == 0) || (cross_2 == 0)) {
+                        printf("Player %s BINGO\n", name);
+                        return 1;
+                    }
+                    //printf("\n");
+                }
+            }
+        }
+        return 0;
+    }
+    else {
+        printf("Room not exist!\n");
+        return 0;
+    }
+}
+
+//TEST 
+
+int BINGOTEST(int roomid, char *name, int choice, int place) {
+    ROOM *room = findRoom(roomid);
+    if (room == NULL)
+    {
+        printf("Room not exit");
+        return 0;
+    }
+    else {
+        for(int n = 0; n < room->playerAmount; n++) {
+            if(strcmp(name, room->player[n]->username) == 0) {
+                int i,j;
+                switch (choice)
                 {
-                    int c = 1;
-                    int randnum;
-
-                    while (c != 0)
-                    {
-
-                        c = 0;
-                        randnum = (rand() % 99) + 1;
-                        //printf("%d -- ", randnum);
-                        for (int n = 0; n < SIZE; n++)
-                        {
-                            for (int m = 0; n < SIZE; n++)
-                            {
-                                if (room->player[i]->board[n][m] == randnum)
-                                {
-                                    c++;
-                                    break;
-                                }
+                case 1: {
+                    for(i = 0; i < SIZE; i++) {
+                        room->player[n]->board[i][place] = 0;
+                    }
+                } break;
+                case 2: {
+                    for(i = 0; i < SIZE; i++) {
+                        room->player[n]->board[place][i] = 0;
+                    }
+                } break;
+                case 3: {
+                    for(i = 0; i < SIZE; i++) {
+                        for(j = 0; j < SIZE; j++) {
+                            if((i+j) == (SIZE-1) && place == 2) {
+                                room->player[n]->board[i][j] = 0;
+                            }
+                            if((i == j) && place == 1) {
+                                room->player[n]->board[i][j] = 0;
                             }
                         }
                     }
-                    room->player[i]->board[j][k] = randnum;
+                } break;
+                
+                default: {
+                    return 0;
+                } break;
                 }
             }
         }
     }
+    return 1;
+}
+
+int playGame(int roomid, fd_set readfds, int master_socket, int max_sd) {
+    return 1;
 }
