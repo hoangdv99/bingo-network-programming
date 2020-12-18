@@ -12,6 +12,7 @@ void createDetailRequest(char *opcode, Request *req);
 void createLogOutRequest(char *opcode, Request *req, char* username);
 void createCreateRoomRequest(char *opcode, Request *req);
 void createInviteRequest(char *opcode, Request *req, char* username);
+void createKickRequest();
 int login(int clientfd, char* username, char* password);
 int registerAccount(int clientfd, char* username, char* password, char* confirm_pass);
 int seeDetail(int clientfd, Request *req, Response *res);
