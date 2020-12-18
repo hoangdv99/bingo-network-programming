@@ -59,6 +59,8 @@ void setMessageResponse(Response *msg){
     case ACCOUNT_BUSY:
       strcpy(msg->message, "This account is using by other player!");
       break;
+    case RES_DETAIL:
+      break;
     case LOGIN_SUCCESS:
       strcpy(msg->message, "Login successfully!");
       break;

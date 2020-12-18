@@ -9,11 +9,11 @@ void inputRequest(char *sendbuff);
 void createLoginRequest(char *opcode, char *username, char *pass, Request *req);
 void createRegisterRequest(char *opcode, char *username, char *pass, char *confirm_pass, Request *req);
 void createDetailRequest(char *opcode, Request *req);
-void createLogOutRequest(char *opcode, Request *req);
-int registerAccount(int clientfd, Request *req, Response *res);
+void createLogOutRequest(char *opcode, Request *req, char* username);
 int login(int clientfd, char* username, char* password);
+int registerAccount(int clientfd, char* username, char* password, char* confirm_pass);
 int seeDetail(int clientfd, Request *req, Response *res);
-int logOut(int clientfd, Request *req, Response *res);
+int logOut(int clientfd, char* username);
 int createRoom(int clientfd, Request *req, Response *res);
 int quickJoinClient(int clientfd, Request *req, Response *res);
 #endif

@@ -240,22 +240,24 @@ void on_btn_menu_login_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_menu_reg_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    Request *req = (Request *)malloc(sizeof(Request));
-    Response *res = (Response *)malloc(sizeof(Response));
+    // Request *req = (Request *)malloc(sizeof(Request));
+    // Response *res = (Response *)malloc(sizeof(Response));
     char username[MAX_STRING], password[MAX_STRING], con_pas[MAX_STRING];
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_user));
     strcpy(password, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_pas));
     strcpy(con_pas, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_con_pas));
-    createRegisterRequest("REGISTER", username, password, con_pas, req);
-    int check = registerAccount(app_wdgts->serverfd, req, res);
-    if (check < 0 || check == 1 || check == 2) //Wrong input
-        showError(res->message, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
-    else
-    {
-        app_wdgts->currUser = strdup(username);
-        app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-        gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    }
+
+    registerAccount(app_wdgts->serverfd, username, password, con_pas);
+    
+    // int check = registerAccount(app_wdgts->serverfd, req, res);
+    // if (check < 0 || check == 1 || check == 2) //Wrong input
+    //     showError(res->message, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+    // else
+    // {
+    //     app_wdgts->currUser = strdup(username);
+    //     app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
+    //     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
+    // }
     return;
 }
 
@@ -286,8 +288,6 @@ void on_btn_menu_details_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_reader_details_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    // Request *req = (Request *)malloc(sizeof(Request));
-    // Response *res = (Response *)malloc(sizeof(Response));
     gchar *file_contents = NULL;
     gboolean file_success = FALSE;
 
@@ -338,13 +338,11 @@ void on_btn_invite_decline_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_lobby_log_out_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    Request *req = (Request *)malloc(sizeof(Request));
-    Response *res = (Response *)malloc(sizeof(Response));
-    createLogOutRequest("LOGOUT", req);
-    logOut(app_wdgts->serverfd, req, res);
-    app_wdgts->currentWindow = app_wdgts->currentWindow - 1;
-    gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    gtk_stack_set_visible_child(app_wdgts->w_stack_menu, app_wdgts->w_container_menu_log);
+    //Request *req = (Request *)malloc(sizeof(Request));
+    logOut(app_wdgts->serverfd, app_wdgts->currUser);
+    // app_wdgts->currentWindow = app_wdgts->currentWindow - 1;
+    // gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
+    // gtk_stack_set_visible_child(app_wdgts->w_stack_menu, app_wdgts->w_container_menu_log);
     return;
 }
 
@@ -535,13 +533,82 @@ void *recv_handler(void *void_sockfd)
         }
         switch (res->code)
         {
-        case LOGIN_SUCCESS:
-            // app_wdgts->currUser = strdup(username);
+            case SYNTAX_ERROR:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case REGISTER_INPUT_WRONG:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case USERNAME_EXISTED:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case REGISTER_SUCCESS:
+            widgets->currUser = strdup(gtk_entry_get_text(widgets->w_entry_menu_reg_user));
             widgets->currentWindow = widgets->currentWindow + 1;
             gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
             break;
+        case USERNAME_NOT_EXISTED:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case ACCOUNT_BUSY:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case LOGIN_SUCCESS:
+            widgets->currUser = strdup(gtk_entry_get_text(widgets->w_entry_menu_log_user));
+            widgets->currentWindow = widgets->currentWindow + 1;
+            gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+            break;
+        case WRONG_PASSWORD:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case LOGOUT_SUCCESS:
+            widgets->currentWindow = widgets->currentWindow - 1;
+            gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+            gtk_stack_set_visible_child(widgets->w_stack_menu, widgets->w_container_menu_log);
+            break;
+        case CREATE_ROOM_SUCCESS:
 
-            default:
+            break;
+        case INVITATION:
+
+            break;
+        case INVITE_SUCCESS:
+
+            break;
+        case INVITE_FAIL:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case QUICKJOIN_FAIL:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case QUICKJOIN_SUCCESS:
+
+            break;
+        case JOIN_SUCCESS:
+
+            break;
+        case JOIN_FAIL:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case ROOM_FULL:
+
+            break;
+        case NEW_HOST:
+
+            break;
+        case OUT_ROOM_SUCCESS:
+
+            break;
+        case KICK_SUCCESS:
+
+            break;
+        case KICK_FAIL:
+            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            break;
+        case EXIT_GAME_SUCCESS:
+
+            break;
+        default:
             break;
         }
     }
