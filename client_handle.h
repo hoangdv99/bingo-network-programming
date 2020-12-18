@@ -18,4 +18,6 @@ void outRoomClie(int clientfd, Request *req, Response *res);
 void kickClie(int clientfd, Request *req, Response *res);
 void acceptInviteClie(int clientfd, Request *req, Response *res);
 void exitGameCLie(int clientfd, Request *req, Response *res);
+void declineInviteClie(int clientfd, Request *req, Response *res);
+
 #endif

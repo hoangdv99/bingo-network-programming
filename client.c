@@ -95,8 +95,11 @@ int main(int argc, char const *argv[])
         case OUT_ROOM:
             outRoomClie(sockfd, req, res);
             break;
-        case ACCEPT:
+        case ACCEPT_INVITE:
             acceptInviteClie(sockfd, req, res);
+            break;
+        case DECLINE_INVITE:
+            declineInviteClie(sockfd, req, res);
             break;
         case EXIT_GAME:
             exitGameClie(sockfd, req, res);

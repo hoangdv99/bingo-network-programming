@@ -157,8 +157,11 @@ int main(int argc, char *argv[])
                             case OUT_ROOM:
                                 outRoom(i, req, res);
                                 break;
-                            case ACCEPT:
-                                //acceptInvite(i, req, res);
+                            case ACCEPT_INVITE:
+                                acceptInvite(i, req, res);
+                                break;
+                            case DECLINE_INVITE:
+                                declineInvite(i, req, res);
                                 break;
                             case EXIT_GAME:
                                 exitGame(i, req, res);
@@ -170,11 +173,13 @@ int main(int argc, char *argv[])
                         }
                         else
                         {
+                            printf("@@@");
                             close_fd = 1;
                         }
                     }
                     if (close_fd == 1)
                     {
+                        printf("@");
                         FD_CLR(i, &masterfds);
                         close(i);
                     }
