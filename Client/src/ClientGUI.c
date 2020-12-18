@@ -530,6 +530,11 @@ void *recv_handler(void *void_sockfd)
             // perror("\nError: ");
             // break;
         }
+        if (strcmp("", res->data) != 0){
+            printf("\nCode: %d\nMessage: %s\nData: %s\n", res->code, res->message, res->data);
+        }
+        else
+            printf("\nCode: %d\nMessage: %s\n", res->code, res->message);
         switch (res->code)
         {
             case SYNTAX_ERROR:
