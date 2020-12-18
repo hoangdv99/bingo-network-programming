@@ -84,16 +84,20 @@ void setMessageResponse(Response *msg){
     case INVITE_FAIL:
       strcpy(msg->message, "Cannot invite this player!");
       break;
+    case ACCEPTED:
+      break;
+    case DECLINED:
+      strcpy(msg->message, "");
+      strcat(msg->data, " declined your invitation!");
+      strcpy(msg->message, msg->data);
+      break;
     case QUICKJOIN_FAIL:
       strcpy(msg->message, "All rooms are full! Please create a new room!");
       break;
     case QUICKJOIN_SUCCESS:
-      strcpy(msg->message, "Quickjoin success! Room ID: ");
-      strcat(msg->message, msg->data);
       break;
     case JOIN_SUCCESS:
-      strcpy(msg->message, "Join success! Room ID: ");
-      strcat(msg->message, msg->data);
+      strcpy(msg->message, "Join success!");
       break;
     case JOIN_FAIL:
       strcpy(msg->message, "This room is not existing!");
@@ -184,8 +188,10 @@ void setOpcodeRequest(Request *req, char *input){
     req->code = JOIN;
   else if (strcmp(code, "OUT_ROOM") == 0)
     req->code = OUT_ROOM;
-  else if (strcmp(code, "ACCEPT") == 0)
-    req->code = ACCEPT;
+  else if (strcmp(code, "ACCEPT_INVITE") == 0)
+    req->code = ACCEPT_INVITE;
+  else if (strcmp(code, "DECLINE_INVITE") == 0)
+    req->code = DECLINE_INVITE; 
   else if (strcmp(code, "EXIT_GAME") == 0)
     req->code = EXIT_GAME;
 }
