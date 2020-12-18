@@ -57,20 +57,27 @@ int logOut(int clientfd, char* username){
     return 1;
 }
 
-int createRoom(int clientfd, Request *req, Response *res){
+int createRoom(int clientfd){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createCreateRoomRequest("CREATE_ROOM", req);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
     printf("Sent %d bytes to server\n", n_sent);
     printf("Waiting for reply\n");
-    int n_recv = recvRes(clientfd, res, sizeof(Response), 0);
-    if (n_recv < 0)
-        return n_recv;
-    printf("Received string with length : %d\n",res->code);
-    printf("Received string with length : %s\n",res->message);
-    return res->code;
+    return 1;
 }
 
+int invite(int clientfd, char* username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createInviteRequest("INVITE", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
 int quickJoinClient(int clientfd, Request *req, Response *res){
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
@@ -116,6 +123,22 @@ void createDetailRequest(char *opcode, Request *req){
 }
 
 void createLogOutRequest(char *opcode, Request *req, char* username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createCreateRoomRequest(char *opcode, Request *req){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, "create_room");
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createInviteRequest(char *opcode, Request *req, char* username){
     char sendbuff[BUFF_SIZE];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");

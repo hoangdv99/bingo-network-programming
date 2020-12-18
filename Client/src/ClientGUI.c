@@ -348,12 +348,8 @@ void on_btn_lobby_log_out_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_lobby_create_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    gtk_stack_set_visible_child(app_wdgts->w_stack_room, GTK_WIDGET(app_wdgts->w_btn_room_start));
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_kick), TRUE);
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_invite), TRUE);
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_entry_room_user), TRUE);
+    createRoom(app_wdgts->serverfd);
+
     return;
 }
 
@@ -403,7 +399,10 @@ void on_btn_room_kick_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_room_invite_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    showInvite(MES_INVITE, app_wdgts->w_lbl_invite, app_wdgts->w_invite_window);
+    char username[MAX_STRING];
+    strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_room_user));
+    invite(app_wdgts->serverfd, username);
+    //showInvite(MES_INVITE, app_wdgts->w_lbl_invite, app_wdgts->w_invite_window);
 }
 
 void on_btn_room_ready_clicked(GtkButton *button, app_widgets *app_wdgts)
@@ -528,8 +527,8 @@ void *recv_handler(void *void_sockfd)
         rcvBytes = recvRes(serverfd, res, sizeof(Response), 0);
         if (rcvBytes < 0)
         {
-            perror("\nError: ");
-            break;
+            // perror("\nError: ");
+            // break;
         }
         switch (res->code)
         {
@@ -567,13 +566,24 @@ void *recv_handler(void *void_sockfd)
             gtk_stack_set_visible_child(widgets->w_stack_menu, widgets->w_container_menu_log);
             break;
         case CREATE_ROOM_SUCCESS:
-
+            widgets->currentWindow = widgets->currentWindow + 1;
+            gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+            gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_start));
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), TRUE);
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), TRUE);
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), TRUE);
             break;
         case INVITATION:
 
             break;
         case INVITE_SUCCESS:
-
+            for (int i = 0; i < ROOM_PLAYER; i++){
+                if (strcmp("Empty", gtk_button_get_label(widgets->w_tog_btn_player[i])) != 0){
+                    gtk_button_set_label(widgets->w_tog_btn_player[i], res->data);
+                    gtk_toggle_button_set_active (widgets->w_tog_btn_player[i], true);
+                    break;
+                }
+            }
             break;
         case INVITE_FAIL:
             showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
