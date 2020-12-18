@@ -145,3 +145,6 @@ void createInviteRequest(char *opcode, Request *req, char* username){
     strcat(sendbuff, username);
     setOpcodeRequest(req, sendbuff);
 }
+void test(){
+    printf("\nTest commit\n");
+}

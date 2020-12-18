@@ -20,4 +20,5 @@ int logOut(int clientfd, char* username);
 int createRoom(int clientfd);
 int invite(int clientfd, char* username);
 int quickJoinClient(int clientfd, Request *req, Response *res);
+void test();
 #endif
