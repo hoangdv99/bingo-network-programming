@@ -1,6 +1,6 @@
 #include "handle.h"
 #define MAX_PLAYER_IN_ROOM 5
-
+#define MAX_STRING 256
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -172,6 +172,7 @@ void quickjoin(int clientfd, Request *req, Response *res)
     USER *user = findUserByClientfd(clientfd);
     int roomID = quickJoin(user);
     ROOM *room = findRoom(roomID);
+    char buffer[MAX_STRING];
     if (roomID == -1)
     {
         res->code = QUICKJOIN_FAIL;
@@ -182,7 +183,11 @@ void quickjoin(int clientfd, Request *req, Response *res)
     {
         //insertPlayer(roomID, user);
         res->code = QUICKJOIN_SUCCESS;
-        strcpy(res->data, user->username);
+        // for (int i = 0; i < room->playerAmount; i++){
+        //     strcat(buffer, room->player[i]->username);
+        //     if (i == room->)
+        // }
+        //strcpy(res->data, bu);
         setMessageResponse(res);
         for (int i = 0; i < room->playerAmount; i++)
         {

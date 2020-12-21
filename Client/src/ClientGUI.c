@@ -83,6 +83,13 @@ typedef struct
     GtkTextBuffer *w_txt_buf;
 } app_widgets;
 
+typedef struct {
+    GtkWidget *w_show_window;
+    void *data;
+    GtkLabel *w_show_title;
+    char mes[MAX_STRING];
+} show_window;
+
 char container_name[NUMBER_CONTAINER][MAX_STRING] = {"container_menu", "container_lobby", "container_room", "container_playing"};
 char tog_btn_table_name[TABLE_NUMBER][MAX_STRING] = {"tog_btn_table_0", "tog_btn_table_1", "tog_btn_table_2", "tog_btn_table_3", "tog_btn_table_4", "tog_btn_table_5", "tog_btn_table_6", "tog_btn_table_7", "tog_btn_table_8", "tog_btn_table_9", "tog_btn_table_10", "tog_btn_table_11", "tog_btn_table_12", "tog_btn_table_13", "tog_btn_table_14", "tog_btn_table_15", "tog_btn_table_16", "tog_btn_table_17", "tog_btn_table_18", "tog_btn_table_19", "tog_btn_table_20", "tog_btn_table_21", "tog_btn_table_22", "tog_btn_table_23", "tog_btn_table_24"};
 char tog_btn_player_name[ROOM_PLAYER][MAX_STRING] = {
@@ -106,10 +113,9 @@ int number_button = sizeof(btn_all_name) / (sizeof(char) * MAX_STRING),
     number_window = sizeof(window_all_name) / (sizeof(char) * MAX_STRING);
 
 static void load_css(void);
+gboolean showWindow(show_window *showWindow);
+show_window *setShowW(char *mes, GtkLabel *label, GtkWidget *window, void *data);
 void *recv_handler(app_widgets *app_widget);
-int showError(char *mesError, GtkLabel *lbl_err, GtkWidget *err_window);
-int showBingo(char *mesBingo, GtkLabel *lbl_bingo, GtkWidget *bingo_window);
-int showInvite(char *mesInvite, GtkLabel *lbl_invite, GtkWidget *invite_window);
 
 int clientGUI(int serverfd)
 {
@@ -394,7 +400,7 @@ void on_btn_room_kick_clicked(GtkButton *button, app_widgets *app_wdgts)
         gtk_toggle_button_set_active(app_wdgts->w_tog_btn_player[i], FALSE);
     }
     if (check == FALSE)
-        showError(MES_NO_KICK, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+        //showError(MES_NO_KICK, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
     return;
 }
 
@@ -430,7 +436,7 @@ void on_btn_room_start_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    showBingo(MES_BINGO1, app_wdgts->w_lbl_bingo, app_wdgts->w_bingo_window);
+    //showBingo(MES_BINGO1, app_wdgts->w_lbl_bingo, app_wdgts->w_bingo_window);
     gtk_stack_set_visible_child(app_wdgts->w_stack_playing, GTK_WIDGET(app_wdgts->w_btn_playing_back));
 }
 
@@ -475,25 +481,19 @@ void on_window_main_destroy()
     gtk_main_quit();
 }
 
-int showError(char *mesError, GtkLabel *lbl_err, GtkWidget *err_window)
-{
-    gtk_label_set_text(GTK_LABEL(lbl_err), mesError);
-    gtk_widget_show(err_window);
-    return 1;
+gboolean showWindow(show_window *showWindow) {
+    gtk_label_set_text(GTK_LABEL(showWindow->w_show_title), showWindow->mes);
+    gtk_widget_show(showWindow->w_show_window);
+    return FALSE;
 }
 
-int showBingo(char *mesBingo, GtkLabel *lbl_bingo, GtkWidget *bingo_window)
-{
-    gtk_label_set_text(GTK_LABEL(lbl_bingo), mesBingo);
-    gtk_widget_show(bingo_window);
-    return 1;
-}
-
-int showInvite(char *mesInvite, GtkLabel *lbl_invite, GtkWidget *invite_window)
-{
-    gtk_label_set_text(GTK_LABEL(lbl_invite), mesInvite);
-    gtk_widget_show(invite_window);
-    return 1;
+show_window *setShowW(char *mes, GtkLabel *label, GtkWidget *window, void *data) {
+    show_window *node = g_slice_new(show_window);
+    strcpy(node->mes, mes);
+    node->w_show_title = label;
+    node->w_show_window = window;
+    node->data = data;
+    return node;
 }
 
 static void load_css(void)
@@ -540,13 +540,13 @@ void *recv_handler(app_widgets *app_widget)
         switch (res->code)
         {
             case SYNTAX_ERROR:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));//NULL sau co the truyen res->data
             break;
         case REGISTER_INPUT_WRONG:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case USERNAME_EXISTED:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case REGISTER_SUCCESS:
             widgets->currUser = strdup(gtk_entry_get_text(widgets->w_entry_menu_reg_user));
@@ -554,10 +554,10 @@ void *recv_handler(app_widgets *app_widget)
             gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
             break;
         case USERNAME_NOT_EXISTED:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case ACCOUNT_BUSY:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case LOGIN_SUCCESS:
             widgets->currUser = strdup(gtk_entry_get_text(widgets->w_entry_menu_log_user));
@@ -565,7 +565,7 @@ void *recv_handler(app_widgets *app_widget)
             gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
             break;
         case WRONG_PASSWORD:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case LOGOUT_SUCCESS:
             widgets->currentWindow = widgets->currentWindow - 1;
@@ -605,10 +605,10 @@ void *recv_handler(app_widgets *app_widget)
             }
             break;
         case INVITE_FAIL:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case QUICKJOIN_FAIL:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case QUICKJOIN_SUCCESS:
             widgets->currentWindow = widgets->currentWindow + 1;
@@ -627,7 +627,7 @@ void *recv_handler(app_widgets *app_widget)
             gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
             break;
         case JOIN_FAIL:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case ROOM_FULL:
 
@@ -642,7 +642,7 @@ void *recv_handler(app_widgets *app_widget)
 
             break;
         case KICK_FAIL:
-            showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
+            gdk_threads_add_idle(showWindow, setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
             break;
         case EXIT_GAME_SUCCESS:
 
