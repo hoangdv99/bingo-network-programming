@@ -99,20 +99,21 @@ char window_all_name[][MAX_STRING] = {WINDOW_READER, WINDOW_INVITE, WINDOW_NAME,
 
 GtkBuilder *builder;
 GtkWidget *window;
-app_widgets *widgets;
+
 int number_button = sizeof(btn_all_name) / (sizeof(char) * MAX_STRING),
     number_entry = sizeof(entry_all_name) / (sizeof(char) * MAX_STRING),
     number_lable = sizeof(label_all_name) / (sizeof(char) * MAX_STRING),
     number_window = sizeof(window_all_name) / (sizeof(char) * MAX_STRING);
 
 static void load_css(void);
-void *recv_handler(void *void_sockfd);
+void *recv_handler(app_widgets *app_widget);
 int showError(char *mesError, GtkLabel *lbl_err, GtkWidget *err_window);
 int showBingo(char *mesBingo, GtkLabel *lbl_bingo, GtkWidget *bingo_window);
 int showInvite(char *mesInvite, GtkLabel *lbl_invite, GtkWidget *invite_window);
 
 int clientGUI(int serverfd)
 {
+    app_widgets *widgets;
     gtk_init(NULL, NULL);
     load_css();
     builder = gtk_builder_new_from_file(GLADE_FILE_NAME);
@@ -209,7 +210,7 @@ int clientGUI(int serverfd)
     gtk_builder_connect_signals(builder, widgets);
     g_object_unref(builder);
     pthread_t tid;
-    pthread_create(&tid, NULL, &recv_handler, (void *)&serverfd);
+    pthread_create(&tid, NULL, &recv_handler, widgets);
 
     gtk_widget_show(window);
     gtk_main();
@@ -514,14 +515,15 @@ static void load_css(void)
     g_object_unref(provider);
 }
 
-void *recv_handler(void *void_sockfd)
+void *recv_handler(app_widgets *app_widget)
 {
     int serverfd;
     int rcvBytes;
     Response *res = (Response *)malloc(sizeof(Response));
     pthread_detach(pthread_self());
-    serverfd = *(int *)void_sockfd;
+    app_widgets *widgets = app_widget;
 
+    serverfd = widgets->serverfd;
     while (1)
     {
         rcvBytes = recvRes(serverfd, res, sizeof(Response), 0);

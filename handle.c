@@ -180,7 +180,7 @@ void quickjoin(int clientfd, Request *req, Response *res)
     }
     else
     {
-        insertPlayer(roomID, user);
+        //insertPlayer(roomID, user);
         res->code = QUICKJOIN_SUCCESS;
         strcpy(res->data, user->username);
         setMessageResponse(res);
