@@ -1,0 +1,5 @@
+When we're playing the game with a number of kids, we play all the variations at once. 
+
+We have a small prize for each 'combination' (a prize for lines, a prize for T's, a prize for U's, a prize for squares and a prize for Blackouts... if we have more than 5 children, we'll do a separate prize for a vertical line, a diagonal line, a horizontal line, a right-side up U, an upside down U, etc, etc). 
+
+We have a rule that a person can only win one prize. The game ends when everyone has won something. If two children win the same prize at the same time, we draw straws or 'guess which number I'm thinking' or play 'rock paper scissors' to see who wins the prize and who keeps playing for the next prize. 
