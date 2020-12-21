@@ -49,6 +49,8 @@ typedef struct ROOM
     ROOM_STATE status;
     int playerAmount;
     USER *player[ROOM_MAX];
+    int pickedNumbers[SIZE*SIZE];
+    int numberPickedAmount;
     struct ROOM *next;
 } ROOM;
 

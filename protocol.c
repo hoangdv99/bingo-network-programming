@@ -83,6 +83,7 @@ void setMessageResponse(Response *msg){
       strcpy(msg->message, "Cannot invite this player!");
       break;
     case ACCEPTED:
+      strcpy(msg->message, "Accepted!");
       break;
     case DECLINED:
       strcpy(msg->message, "");
@@ -117,10 +118,46 @@ void setMessageResponse(Response *msg){
     case KICK_FAIL:
       strcpy(msg->message, "Kick failed!");
       break;
+    case BE_KICKED:
+      strcpy(msg->message, "You have been kicked by host!");
+      break;
     case EXIT_GAME_SUCCESS:
       strcat(msg->data, " exited!");
       strcpy(msg->message, "");
       strcat(msg->message, msg->data);
+    case GAME_START:
+      strcpy(msg->message, "Game started!");
+      break;
+    case YOUR_TURN:
+      strcpy(msg->message, "Your turn!");
+      break;
+    case OTHER_PLAYER_TURN:
+      strcat(msg->data, " turn");
+      strcat(msg->message, msg->data);
+      break;
+    case BINGO_REAL:
+      strcpy(msg->message, "Bingo yoooooooo!!");
+      break;
+    case BINGO_FAKE:
+      strcpy(msg->message, "Dont xiaoliz!");
+      break;
+    case PICK_FAIL:
+      strcpy(msg->message, "Wrong number. Please pick another!");
+      break;
+    case PICK_SUCCESS:
+      strcat(msg->data, " is picked!");
+      strcpy(msg->message, msg->data);
+      break;
+    case YOU_WIN:
+      strcpy(msg->message, "You won!");
+      break;
+    case OTHER_PLAYER_WIN:
+      strcat(msg->data, " won!");
+      strcpy(msg->message, msg->data);
+      break;
+    case NO_ROOM:
+      strcpy(msg->message, "No room has been created! Please create a new room!");
+      break;
     default:
       break;
     }
@@ -188,6 +225,12 @@ void setOpcodeRequest(Request *req, char *input){
     req->code = DECLINE_INVITE; 
   else if (strcmp(code, "EXIT_GAME") == 0)
     req->code = EXIT_GAME;
+  else if (strcmp(code, "PLAY") == 0)
+    req->code = PLAY;
+  else if (strcmp(code, "BINGO") == 0)
+    req->code = BINGO;
+  else if (strcmp(code, "PICK") == 0)
+    req->code = PICK;
 }
 
 int sendNum(int socket, int num, int size, int flags)

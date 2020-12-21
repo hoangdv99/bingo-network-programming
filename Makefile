@@ -12,6 +12,7 @@
 # OBJ_SERVER = server.o protocol.o helper.o handle.o list.o
 
 # %.o: %.c
+#	rm -f *.o *~
 # 	$(CC) -c -o $@ $< $(CFLAGS)
 
 # server: $(OBJ_SERVER)
@@ -28,14 +29,14 @@ LIBS =  -lm
 
 all: client server 
 
-server: server.o protocol.o helper.o handle.o list.o
-	${CC} protocol.o helper.o server.o handle.o list.o -o server
+server: server.o protocol.o helper.o handle.o list.o gameplay.o
+	${CC} protocol.o helper.o server.o handle.o list.o gameplay.o -o server -lpthread
 
 server.o: server.c
-	${CC} ${CFLAGS} server.c
+	${CC} ${CFLAGS} server.c -lpthread
 
-client: client.o protocol.o helper.o client_handle.o
-	${CC} protocol.o helper.o client_handle.o client.o -o client
+client: client.o protocol.o helper.o client_handle.o 
+	${CC} protocol.o helper.o client_handle.o client.o -o client -lpthread
 
 client.o: client.c 
 	${CC} ${CFLAGS} client.c
@@ -51,7 +52,12 @@ handle.o: handle.c
 
 client_handle.o: client_handle.c
 	${CC} ${CFLAGS} client_handle.c
+
 list.o: list.c
 	${CC} ${CFLAGS} list.c
+
+gameplay.o: gameplay.c
+	${CC} ${CFLAGS} gameplay.c -lpthread
+
 clean:
 	rm -f *.o *~

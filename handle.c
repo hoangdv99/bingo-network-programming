@@ -159,6 +159,9 @@ void kick(int clientfd, Request *req, Response *res)
     {
         sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
     }
+    res->code = BE_KICKED;
+    setMessageResponse(res);
+    sendRes(user->clientfd, res, sizeof(Response), 0);
 }
 
 void quickjoin(int clientfd, Request *req, Response *res)
@@ -169,6 +172,11 @@ void quickjoin(int clientfd, Request *req, Response *res)
     if (roomID == -1)
     {
         res->code = QUICKJOIN_FAIL;
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+    else if (roomID == 0){
+        res->code = NO_ROOM;
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);
     }
@@ -233,13 +241,15 @@ void outRoom(int clientfd, Request *req, Response *res)
         res->code = NEW_HOST;
         setMessageResponse(res);
         sendRes(room->player[room->playerAmount - 1]->clientfd, res, sizeof(Response), 0);
+        return;
     }
     detelePlayerFromRoom(room, user);
     res->code = OUT_ROOM_SUCCESS;
     strcpy(res->data, user->username);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
-    for(int i = 0; i < room->playerAmount; i++){
+    for (int i = 0; i < room->playerAmount; i++)
+    {
         sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
     }
     printf("Host: %s\n", room->host->username);
@@ -266,29 +276,43 @@ void exitGame(int clientfd, Request *req, Response *res)
     }
 }
 
-
 //ACCEPT_INVITE hoang
-void acceptInvite(int clientfd, Request *req, Response *res){
+void acceptInvite(int clientfd, Request *req, Response *res)
+{
     USER *user = findUserByClientfd(clientfd);
     USER *host = findUserByUsername(req->message);
+    printf("%d\n", host->clientfd);
     ROOM *room = findRoomByClientfd(host->clientfd);
 
     insertPlayer(room->id, user);
+    printRoomPlayer(room->id);
     res->code = ACCEPTED;
     strcpy(res->data, user->username);
     setMessageResponse(res);
-    for (int  i = 0; i < room->playerAmount; i++)
+    for (int i = 0; i < room->playerAmount; i++)
     {
         sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
     }
-    
 }
 //DECLINE_INVITE hoang
-void declineInvite(int clientfd, Request *req, Response *res){
+void declineInvite(int clientfd, Request *req, Response *res)
+{
     USER *user = findUserByClientfd(clientfd);
     USER *host = findUserByUsername(req->message);
     res->code = DECLINED;
     strcpy(res->data, user->username);
     setMessageResponse(res);
     sendRes(host->clientfd, res, sizeof(Response), 0);
+}
+
+void play(THREAD_DATA *threadData, int clientfd, Request *req, Response *res){
+    pthread_t tid;
+    pthread_create(&tid, NULL, &roomThreadFunc, (void*)&threadData);
+    res->code = GAME_START;
+    setMessageResponse(res);
+    for (int i = 0; i < threadData->room->playerAmount; i++)
+    {
+        threadData->room->player[i]->status = INGAME;
+        sendRes(threadData->room->player[i]->clientfd, res, sizeof(Response), 0);
+    }
 }

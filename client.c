@@ -7,12 +7,38 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <pthread.h>
 #include "protocol.h"
 #include "helper.h"
 #include "client_handle.h"
 #define BUFF_SIZE 255
 
 //int clientGUI();
+
+void *client_handler(void *arg){
+	int clientfd;
+	int sendBytes, rcvBytes;
+	Response *res;
+	pthread_detach(pthread_self());
+	clientfd = *(int*) arg;
+
+	while(1){
+		rcvBytes = recvRes(clientfd, res, sizeof(Response), 0);
+		if (rcvBytes < 0){
+			perror("\nError: ");
+			break;
+		}
+		else if (rcvBytes == 0){
+			close(clientfd);
+			printf("[-]Disconnected from server.\n");
+			exit(1);
+		}
+		printf("SERVER: %s\n", res->message);
+		
+	}
+	close(clientfd);
+}
+
 
 int main(int argc, char const *argv[])
 {
@@ -54,6 +80,9 @@ int main(int argc, char const *argv[])
     //char message[100];
     char sendbuff[BUFF_SIZE];
     //clientGUI();
+    pthread_t tid;
+	pthread_create(&tid, NULL, &client_handler,(void *) &sockfd);
+
     while (1)
     {
         memset(sendbuff, '\0', BUFF_SIZE); //initialize buffer
@@ -103,6 +132,9 @@ int main(int argc, char const *argv[])
             break;
         case EXIT_GAME:
             exitGameClie(sockfd, req, res);
+            break;
+        case PLAY:
+            playClie(sockfd, req, res);
             break;
         default:
             break;

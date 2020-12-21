@@ -302,6 +302,9 @@ void detelePlayerFromRoom(ROOM *room, USER* user){
 int quickJoin(USER *player)
 {
     ROOM *room = roomListHead;
+    if(room == NULL){
+        return 0;
+    }
     while (room != NULL)
     {
         if (room->playerAmount < ROOM_MAX)

@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
     char *port_char = argv[1];
     int port_number = atoi(port_char);
     struct sockaddr_in servaddr, clieaddr;
+    ROOM *room;
+    THREAD_DATA *threadData;
     // Tao server socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)
@@ -163,6 +165,15 @@ int main(int argc, char *argv[])
                             case DECLINE_INVITE:
                                 declineInvite(i, req, res);
                                 break;
+                            case PLAY:
+                                room = findRoomByClientfd(i);
+                                threadData = (THREAD_DATA*)malloc(sizeof(THREAD_DATA));
+                                threadData->room = room;
+                                threadData->readfds = readfds;
+                                threadData->master_socket = sockfd;
+                                threadData->max_sd = max_fd;
+                                play(threadData, i, req, res);
+                                break;
                             case EXIT_GAME:
                                 exitGame(i, req, res);
                                 break;
@@ -173,7 +184,6 @@ int main(int argc, char *argv[])
                         }
                         else
                         {
-                            printf("@@@");
                             close_fd = 1;
                         }
                     }
