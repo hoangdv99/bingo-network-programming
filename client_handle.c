@@ -68,6 +68,28 @@ int createRoom(int clientfd){
     return 1;
 }
 
+int quickJoinClient(int clientfd){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createQuickJoinClientRequest("QUICKJOIN", req);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int joinClient(int clientfd, char *roomID){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createJoinClientRequest("JOIN", req, roomID);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
 int invite(int clientfd, char* username){
     Request *req = (Request *)malloc(sizeof(Request));
     createInviteRequest("INVITE", req, username);
@@ -78,19 +100,8 @@ int invite(int clientfd, char* username){
     printf("Waiting for reply\n");
     return 1;
 }
-int quickJoinClient(int clientfd, Request *req, Response *res){
-    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
-    if (n_sent < 0)
-        return n_sent;
-    printf("Sent %d bytes to server\n", n_sent);
-    printf("Waiting for reply\n");
-    int n_recv = recvRes(clientfd, res, sizeof(Response), 0);
-    if (n_recv < 0)
-        return n_recv;
-    printf("Received string with length : %d\n",res->code);
-    printf("Received string with length : %s\n",res->message);
-    return res->code;
-}
+
+/*Create request*/
 
 void createLoginRequest(char *opcode, char *username, char *pass, Request *req){
     char sendbuff[BUFF_SIZE];
@@ -138,13 +149,38 @@ void createCreateRoomRequest(char *opcode, Request *req){
     setOpcodeRequest(req, sendbuff);
 }
 
-void createInviteRequest(char *opcode, Request *req, char* username){
+void createQuickJoinClientRequest(char *opcode, Request *req){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, "quick_join");
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createInviteRequest(char *opcode, Request *req, char *username){
     char sendbuff[BUFF_SIZE];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
     setOpcodeRequest(req, sendbuff);
 }
-void test(){
-    printf("\nTest commit\n");
+
+void createJoinClientRequest(char *opcode, Request *req, char *roomID){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, roomID);
+    setOpcodeRequest(req, sendbuff);
+}
+void splitRoomID(char *input, char *username, char *id){
+    int i, usernameLength = 0, idLength = 0;
+    for (i = 0; input[i] != '-'; i++){
+        username[usernameLength++] = input[i];
+    }
+    username[usernameLength] = '\0';
+    i++;
+    for (i; i < strlen(input); i++){
+        id[idLength++] = input[i];
+    }
+    id[idLength] = '\0';
 }

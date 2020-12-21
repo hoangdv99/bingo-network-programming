@@ -37,6 +37,7 @@
 #define LBL_BINGO "lbl_bingo"
 #define LBL_INVITE "lbl_invite"
 #define LBL_MENU_TITLE "lbl_menu_title"
+#define LBL_ROOM_ID "lbl_room_id"
 //ID Entry
 #define ENTRY_MENU_LOG_USER "entry_menu_log_user"
 #define ENTRY_LOBBY_SEARCH "entry_lobby_search"
@@ -74,7 +75,7 @@ typedef struct
     char *currUser;
     int serverfd;
     GtkEntry *w_entry_menu_log_user, *w_entry_lobby_search, *w_entry_room_user, *w_entry_menu_log_pas, *w_entry_menu_reg_user, *w_entry_menu_reg_pas, *w_entry_menu_reg_con_pas;
-    GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite;
+    GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite, *w_lbl_room_id;
     GtkStack *w_stack_container, *w_stack_room, *w_stack_playing, *w_stack_menu;
     GtkWidget *w_container_list[NUMBER_CONTAINER], *w_read_window, *w_err_window, *w_bingo_window, *w_invite_window, *w_container_menu_log, *w_container_menu_reg;
     GtkToggleButton *w_tog_btn_table[TABLE_NUMBER], *w_tog_btn_player[ROOM_PLAYER];
@@ -164,6 +165,7 @@ int clientGUI(int serverfd)
     widgets->w_lbl_err = GTK_LABEL(gtk_builder_get_object(builder, LBL_ERR));
     widgets->w_lbl_bingo = GTK_LABEL(gtk_builder_get_object(builder, LBL_BINGO));
     widgets->w_lbl_invite = GTK_LABEL(gtk_builder_get_object(builder, LBL_INVITE));
+    widgets->w_lbl_room_id = GTK_LABEL(gtk_builder_get_object(builder, LBL_ROOM_ID));
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(builder, LBL_MENU_LOG))), "title2");
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(builder, LBL_MENU_REG))), "title2");
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(builder, LBL_MENU_TITLE))), "title1");
@@ -355,12 +357,14 @@ void on_btn_lobby_create_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_lobby_quick_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    gtk_stack_set_visible_child(app_wdgts->w_stack_room, GTK_WIDGET(app_wdgts->w_btn_room_ready));
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_kick), FALSE);
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_invite), FALSE);
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_entry_room_user), FALSE);
+
+    quickJoinClient(app_wdgts->serverfd);
+    // app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
+    // gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
+    // gtk_stack_set_visible_child(app_wdgts->w_stack_room, GTK_WIDGET(app_wdgts->w_btn_room_ready));
+    // gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_kick), FALSE);
+    // gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_invite), FALSE);
+    // gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_entry_room_user), FALSE);
     return;
 }
 
@@ -368,12 +372,8 @@ void on_btn_lobby_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
     char id[MAX_STRING] = "\0";
     strcpy(id, gtk_entry_get_text(app_wdgts->w_entry_lobby_search));
-    app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    gtk_stack_set_visible_child(app_wdgts->w_stack_room, GTK_WIDGET(app_wdgts->w_btn_room_ready));
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_kick), FALSE);
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_invite), FALSE);
-    gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_entry_room_user), FALSE);
+    joinClient(app_wdgts->serverfd, id);
+    
     return;
 }
 
@@ -577,6 +577,18 @@ void *recv_handler(void *void_sockfd)
             gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), TRUE);
             gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), TRUE);
             gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), TRUE);
+            char username[MAX_STRING], id[MAX_STRING], buffer[MAX_STRING];
+            splitRoomID(res->data, username, id);
+            strcpy(buffer, "ID: ");
+            strcat(buffer, id);
+            gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer);
+            for (int i = 0; i < ROOM_PLAYER; i++){
+                if (strcmp("Empty", gtk_button_get_label(widgets->w_tog_btn_player[i])) == 0){
+                    gtk_button_set_label(widgets->w_tog_btn_player[i], username);
+                    gtk_toggle_button_set_active (widgets->w_tog_btn_player[i], true);
+                    break;
+                }
+            }
             break;
         case INVITATION:
 
@@ -597,10 +609,20 @@ void *recv_handler(void *void_sockfd)
             showError(res->message, widgets->w_lbl_err, widgets->w_err_window);
             break;
         case QUICKJOIN_SUCCESS:
-
+            widgets->currentWindow = widgets->currentWindow + 1;
+            gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+            gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
             break;
         case JOIN_SUCCESS:
-
+            widgets->currentWindow = widgets->currentWindow + 1;
+            gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+            gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
+            gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
             break;
         case JOIN_FAIL:
             showError(res->message, widgets->w_lbl_err, widgets->w_err_window);

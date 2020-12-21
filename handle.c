@@ -105,11 +105,17 @@ void createRoom(int clientfd, Request *req, Response *res)
     USER *host = findUserByClientfd(clientfd);
     newRoom->host = host;
     newRoom->id = countRoom() + 1;
+    printf("\nRoom ID: %d\n", newRoom->id);
     newRoom->playerAmount = 0;
     newRoom->status = NOTSTARTED;
     insertRoom(newRoom);
     insertPlayer(newRoom->id, host);
     res->code = CREATE_ROOM_SUCCESS;
+    strcpy(res->data, host->username);
+    strcat(res->data, "-");
+    char buffer[33];
+    sprintf(buffer, "%d", newRoom->id);
+    strcat(res->data, buffer);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
 }
