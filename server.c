@@ -157,10 +157,10 @@ int main(int argc, char *argv[])
                             case OUT_ROOM:
                                 outRoom(i, req, res);
                                 break;
-                            case ACCEPT_INVITE:
+                            case ACCEPT_INVITE_REQUEST:
                                 acceptInvite(i, req, res);
                                 break;
-                            case DECLINE_INVITE:
+                            case DECLINE_INVITE_REQUEST:
                                 declineInvite(i, req, res);
                                 break;
                             case EXIT_GAME:

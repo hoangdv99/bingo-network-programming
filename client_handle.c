@@ -184,3 +184,21 @@ void splitRoomID(char *input, char *username, char *id){
     }
     id[idLength] = '\0';
 }
+
+void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *roomID, char *usernameList){
+    int i, playerAmountLength = 0, usernameListLength = 0, idLength = 0;
+    for (i = 0; input[i] != ' '; i++){
+        playerAmount[playerAmountLength++] = input[i];
+    }
+    playerAmount[playerAmountLength] = '\0';
+    i++;
+    for (i; input[i] != ' '; i++){
+        roomID[idLength++] = input[i];
+    }
+    roomID[idLength] = '\0';
+    i++;
+    for (i; i < strlen(input); i++){
+        usernameList[usernameListLength++] = input[i];
+    }
+    usernameList[usernameListLength] = '\0';
+}

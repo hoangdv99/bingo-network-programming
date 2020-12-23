@@ -41,6 +41,9 @@ void setMessageResponse(Response *msg){
   if(msg->code != NULL){
     switch (msg->code)
     {
+    case ROOM_CHANGED:
+      strcpy(msg->message, "The number of player has changed!");
+      break;
     case SYNTAX_ERROR:
       strcpy(msg->message, "Syntax error");
       break;

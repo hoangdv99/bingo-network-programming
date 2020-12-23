@@ -25,4 +25,5 @@ int invite(int clientfd, char* username);
 int quickJoinClient(int clientfd);
 int joinClient(int clientdfd, char *roomID);
 void splitRoomID(char *input, char *username, char *id);
+void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *roomID, char *usernameList);
 #endif

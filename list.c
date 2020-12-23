@@ -273,12 +273,11 @@ ROOM *findRoomByClientfd(int clientfd){
 int insertPlayer(int id, USER *player)
 {
     ROOM *room = findRoom(id);
-
     if (room != NULL && room->playerAmount < ROOM_MAX)
     {
         player->status = INROOM;
         room->player[room->playerAmount] = player;
-        room->playerAmount++;
+        room->playerAmount = room->playerAmount + 1;
         return 1;
     }
     return 0;
@@ -337,15 +336,15 @@ int countRoom()
     while (curr != NULL)
     {
         if (curr->next == NULL)
-            return count;
+            return ++count;
         else
         {
             curr = curr->next;
             count++;
-            return count;
+            //return count;
         }
     }
-    return 0;
+    //return count;
 }
 
 ROOM *deleteRoom(int id){

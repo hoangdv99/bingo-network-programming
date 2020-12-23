@@ -181,17 +181,36 @@ void quickjoin(int clientfd, Request *req, Response *res)
     }
     else
     {
-        //insertPlayer(roomID, user);
-        res->code = QUICKJOIN_SUCCESS;
-        // for (int i = 0; i < room->playerAmount; i++){
-        //     strcat(buffer, room->player[i]->username);
-        //     if (i == room->)
-        // }
-        //strcpy(res->data, bu);
-        setMessageResponse(res);
+        sprintf(buffer, "%d", room->playerAmount);//Format: playerAmount roomID username1-username2
+        strcat(buffer, " ");
+        char id[3];
+        sprintf(id, "%d", roomID);
+        strcat(buffer, id);
+        strcat(buffer, " ");
+        for (int i = 0; i < room->playerAmount; i++){
+            printf("\ni=%d", i);
+            printf("\n%s", room->player[i]->username);
+            strcat(buffer, room->player[i]->username);
+            if (i == room->playerAmount - 1)
+                break;
+            else{
+                strcat(buffer, "-");
+            }
+        }
         for (int i = 0; i < room->playerAmount; i++)
         {
-            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+            if (room->player[i]->clientfd == clientfd)
+            {
+                res->code = QUICKJOIN_SUCCESS;
+                strcpy(res->data, buffer);
+                setMessageResponse(res);
+                sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+            }else{
+                res->code = ROOM_CHANGED;
+                strcpy(res->data, buffer);
+                setMessageResponse(res);
+                sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+            }
         }
     }
 }
@@ -201,6 +220,7 @@ void join(int clientfd, Request *req, Response *res)
     int roomID = atoi(req->message);
     ROOM *room = findRoom(roomID);
     USER *user = findUserByClientfd(clientfd);
+    char buffer[MAX_STRING];
 
     if (room == NULL)
     {
@@ -219,14 +239,38 @@ void join(int clientfd, Request *req, Response *res)
         else
         {
             insertPlayer(roomID, user);
-            res->code = JOIN_SUCCESS;
-            strcpy(res->data, user->username);
-            setMessageResponse(res);
+
+            sprintf(buffer, "%d", room->playerAmount);//Format: playerAmount roomID username1-username2
+            strcat(buffer, " ");
+            char id[3];
+            sprintf(id, "%d", roomID);
+            strcat(buffer, id);
+            strcat(buffer, " ");
+            for (int i = 0; i < room->playerAmount; i++){
+                printf("\ni=%d", i);
+                printf("\n%s", room->player[i]->username);
+                strcat(buffer, room->player[i]->username);
+                if (i == room->playerAmount - 1)
+                    break;
+                else{
+                    strcat(buffer, "-");
+                }
+            }
             for (int i = 0; i < room->playerAmount; i++)
             {
-                sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                if (room->player[i]->clientfd == clientfd)
+                {
+                    res->code = JOIN_SUCCESS;
+                    strcpy(res->data, buffer);
+                    setMessageResponse(res);
+                    sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                }else{
+                    res->code = ROOM_CHANGED;
+                    strcpy(res->data, buffer);
+                    setMessageResponse(res);
+                    sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                }
             }
-            printRoomPlayer(roomID);
         }
     }
 }
