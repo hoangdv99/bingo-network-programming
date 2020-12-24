@@ -1,0 +1,76 @@
+.window {
+    background-color: white;
+}
+
+.tog_btn_table {
+    font-family: "Libre Baskerville", serif;
+    border-radius: 100%;
+    font-size: 16px;
+}
+
+.tog_btn_player {
+    font-family: "Libre Baskerville", serif;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.tog_btn_player:checked {
+    background: red;
+    color: white;
+}
+
+.tog_btn_table:checked {
+    background: red;
+    color: white;
+}
+
+.button {
+    font-family: "Libre Baskerville", serif;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.cb {
+    font-weight: bold;
+    outline: none;
+    border: none;
+    box-shadow: none;
+    background: white;
+    margin-top: 2em;
+}
+
+.cb:hover {
+    color: red;
+}
+
+.cb:active {
+    color: blue;
+}
+
+.entry {
+    font-family: "Libre Baskerville", serif;
+    letter-spacing: 2px;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.label {
+    font-family: "Libre Baskerville", serif;
+    font-size: 16px;
+}
+
+.title1 {
+    font-family: "Great Vibes", cursive;
+    background: white;
+    font-size: 4em;
+    font-weight: normal;
+    text-shadow: 0 1px 1px #fff; 
+    margin-top: 1em;
+}
+
+.title2 {
+    font-family: "Libre Baskerville", serif;
+    font-size: 2.5em;
+    font-weight: normal;
+    text-shadow: 0 1px 1px #fff; 
+}
