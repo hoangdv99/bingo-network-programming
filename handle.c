@@ -324,18 +324,51 @@ void exitGame(int clientfd, Request *req, Response *res)
 
 //ACCEPT_INVITE hoang
 void acceptInvite(int clientfd, Request *req, Response *res){
+    printf("\nReached here");
     USER *user = findUserByClientfd(clientfd);
     USER *host = findUserByUsername(req->message);
     ROOM *room = findRoomByClientfd(host->clientfd);
-
+    char buffer[MAX_STRING];
     insertPlayer(room->id, user);
-    res->code = ACCEPTED;
-    strcpy(res->data, user->username);
-    setMessageResponse(res);
-    for (int  i = 0; i < room->playerAmount; i++)
-    {
-        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+
+    sprintf(buffer, "%d", room->playerAmount);//Format: playerAmount roomID username1-username2
+    strcat(buffer, " ");
+    char id[3];
+    sprintf(id, "%d", room->id);
+    strcat(buffer, id);
+    strcat(buffer, " ");
+    for (int i = 0; i < room->playerAmount; i++){
+        printf("\ni=%d", i);
+        printf("\n%s", room->player[i]->username);
+        strcat(buffer, room->player[i]->username);
+        if (i == room->playerAmount - 1)
+            break;
+        else{
+            strcat(buffer, "-");
+        }
     }
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        if (room->player[i]->clientfd == clientfd)
+        {
+            res->code = ACCEPTED;
+            strcpy(res->data, buffer);
+            setMessageResponse(res);
+            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+        }else{
+            res->code = ROOM_CHANGED;
+            strcpy(res->data, buffer);
+            setMessageResponse(res);
+            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+        }
+    }
+    // res->code = ACCEPTED;
+    // strcpy(res->data, user->username);
+    // setMessageResponse(res);
+    // for (int  i = 0; i < room->playerAmount; i++)
+    // {
+    //     sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+    // }
     
 }
 //DECLINE_INVITE hoang

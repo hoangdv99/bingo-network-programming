@@ -90,7 +90,7 @@ int joinClient(int clientfd, char *roomID){
     return 1;
 }
 
-int invite(int clientfd, char* username){
+int inviteClient(int clientfd, char *username){
     Request *req = (Request *)malloc(sizeof(Request));
     createInviteRequest("INVITE", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
@@ -101,6 +101,16 @@ int invite(int clientfd, char* username){
     return 1;
 }
 
+int acceptInviteClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createAcceptInviteClientRequest("ACCEPT_INVITE_REQUEST", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
 /*Create request*/
 
 void createLoginRequest(char *opcode, char *username, char *pass, Request *req){
@@ -172,6 +182,15 @@ void createJoinClientRequest(char *opcode, Request *req, char *roomID){
     strcat(sendbuff, roomID);
     setOpcodeRequest(req, sendbuff);
 }
+
+void createAcceptInviteClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
 void splitRoomID(char *input, char *username, char *id){
     int i, usernameLength = 0, idLength = 0;
     for (i = 0; input[i] != '-'; i++){
@@ -201,4 +220,16 @@ void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *
         usernameList[usernameListLength++] = input[i];
     }
     usernameList[usernameListLength] = '\0';
+}
+
+void splitHostName(char *input, char *hostName){
+    int i, hostNameLength = 0;
+    for (i = 0; input[i] != 'm'; i++){//character 'm' from "You receive an invitation from "
+        continue;
+    }
+    i+=2;
+    for (i; i < strlen(input); i++){
+        hostName[hostNameLength++] = input[i];
+    }
+    hostName[hostNameLength] = '\0';
 }

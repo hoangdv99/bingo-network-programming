@@ -14,6 +14,7 @@ void createCreateRoomRequest(char *opcode, Request *req);
 void createInviteRequest(char *opcode, Request *req, char* username);
 void createQuickJoinClientRequest(char *opcode, Request *req);
 void createJoinClientRequest(char *opcode, Request *req, char* roomID);
+void createAcceptInviteClientRequest(char *opcode, Request *req, char *username);
 void createKickRequest();
 
 int login(int clientfd, char* username, char* password);
@@ -21,9 +22,11 @@ int registerAccount(int clientfd, char* username, char* password, char* confirm_
 int seeDetail(int clientfd, Request *req, Response *res);
 int logOut(int clientfd, char* username);
 int createRoom(int clientfd);
-int invite(int clientfd, char* username);
 int quickJoinClient(int clientfd);
-int joinClient(int clientdfd, char *roomID);
+int joinClient(int clientfd, char *roomID);
+int inviteClient(int clientfd, char *username);
+int acceptInviteClient(int clientfd, char *username);
 void splitRoomID(char *input, char *username, char *id);
 void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *roomID, char *usernameList);
+void splitHostName(char *input, char *hostName);
 #endif

@@ -229,30 +229,15 @@ int clientGUI(int serverfd)
 
 void on_btn_menu_login_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    // Request *req = (Request *)malloc(sizeof(Request));
-    // Response *res = (Response *)malloc(sizeof(Response));
     char username[MAX_STRING], password[MAX_STRING];
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_menu_log_user));
     strcpy(password, gtk_entry_get_text(app_wdgts->w_entry_menu_log_pas));
-    // memset(sendbuff, '\0', BUFF_SIZE); //clear buffer
-    // memset(res->data, '\0', BUFF_SIZE); //clear buff in res->data
-    // memset(res->message, '\0', BUFF_SIZE); //clear buff in res->message
     login(app_wdgts->serverfd, username, password);
-    // int check = login(app_wdgts->serverfd, req, res);
-    // if (check < 0 || check == 4 || check == 7 || check == 8)
-    //     showError(res->message, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
-    // else {
-    //     app_wdgts->currUser = strdup(username);
-    //     app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    //     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    // }
     return;
 }
 
 void on_btn_menu_reg_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    // Request *req = (Request *)malloc(sizeof(Request));
-    // Response *res = (Response *)malloc(sizeof(Response));
     char username[MAX_STRING], password[MAX_STRING], con_pas[MAX_STRING];
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_user));
     strcpy(password, gtk_entry_get_text(app_wdgts->w_entry_menu_reg_pas));
@@ -260,15 +245,6 @@ void on_btn_menu_reg_clicked(GtkButton *button, app_widgets *app_wdgts)
 
     registerAccount(app_wdgts->serverfd, username, password, con_pas);
 
-    // int check = registerAccount(app_wdgts->serverfd, req, res);
-    // if (check < 0 || check == 1 || check == 2) //Wrong input
-    //     showError(res->message, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
-    // else
-    // {
-    //     app_wdgts->currUser = strdup(username);
-    //     app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    //     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    // }
     return;
 }
 
@@ -339,6 +315,13 @@ void on_btn_bingo_ok_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_invite_accept_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
+    char hostName[MAX_STRING];
+    char buffer[MAX_STRING];
+    strcpy(buffer, gtk_label_get_text(app_wdgts->w_lbl_invite));
+    printf("\nBuffer: %s", buffer);
+    splitHostName(buffer, hostName);
+    printf("\nHost name: %s", hostName);
+    acceptInviteClient(app_wdgts->serverfd, hostName);
     gtk_widget_hide(app_wdgts->w_invite_window);
 }
 
@@ -349,11 +332,7 @@ void on_btn_invite_decline_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_lobby_log_out_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    //Request *req = (Request *)malloc(sizeof(Request));
     logOut(app_wdgts->serverfd, app_wdgts->currUser);
-    // app_wdgts->currentWindow = app_wdgts->currentWindow - 1;
-    // gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    // gtk_stack_set_visible_child(app_wdgts->w_stack_menu, app_wdgts->w_container_menu_log);
     return;
 }
 
@@ -368,12 +347,6 @@ void on_btn_lobby_quick_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
 
     quickJoinClient(app_wdgts->serverfd);
-    // app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    // gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    // gtk_stack_set_visible_child(app_wdgts->w_stack_room, GTK_WIDGET(app_wdgts->w_btn_room_ready));
-    // gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_kick), FALSE);
-    // gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_btn_room_invite), FALSE);
-    // gtk_widget_set_visible(GTK_WIDGET(app_wdgts->w_entry_room_user), FALSE);
     return;
 }
 
@@ -410,7 +383,7 @@ void on_btn_room_invite_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
     char username[MAX_STRING];
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_room_user));
-    invite(app_wdgts->serverfd, username);
+    inviteClient(app_wdgts->serverfd, username);
     //showInvite(MES_INVITE, app_wdgts->w_lbl_invite, app_wdgts->w_invite_window);
 }
 
@@ -580,16 +553,10 @@ gboolean handle_res(app_widgets *widgets)
         }
         break;
     case INVITATION:
-
+        gtk_label_set_text(GTK_LABEL(widgets->w_lbl_invite), res->message);
+        showWindow(setShowW(res->message, widgets->w_lbl_invite, widgets->w_invite_window, NULL));
         break;
     case INVITE_SUCCESS:
-        // for (int i = 0; i < ROOM_PLAYER; i++){
-        //     if (strcmp("Empty", gtk_button_get_label(GTK_BUTTON(widgets->w_tog_btn_player[i]))) != 0){
-        //         gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), res->data);
-        //         gtk_toggle_button_set_active (widgets->w_tog_btn_player[i], true);
-        //         break;
-        //     }
-        // }
         break;
     case INVITE_FAIL:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
@@ -654,6 +621,26 @@ gboolean handle_res(app_widgets *widgets)
         break;
     case JOIN_FAIL:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case ACCEPTED:
+        widgets->currentWindow = widgets->currentWindow + 1;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+        gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
+        gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
+        gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
+        char playerAmount_A[MAX_STRING], usernameList_A[MAX_STRING], roomID_A[3], buffer_A[MAX_STRING];
+        splitPlayerAmountUsernameListRoomID(res->data, playerAmount_A, roomID_A, usernameList_A);
+        int amount_A = atoi(playerAmount_A);
+        strcpy(buffer_A, "ID: ");
+        strcat(buffer_A, roomID_A);
+        gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_A);
+        char *token_A;
+        token_A = strtok(usernameList_A, "-");
+        for (int i = 0; i < amount_A; i++){
+            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_A);
+            token_A =strtok(NULL, "-");
+        }
         break;
     case ROOM_FULL:
 

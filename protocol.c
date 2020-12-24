@@ -88,6 +88,7 @@ void setMessageResponse(Response *msg){
       strcpy(msg->message, "Cannot invite this player!");
       break;
     case ACCEPTED:
+      strcpy(msg->message, "You accepted!");
       break;
     case DECLINED:
       strcpy(msg->message, "");
