@@ -183,6 +183,9 @@ void setMessageResponse(Response *msg)
   case RETURN_ROOM_SUCCESS:
     strcpy(msg->message, "Return room success!");
     break;
+  case DISCONNECTED:
+    strcpy(msg->message, "You have been disconnected!");
+    break;
   default:
     break;
   }
@@ -267,6 +270,8 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = CHECK_READY;
   else if (strcmp(code, "RETURN_ROOM") == 0)
     req->code = RETURN_ROOM;
+  else if (strcmp(code, "TEST") == 0)
+    req->code = TEST;
 }
 
 int sendNum(int socket, int num, int size, int flags)

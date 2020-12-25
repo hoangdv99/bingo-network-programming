@@ -26,7 +26,8 @@ typedef enum REQ_OPCODE{
     UNREADY,
     CHECK_READY,
     EXIT_GAME,
-    RETURN_ROOM
+    RETURN_ROOM,
+    TEST
 }REQ_OPCODE; 
 
 typedef enum RES_OPCODE{
@@ -75,7 +76,8 @@ typedef enum RES_OPCODE{
     NEW_PLAYER_JOINED,
     SOMEONE_LEFT_GAME,
     ALL_PLAYERS_LEFT_GAME,
-    RETURN_ROOM_SUCCESS
+    RETURN_ROOM_SUCCESS,
+    DISCONNECTED
 }RES_OPCODE;
 
 typedef struct Request

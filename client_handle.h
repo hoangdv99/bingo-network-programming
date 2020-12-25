@@ -26,4 +26,5 @@ void checkReadyClie(int clientfd, Request *req, Response *res);
 void bingoClie(int clientfd, Request *req, Response *res);
 void pickClie(int clientfd, Request *req, Response *res);
 void returnRoomClie(int clientfd, Request *req, Response *res);
+void testClie(int clientfd, Request *req, Response *res);
 #endif

@@ -173,10 +173,13 @@ void *roomThreadFunc(void *arg)
         {
             char leftPlayerUsername[50];
             strcpy(leftPlayerUsername, room->player[turn]->username);
+            res->code = DISCONNECTED;
+            setMessageResponse(res);
+            sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
             FD_CLR(room->player[turn]->clientfd, &t_readfds);
             detelePlayerFromRoom(room, room->player[turn]);
-            deleteUserByUsername(room->player[turn]->username);
-
+            deleteUserByClientfd(room->player[turn]->clientfd);
+            room->host = room->player[0];
             res->code = SOMEONE_LEFT_GAME;
             strcpy(res->data, leftPlayerUsername);
             setMessageResponse(res);
@@ -221,6 +224,41 @@ void *roomThreadFunc(void *arg)
                     {
                         //Somebody disconnected , get his details and print
                         //code
+                        char leftPlayerUsername[50];
+                        strcpy(leftPlayerUsername, room->player[turn]->username);
+                        
+                        FD_CLR(room->player[turn]->clientfd, &t_readfds);
+                        detelePlayerFromRoom(room, room->player[turn]);
+                        deleteUserByUsername(room->player[turn]->username);
+
+                        res->code = SOMEONE_LEFT_GAME;
+                        strcpy(res->data, leftPlayerUsername);
+                        setMessageResponse(res);
+
+                        for (int i = 0; i < room->playerAmount; i++)
+                        {
+                            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                        }
+
+                        if (room->playerAmount == 1)
+                        {
+                            res->code = ALL_PLAYERS_LEFT_GAME;
+                            setMessageResponse(res);
+                            for (int i = 0; i < room->playerAmount; i++)
+                            {
+                                sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                                FD_CLR(room->player[i]->clientfd, &t_readfds);
+                                FD_SET(room->player[i]->clientfd, &masterfds);
+                            }
+                            return (void *)0;
+                        }
+                        if (turn == room->playerAmount - 1)
+                            turn = 0;
+                        else
+                            turn++;
+                        printf(" timed out.  Bravo[%d] turn\n", room->player[turn]->clientfd);
+                        remain_time = REMAIN_TIME;
+                        continue;
                     }
                     else if (req->code == BINGO)
                     {
@@ -310,6 +348,9 @@ void *roomThreadFunc(void *arg)
                                 remain_time = REMAIN_TIME;
                             }
                         }
+                    }
+                    else if (req->code == TEST)
+                    {
                     }
                     else
                     {

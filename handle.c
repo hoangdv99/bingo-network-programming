@@ -117,8 +117,9 @@ void createRoom(int clientfd, Request *req, Response *res)
 void sendInvite(int clientfd, Request *req, Response *res)
 {
     USER *user = findUserByUsername(req->message);
-    USER *host = findUserByClientfd(clientfd);
-
+    // USER *host = findUserByClientfd(clientfd);
+    ROOM *room = findRoomByClientfd(clientfd);
+    
     if (user == NULL || user->status != LOBBY)
     {
         res->code = INVITE_FAIL;
@@ -134,7 +135,7 @@ void sendInvite(int clientfd, Request *req, Response *res)
         sendRes(clientfd, res, sizeof(Response), 0);
         //send invitation to user
         res->code = INVITATION;
-        strcpy(res->data, host->username);
+        strcpy(res->data, room->host->username);
         setMessageResponse(res);
         sendRes(user->clientfd, res, sizeof(Response), 0);
     }
@@ -221,7 +222,7 @@ void join(int clientfd, Request *req, Response *res)
     ROOM *room = findRoom(roomID);
     USER *user = findUserByClientfd(clientfd);
 
-    if (room == NULL)
+    if (room == NULL || room->status == STARTED)
     {
         res->code = JOIN_FAIL;
         setMessageResponse(res);
@@ -256,7 +257,7 @@ void outRoom(int clientfd, Request *req, Response *res)
 {
     ROOM *room = findRoomByClientfd(clientfd);
     USER *user = findUserByClientfd(clientfd);
-    if (room->host == user)
+    if (room->host->clientfd == clientfd)
     {
         if (room->playerAmount == 1)
         {
@@ -336,6 +337,7 @@ void declineInvite(int clientfd, Request *req, Response *res)
 void play(THREAD_DATA threadData, int clientfd, Request *req, Response *res)
 {
     ROOM *room = findRoomByClientfd(clientfd);
+    room->status = STARTED;
     pthread_t tid;
     pthread_create(&tid, NULL, roomThreadFunc, &threadData);
     res->code = GAME_START;
@@ -415,9 +417,12 @@ void startGame(int sockfd, int clientfd, Request *req, Response *res)
 }
 
 void returnRoom(int clientfd, Request *req, Response *res){
-    USER *user = findUserByClientfd(clientfd);
-    user->status = INROOM;
+    ROOM *room = findRoomByClientfd(clientfd);
     res->code = RETURN_ROOM_SUCCESS;
     setMessageResponse(res);
-    sendRes(clientfd, res, sizeof(Response), 0);
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        room->player[i]->status = INROOM;
+        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+    }
 }

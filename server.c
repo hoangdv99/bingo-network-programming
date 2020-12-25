@@ -76,6 +76,9 @@ int main(int argc, char *argv[])
     // Ở đây ta chỉ quan tâm đến ready to read, sự kiện có 1 kết nối đến server coi như là ột /sự kiện ready to read trên server Socket
     // ta cần có 1 tập chứa các socket
     socklen_t len = sizeof(struct sockaddr_in);
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
     //fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
     FD_ZERO(&masterfds);
     FD_ZERO(&readfds);
@@ -86,7 +89,7 @@ int main(int argc, char *argv[])
     do
     {
         memcpy(&readfds, &masterfds, sizeof(masterfds)); // Copy masterfds vao readfds để đợi sự kiện
-        n_select = select(max_fd + 1, &readfds, NULL, NULL, NULL);
+        n_select = select(max_fd + 1, &readfds, NULL, NULL, &timeout);
         // Hàm này sẽ block chương trình đến khi có 1 sự kiên ready to read xảy ra
         if (n_select < 0)
         {
@@ -95,7 +98,6 @@ int main(int argc, char *argv[])
         }
         else if (n_select == 0)
         {
-            printf("Time out\n");
         }
         else
         {

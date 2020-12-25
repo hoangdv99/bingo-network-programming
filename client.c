@@ -154,6 +154,9 @@ int main(int argc, char const *argv[])
         case RETURN_ROOM:
             returnRoomClie(sockfd, req, res);
             break;
+        case TEST:
+            testClie(sockfd, req, res);
+            break;
         default:
             break;
         }

@@ -161,7 +161,11 @@ USER *findUserByClientfd(int clientfd)
 {
     USER *curr = userListHead;
     if (userListHead == NULL)
+    {
+        printf("head null\n");
         return NULL;
+    }
+        
     while (curr->clientfd != clientfd)
     {
         if (curr->next == NULL)
