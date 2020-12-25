@@ -99,6 +99,7 @@ void setMessageResponse(Response *msg){
       strcpy(msg->message, "All rooms are full! Please create a new room!");
       break;
     case QUICKJOIN_SUCCESS:
+      strcpy(msg->message, "You entered room!");
       break;
     case JOIN_SUCCESS:
       strcpy(msg->message, "Join success!");
@@ -122,6 +123,9 @@ void setMessageResponse(Response *msg){
       break;
     case KICK_FAIL:
       strcpy(msg->message, "Kick failed!");
+      break;
+    case BE_KICKED:
+      strcpy(msg->message, "You are be kicked!");
       break;
     case EXIT_GAME_SUCCESS:
       strcat(msg->data, " exited!");
@@ -192,10 +196,10 @@ void setOpcodeRequest(Request *req, char *input){
     req->code = JOIN;
   else if (strcmp(code, "OUT_ROOM") == 0)
     req->code = OUT_ROOM;
-  else if (strcmp(code, "ACCEPT_INVITE") == 0)
-    req->code = ACCEPT_INVITE;
-  else if (strcmp(code, "DECLINE_INVITE") == 0)
-    req->code = DECLINE_INVITE; 
+  else if (strcmp(code, "ACCEPT_INVITE_REQUEST") == 0)
+    req->code = ACCEPT_INVITE_REQUEST;
+  else if (strcmp(code, "DECLINE_INVITE_REQUEST") == 0)
+    req->code = DECLINE_INVITE_REQUEST; 
   else if (strcmp(code, "EXIT_GAME") == 0)
     req->code = EXIT_GAME;
 }

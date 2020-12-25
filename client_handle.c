@@ -101,9 +101,42 @@ int inviteClient(int clientfd, char *username){
     return 1;
 }
 
-int acceptInviteClient(int clientfd, char *username){
+int acceptInviteClient(int clientfd, char *hostName){
     Request *req = (Request *)malloc(sizeof(Request));
-    createAcceptInviteClientRequest("ACCEPT_INVITE_REQUEST", req, username);
+    createAcceptInviteClientRequest("ACCEPT_INVITE_REQUEST", req, hostName);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int declineInviteClient(int clientfd, char *hostName){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createDeclineInviteClientRequest("DECLINE_INVITE_REQUEST", req, hostName);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int backClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createBackClientRequest("OUT_ROOM", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int kickClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createKickRequest("KICK", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -183,7 +216,31 @@ void createJoinClientRequest(char *opcode, Request *req, char *roomID){
     setOpcodeRequest(req, sendbuff);
 }
 
-void createAcceptInviteClientRequest(char *opcode, Request *req, char *username){
+void createAcceptInviteClientRequest(char *opcode, Request *req, char *hostName){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, hostName);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createDeclineInviteClientRequest(char *opcode, Request *req, char *hostName){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, hostName);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createBackClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createKickRequest(char *opcode, Request *req, char *username){
     char sendbuff[BUFF_SIZE];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");

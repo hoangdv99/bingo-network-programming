@@ -299,8 +299,7 @@ void on_btn_reader_about_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_back_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    app_wdgts->currentWindow = app_wdgts->currentWindow - 1;
-    gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
+    backClient(app_wdgts->serverfd, app_wdgts->currUser);
 }
 
 void on_btn_error_ok_clicked(GtkButton *button, app_widgets *app_wdgts)
@@ -318,15 +317,18 @@ void on_btn_invite_accept_clicked(GtkButton *button, app_widgets *app_wdgts)
     char hostName[MAX_STRING];
     char buffer[MAX_STRING];
     strcpy(buffer, gtk_label_get_text(app_wdgts->w_lbl_invite));
-    printf("\nBuffer: %s", buffer);
     splitHostName(buffer, hostName);
-    printf("\nHost name: %s", hostName);
     acceptInviteClient(app_wdgts->serverfd, hostName);
     gtk_widget_hide(app_wdgts->w_invite_window);
 }
 
 void on_btn_invite_decline_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
+    char hostName[MAX_STRING];
+    char buffer[MAX_STRING];
+    strcpy(buffer, gtk_label_get_text(app_wdgts->w_lbl_invite));
+    splitHostName(buffer, hostName);
+    declineInviteClient(app_wdgts->serverfd, hostName);
     gtk_widget_hide(app_wdgts->w_invite_window);
 }
 
@@ -345,7 +347,6 @@ void on_btn_lobby_create_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_lobby_quick_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-
     quickJoinClient(app_wdgts->serverfd);
     return;
 }
@@ -361,22 +362,29 @@ void on_btn_lobby_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_room_kick_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    gboolean check = FALSE;
-    char tmp[MAX_STRING];
+    //gboolean check = FALSE;
+    char username[MAX_STRING];
     for (int i = 0; i < ROOM_PLAYER; i++)
     {
         if (gtk_toggle_button_get_active(app_wdgts->w_tog_btn_player[i]))
         {
-            check = TRUE;
-            strcpy(tmp, gtk_button_get_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i])));
+            if (i == 0){
+                showWindow(setShowW("Host can't be kicked!", app_wdgts->w_lbl_err, app_wdgts->w_err_window, NULL));
+                gtk_toggle_button_set_active(app_wdgts->w_tog_btn_player[i], FALSE);
+                continue;
+            }
+            //check = TRUE;
+            strcpy(username, gtk_button_get_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i])));
             // GOT USERNAME AND KICK
-            gtk_button_set_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i]), "Empty");
+            kickClient(app_wdgts->serverfd, username);
+            //gtk_button_set_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i]), "Empty");
         }
         gtk_toggle_button_set_active(app_wdgts->w_tog_btn_player[i], FALSE);
     }
-    if (check == FALSE)
-        //showError(MES_NO_KICK, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
-        return;
+    // if (check == FALSE)
+    //     showWindow(setShowW(MES_NO_KICK, widgets->w_lbl_err, widgets->w_err_window, NULL));
+    //     //showError(MES_NO_KICK, app_wdgts->w_lbl_err, app_wdgts->w_err_window);
+    //     return;
 }
 
 void on_btn_room_invite_clicked(GtkButton *button, app_widgets *app_wdgts)
@@ -384,7 +392,6 @@ void on_btn_room_invite_clicked(GtkButton *button, app_widgets *app_wdgts)
     char username[MAX_STRING];
     strcpy(username, gtk_entry_get_text(app_wdgts->w_entry_room_user));
     inviteClient(app_wdgts->serverfd, username);
-    //showInvite(MES_INVITE, app_wdgts->w_lbl_invite, app_wdgts->w_invite_window);
 }
 
 void on_btn_room_ready_clicked(GtkButton *button, app_widgets *app_wdgts)
@@ -530,7 +537,7 @@ gboolean handle_res(app_widgets *widgets)
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_menu, widgets->w_container_menu_log);
         break;
-    case CREATE_ROOM_SUCCESS: ;
+    case CREATE_ROOM_SUCCESS:;
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_start));
@@ -561,7 +568,7 @@ gboolean handle_res(app_widgets *widgets)
     case INVITE_FAIL:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
-    case ROOM_CHANGED: ;
+    case ROOM_CHANGED:;
         char playerAmount_RC[MAX_STRING], usernameList_RC[MAX_STRING], roomID_RC[3], buffer_RC[MAX_STRING];
         splitPlayerAmountUsernameListRoomID(res->data, playerAmount_RC, roomID_RC, usernameList_RC);
         int amount_RC = atoi(playerAmount_RC);
@@ -569,17 +576,25 @@ gboolean handle_res(app_widgets *widgets)
         strcat(buffer_RC, roomID_RC);
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_RC);
         char *token_RC;
-        token_RC = (char*)malloc(sizeof(char)*MAX_STRING);
+        token_RC = (char *)malloc(sizeof(char) * MAX_STRING);
         token_RC = strtok(usernameList_RC, "-");
-        for (int i = 0; i < amount_RC; i++){
-            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_RC);
-            token_RC =strtok(NULL, "-");
+        for (int i = 0; i < 5; i++)
+        {
+            if (i < amount_RC)
+            {
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_RC);
+                token_RC = strtok(NULL, "-");
+            }
+            else
+            {
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), "Empty");
+            }
         }
         break;
     case QUICKJOIN_FAIL:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
-    case QUICKJOIN_SUCCESS: ;
+    case QUICKJOIN_SUCCESS:;
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
@@ -594,9 +609,10 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_QS);
         char *token_QS;
         token_QS = strtok(usernameList_QS, "-");
-        for (int i = 0; i < amount_QS; i++){
+        for (int i = 0; i < amount_QS; i++)
+        {
             gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_QS);
-            token_QS =strtok(NULL, "-");
+            token_QS = strtok(NULL, "-");
         }
         break;
     case JOIN_SUCCESS:
@@ -614,9 +630,10 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_JS);
         char *token_JS;
         token_JS = strtok(usernameList_JS, "-");
-        for (int i = 0; i < amount_JS; i++){
+        for (int i = 0; i < amount_JS; i++)
+        {
             gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_JS);
-            token_JS =strtok(NULL, "-");
+            token_JS = strtok(NULL, "-");
         }
         break;
     case JOIN_FAIL:
@@ -637,26 +654,35 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_A);
         char *token_A;
         token_A = strtok(usernameList_A, "-");
-        for (int i = 0; i < amount_A; i++){
+        for (int i = 0; i < amount_A; i++)
+        {
             gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_A);
-            token_A =strtok(NULL, "-");
+            token_A = strtok(NULL, "-");
         }
         break;
-    case ROOM_FULL:
-
-        break;
-    case NEW_HOST:
-
-        break;
-    case OUT_ROOM_SUCCESS:
-
-        break;
-    case KICK_SUCCESS:
-
-        break;
-    case KICK_FAIL:
+    case DECLINED:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
+    case ROOM_FULL:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case NEW_HOST:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case OUT_ROOM_SUCCESS:
+        widgets->currentWindow = widgets->currentWindow - 1;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+        break;
+    case KICK_SUCCESS:
+        printf("\nOK");
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case KICK_FAIL:
+        showWindow(setShowW(MES_NO_KICK, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case BE_KICKED:
+        widgets->currentWindow = widgets->currentWindow - 1;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
     case EXIT_GAME_SUCCESS:
 
         break;
