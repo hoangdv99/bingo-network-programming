@@ -11,6 +11,8 @@
 #include "handle.h"
 #define MAX_LENGTH 1024
 #define MAX_CLIENT 20
+fd_set masterfds;
+fd_set readfds;
 
 USER *userListHead = NULL;
 ROOM *roomListHead = NULL;
@@ -25,8 +27,7 @@ int main(int argc, char *argv[])
     int port_number = atoi(port_char);
     struct sockaddr_in servaddr, clieaddr;
     ROOM *room;
-    fd_set masterfds;
-    fd_set readfds;
+    
     // Tao server socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)

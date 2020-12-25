@@ -1,6 +1,7 @@
 #include "gameplay.h"
 #define REMAIN_TIME 30
-extern int roomEndID;
+extern fd_set masterfds;
+
 void initGame(ROOM *room)
 {
     printf("Boards generating!\n");
@@ -193,7 +194,7 @@ void *roomThreadFunc(void *arg)
                 {
                     sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
                     FD_CLR(room->player[i]->clientfd, &t_readfds);
-                    roomEndID = room->id;
+                    FD_SET(room->player[i]->clientfd, &masterfds);
                 }
                 return (void *)0;
             }
