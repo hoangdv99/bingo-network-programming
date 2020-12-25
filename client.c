@@ -145,6 +145,15 @@ int main(int argc, char const *argv[])
         case PLAY:
             playClie(sockfd, req, res);
             break;
+        case BINGO:
+            bingoClie(sockfd, req, res);
+            break;
+        case PICK:
+            pickClie(sockfd, req, res);
+            break;
+        case RETURN_ROOM:
+            returnRoomClie(sockfd, req, res);
+            break;
         default:
             break;
         }

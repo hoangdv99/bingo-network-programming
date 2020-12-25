@@ -335,7 +335,6 @@ void declineInvite(int clientfd, Request *req, Response *res)
 
 void play(THREAD_DATA threadData, int clientfd, Request *req, Response *res)
 {
-    printf("handle: %d\n", threadData.clientfd);
     ROOM *room = findRoomByClientfd(clientfd);
     pthread_t tid;
     pthread_create(&tid, NULL, roomThreadFunc, &threadData);
@@ -393,28 +392,32 @@ int checkReady(int clientfd)
     return 1;
 }
 
-void startGame(int sockfd, fd_set readfds, int max_fd, int clientfd, Request *req, Response *res)
+void startGame(int sockfd, int clientfd, Request *req, Response *res)
 {
-    // THREAD_DATA threadData;
-    // ROOM *room = findRoomByClientfd(clientfd);
-    // if(room->playerAmount == 1){
-    //     res->code = PLAYER_NOT_ENOUGH;
-    //     setMessageResponse(res);
-    //     sendRes(clientfd, res, sizeof(Response), 0);
-    // }else if(checkReady(clientfd) == 0){
-    //     res->code = SOMEONE_UNREADY;
-    //     setMessageResponse(res);
-    //     sendRes(clientfd, res, sizeof(Response), 0);
-    // }
-    // else
-    // {
-    //     threadData.clientfd = clientfd;
-    //     threadData.master_socket = sockfd;
-    //     threadData.max_sd = max_fd;
-    //     play(threadData, clientfd, req, res);
-    //     for (int i = 0; i < room->playerAmount; i++)
-    //     {
-    //         FD_CLR(room->player[i]->clientfd, &readfds);
-    //     }
-    // }
+    THREAD_DATA threadData;
+    ROOM *room = findRoomByClientfd(clientfd);
+    if(room->playerAmount == 1){
+        res->code = PLAYER_NOT_ENOUGH;
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        
+    }else if(checkReady(clientfd) == 0){
+        res->code = SOMEONE_UNREADY;
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+    }
+    else
+    {
+        threadData.clientfd = clientfd;
+        threadData.master_socket = sockfd;
+        play(threadData, clientfd, req, res);
+    }
+}
+
+void returnRoom(int clientfd, Request *req, Response *res){
+    USER *user = findUserByClientfd(clientfd);
+    user->status = INROOM;
+    res->code = RETURN_ROOM_SUCCESS;
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
 }

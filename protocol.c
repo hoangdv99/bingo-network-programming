@@ -123,6 +123,7 @@ void setMessageResponse(Response *msg)
     strcat(msg->data, " exited!");
     strcpy(msg->message, "");
     strcat(msg->message, msg->data);
+    break;
   case GAME_START:
     strcpy(msg->message, "Game started!");
     break;
@@ -131,7 +132,7 @@ void setMessageResponse(Response *msg)
     break;
   case OTHER_PLAYER_TURN:
     strcat(msg->data, " turn!");
-    strcat(msg->message, msg->data);
+    strcpy(msg->message, msg->data);
     break;
   case BINGO_REAL:
     strcpy(msg->message, "Bingo yoooooooo!!");
@@ -171,6 +172,16 @@ void setMessageResponse(Response *msg)
     break;
   case NEW_PLAYER_JOINED:
     strcpy(msg->message, msg->data);
+    break;
+  case SOMEONE_LEFT_GAME:
+    strcat(msg->data, " has left the game!");
+    strcpy(msg->message, msg->data);
+    break;
+  case ALL_PLAYERS_LEFT_GAME:
+    strcpy(msg->message, "All players have left the game. Game ends!");
+    break;
+  case RETURN_ROOM_SUCCESS:
+    strcpy(msg->message, "Return room success!");
     break;
   default:
     break;
@@ -254,6 +265,8 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = UNREADY;
   else if (strcmp(code, "CHECK_READY") == 0)
     req->code = CHECK_READY;
+  else if (strcmp(code, "RETURN_ROOM") == 0)
+    req->code = RETURN_ROOM;
 }
 
 int sendNum(int socket, int num, int size, int flags)

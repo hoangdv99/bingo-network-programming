@@ -13,9 +13,7 @@
 
 typedef struct THREAD_DATA{
     int clientfd;
-    fd_set readfds;
     int master_socket;
-    int max_sd;
 } THREAD_DATA;
 
 void signUp(int clientfd, Request *req, Response* res);
@@ -34,6 +32,7 @@ void declineInvite(int clientfd, Request *req, Response *res);
 void ready(int clientfd, Request *req, Response *res);
 void unready(int clientfd, Request *req, Response *res);
 int checkReady(int clientfd);
-void startGame(int sockfd, fd_set readfds, int max_fd ,int clientfd, Request *req, Response *res);
+void startGame(int sockfd, int clientfd, Request *req, Response *res);
 void play(THREAD_DATA threadData, int clientfd, Request *req, Response *res);
+void returnRoom(int clientfd, Request *req, Response *res);
 #endif

@@ -15,6 +15,7 @@
 USER *userListHead = NULL;
 ROOM *roomListHead = NULL;
 ACCOUNT *accountListHead = NULL;
+int roomEndID = 0;
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +25,8 @@ int main(int argc, char *argv[])
     int port_number = atoi(port_char);
     struct sockaddr_in servaddr, clieaddr;
     ROOM *room;
-    THREAD_DATA threadData;
+    fd_set masterfds;
+    fd_set readfds;
     // Tao server socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)
@@ -73,11 +75,11 @@ int main(int argc, char *argv[])
     // Ở đây ta chỉ quan tâm đến ready to read, sự kiện có 1 kết nối đến server coi như là ột /sự kiện ready to read trên server Socket
     // ta cần có 1 tập chứa các socket
     socklen_t len = sizeof(struct sockaddr_in);
-    fd_set readfds;
-    fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
+    //fd_set masterfds; // tập readfds để check các socket, 1 tập để lưu lại nhưng thay đổi của tập readfds.
     FD_ZERO(&masterfds);
     FD_ZERO(&readfds);
     FD_SET(sockfd, &masterfds); // add serverSock vào tập masterfds.
+
     int max_fd = sockfd;
     int n_select;
     do
@@ -170,31 +172,18 @@ int main(int argc, char *argv[])
                                 unready(i, req, res);
                                 break;
                             case PLAY:
-                                // startGame(sockfd, readfds, max_fd, i, req, res);
                                 room = findRoomByClientfd(i);
-                                if (room->playerAmount == 1)
+                                if (room->playerAmount != 1 && (checkReady(i) != 0))
                                 {
-                                    res->code = PLAYER_NOT_ENOUGH;
-                                    setMessageResponse(res);
-                                    sendRes(i, res, sizeof(Response), 0);
-                                }
-                                else if (checkReady(i) == 0)
-                                {
-                                    res->code = SOMEONE_UNREADY;
-                                    setMessageResponse(res);
-                                    sendRes(i, res, sizeof(Response), 0);
-                                }
-                                else
-                                {
-                                    threadData.clientfd = i;
-                                    threadData.master_socket = sockfd;
-                                    threadData.max_sd = max_fd;
-                                    play(threadData, i, req, res);
                                     for (int i = 0; i < room->playerAmount; i++)
                                     {
                                         FD_CLR(room->player[i]->clientfd, &masterfds);
                                     }
                                 }
+                                startGame(sockfd, i, req, res);
+                                break;
+                            case RETURN_ROOM:
+                                returnRoom(i, req, res);
                                 break;
                             case EXIT_GAME:
                                 exitGame(i, req, res);

@@ -143,3 +143,15 @@ void unreadyClie(int clientfd, Request *req, Response *res){
 void checkReadyClie(int clientfd, Request *req, Response *res){
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
 }
+
+void bingoClie(int clientfd, Request *req, Response *res){
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+}
+
+void pickClie(int clientfd, Request *req, Response *res){
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+}
+
+void returnRoomClie(int clientfd, Request *req, Response *res){
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+}
