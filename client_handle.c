@@ -255,7 +255,7 @@ void splitRoomID(char *input, char *username, char *id){
     }
     username[usernameLength] = '\0';
     i++;
-    for (i; i < strlen(input); i++){
+    for (; i < strlen(input); i++){
         id[idLength++] = input[i];
     }
     id[idLength] = '\0';
@@ -268,12 +268,12 @@ void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *
     }
     playerAmount[playerAmountLength] = '\0';
     i++;
-    for (i; input[i] != ' '; i++){
+    for (; input[i] != ' '; i++){
         roomID[idLength++] = input[i];
     }
     roomID[idLength] = '\0';
     i++;
-    for (i; i < strlen(input); i++){
+    for (; i < strlen(input); i++){
         usernameList[usernameListLength++] = input[i];
     }
     usernameList[usernameListLength] = '\0';
@@ -285,7 +285,7 @@ void splitHostName(char *input, char *hostName){
         continue;
     }
     i+=2;
-    for (i; i < strlen(input); i++){
+    for (; i < strlen(input); i++){
         hostName[hostNameLength++] = input[i];
     }
     hostName[hostNameLength] = '\0';

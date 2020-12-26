@@ -3,6 +3,7 @@
 //For inet_addr()
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <unistd.h> // for close
 // For ..
 #include <string.h>
 #include <stdlib.h>

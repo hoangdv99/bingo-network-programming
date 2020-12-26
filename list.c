@@ -341,10 +341,9 @@ int countRoom()
         {
             curr = curr->next;
             count++;
-            //return count;
         }
     }
-    //return count;
+    return 0;//Not necessary but still need to avoid warning
 }
 
 ROOM *deleteRoom(int id){

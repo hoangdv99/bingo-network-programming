@@ -674,13 +674,12 @@ gboolean handle_res(app_widgets *widgets)
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         break;
     case KICK_SUCCESS:
-        printf("\nOK");
-        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case KICK_FAIL:
         showWindow(setShowW(MES_NO_KICK, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case BE_KICKED:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
     case EXIT_GAME_SUCCESS:

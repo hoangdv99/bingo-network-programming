@@ -1,4 +1,6 @@
+#include <sys/socket.h>
 #include "protocol.h"
+#include "helper.h"
 #define BUFF_SIZE 255
 
 int recvReq(int socket, Request *buff, int size, int flags){
@@ -38,7 +40,7 @@ int recvRes(int socket, Response *msg, int size, int flags)
 }
 
 void setMessageResponse(Response *msg){
-  if(msg->code != NULL){
+  if(msg->code != -1){
     switch (msg->code)
     {
     case ROOM_CHANGED:
@@ -138,7 +140,7 @@ void setMessageResponse(Response *msg){
 }
 
 void readMessageReponse(Response *msg){
-  if(msg->code != NULL){
+  if(msg->code != -1){
     printf("%s\n", msg->message);
     switch (msg->code)
     {
@@ -207,7 +209,7 @@ void setOpcodeRequest(Request *req, char *input){
 int sendNum(int socket, int num, int size, int flags)
 {
   int n;
-  n = send(socket, num, size, flags);
+  n = send(socket, (void*)&num, size, flags);
   if (n < 0)
     perror("Error: ");
   return n;
@@ -216,7 +218,7 @@ int sendNum(int socket, int num, int size, int flags)
 int recvNum(int socket, int num, int size, int flags)
 {
   int n;
-  n = recv(socket, num, size, flags);
+  n = recv(socket, (void*)&num, size, flags);
   if (n < 0)
     perror("Error: ");
   return n;
