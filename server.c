@@ -160,7 +160,6 @@ int main(int argc, char *argv[])
                                 break;
                             case OUT_ROOM:
                                 outRoom(i, req, res);
-                    
                                 break;
                             case READY1:
                                 ready(i, req, res);
