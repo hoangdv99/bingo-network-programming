@@ -319,6 +319,15 @@ void outRoom(int clientfd, Request *req, Response *res)
 
     if (room->host == user)
     {
+        if (room->playerAmount == 1){
+            room->playerAmount-=1;
+            res->code = OUT_ROOM_SUCCESS;
+            setMessageResponse(res);
+            sendRes(clientfd, res, sizeof(Response), 0);
+            detelePlayerFromRoom(room, user);
+            deleteRoom(room->id);
+            return;
+        }
         room->host = room->player[room->playerAmount - 1];
         res->code = NEW_HOST;
         setMessageResponse(res);

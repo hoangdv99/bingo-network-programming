@@ -355,6 +355,10 @@ void on_btn_lobby_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
     char id[MAX_STRING] = "\0";
     strcpy(id, gtk_entry_get_text(app_wdgts->w_entry_lobby_search));
+    if (strcmp(id, "") == 0){
+        showWindow(setShowW("You did not enter room id", app_wdgts->w_lbl_err, app_wdgts->w_err_window, NULL));
+        return;
+    }
     joinClient(app_wdgts->serverfd, id);
 
     return;
@@ -375,6 +379,10 @@ void on_btn_room_kick_clicked(GtkButton *button, app_widgets *app_wdgts)
             }
             //check = TRUE;
             strcpy(username, gtk_button_get_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i])));
+            if (strcmp("Empty", username) == 0){
+                gtk_toggle_button_set_active(app_wdgts->w_tog_btn_player[i], FALSE);
+                continue;
+            }
             // GOT USERNAME AND KICK
             kickClient(app_wdgts->serverfd, username);
             //gtk_button_set_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i]), "Empty");
@@ -458,8 +466,9 @@ gboolean on_window_reader_delete_event(GtkWidget *widget, GdkEvent *event, gpoin
     return TRUE;
 }
 
-void on_window_main_destroy()
+void on_window_main_destroy(/*GtkWidget *widget, GdkEvent *event, gpointer data*/)
 {
+    //logOut(data->serverfd, data->currUser);
     gtk_main_quit();
 }
 
@@ -551,13 +560,9 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer);
         for (int i = 0; i < ROOM_PLAYER; i++)
         {
-            if (strcmp("Empty", gtk_button_get_label(GTK_BUTTON(widgets->w_tog_btn_player[i]))) == 0)
-            {
-                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), username);
-                //gtk_toggle_button_set_active (widgets->w_tog_btn_player[i], true);
-                break;
-            }
+            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), "Empty");
         }
+        gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[0]), username);
         break;
     case INVITATION:
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_invite), res->message);
@@ -667,6 +672,11 @@ gboolean handle_res(app_widgets *widgets)
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case NEW_HOST:
+        printf("\nTest");
+        gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_start));
+        gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), TRUE);
+        gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), TRUE);
+        gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), TRUE);
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case OUT_ROOM_SUCCESS:
