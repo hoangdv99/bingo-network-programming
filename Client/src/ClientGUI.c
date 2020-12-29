@@ -74,7 +74,7 @@ typedef struct
     int currentWindow;
     char *currUser;
     int serverfd;
-    Response *res;
+    Response res;
     GtkEntry *w_entry_menu_log_user, *w_entry_lobby_search, *w_entry_room_user, *w_entry_menu_log_pas, *w_entry_menu_reg_user, *w_entry_menu_reg_pas, *w_entry_menu_reg_con_pas;
     GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite, *w_lbl_room_id;
     GtkStack *w_stack_container, *w_stack_room, *w_stack_playing, *w_stack_menu;
@@ -465,9 +465,9 @@ gboolean on_window_reader_delete_event(GtkWidget *widget, GdkEvent *event, gpoin
     return TRUE;
 }
 
-void on_window_main_destroy(/*GtkWidget *widget, GdkEvent *event, gpointer data*/)
+void on_window_main_destroy(GtkWidget *widget, app_widgets *data)
 {
-    //logOut(data->serverfd, data->currUser);
+    logOut(data->serverfd, data->currUser);
     gtk_main_quit();
 }
 
@@ -509,7 +509,13 @@ static void load_css(void)
 
 gboolean handle_res(app_widgets *widgets)
 {
-    Response *res = widgets->res;
+    Response *res = &(widgets->res);
+    if (strcmp("", res->data) != 0)
+        {
+            printf("\nCode: %d\nMessage: %s\nData: %s\n", res->code, res->message, res->data);
+        }
+        else
+            printf("\nCode: %d\nMessage: %s\n", res->code, res->message);
     switch (res->code)
     {
     case SYNTAX_ERROR:
@@ -704,25 +710,25 @@ void *recv_handler(void *app_widget)
 {
     int serverfd;
     int rcvBytes;
-    Response *res = (Response *)malloc(sizeof(Response));
+    //Response *res = (Response *)malloc(sizeof(Response));
     pthread_detach(pthread_self());
     app_widgets *widgets = (app_widgets *)app_widget;
     serverfd = widgets->serverfd;
     while (1)
     {
-        rcvBytes = recvRes(serverfd, res, sizeof(Response), 0);
-        widgets->res = res;
+        rcvBytes = recvRes(serverfd, &(widgets->res), sizeof(Response), 0);
+        //widgets->res = res;
         if (rcvBytes < 0)
         {
             // perror("\nError: ");
             // break;
         }
-        if (strcmp("", res->data) != 0)
+        if (strcmp("", widgets->res.data) != 0)
         {
-            printf("\nCode: %d\nMessage: %s\nData: %s\n", res->code, res->message, res->data);
+            printf("\nCode: %d\nMessage: %s\nData: %s\n", widgets->res.code, widgets->res.message, widgets->res.data);
         }
         else
-            printf("\nCode: %d\nMessage: %s\n", res->code, res->message);
+            printf("\nCode: %d\nMessage: %s\n", widgets->res.code, widgets->res.message);
         g_idle_add((GSourceFunc)handle_res, widgets);
     }
     close(serverfd);
