@@ -6,9 +6,10 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define MAX 100
+#define PLAYER_MAX 100
 #define SIZE 5
-#define ROOM_MAX 5
+#define ROOM_PLAYER_MAX 5
+#define ROOM_MAX 10
 
 typedef enum USER_STATUS
 {
@@ -26,7 +27,7 @@ typedef enum ROOM_STATE
 
 typedef struct USER
 {
-    char username[MAX];
+    char username[PLAYER_MAX];
     USER_STATUS status;
     int clientfd;
     int board[SIZE][SIZE];
@@ -35,8 +36,8 @@ typedef struct USER
 
 typedef struct ACCOUNT
 {
-    char username[MAX];
-    char password[MAX];
+    char username[PLAYER_MAX];
+    char password[PLAYER_MAX];
     int status;
     struct ACCOUNT* next;
 } ACCOUNT;

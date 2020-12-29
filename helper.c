@@ -9,7 +9,7 @@ void splitMessage(char *input, char *code, char *data)
 	}
 	code[codeLength] = '\0';
 	i++;
-	for (i; i < strlen(input); i++)
+	for (; i < strlen(input); i++)
 	{
 		data[dataLength++] = input[i];
 	}
@@ -25,7 +25,7 @@ void splitMessageData(char *input, char *username, char *password)
 	}
 	username[usernameLength] = '\0';
 	i++;
-	for (i; i < strlen(input); i++)
+	for (; i < strlen(input); i++)
 	{
 		password[passwordLength++] = input[i];
 	}

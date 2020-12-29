@@ -1,4 +1,3 @@
-
 #ifndef __TOOL__
 #define __TOOL__
 

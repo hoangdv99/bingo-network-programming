@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Prerequisites
 *.d
 
@@ -50,6 +51,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+=======
+>>>>>>> 67722a54cc94809a2fe9304a12bd9f7b1d76a6d7
 # Ignore all .o
 *.o
 Client/*.o

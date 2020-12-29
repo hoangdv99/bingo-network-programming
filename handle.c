@@ -1,6 +1,6 @@
 #include "handle.h"
 #define MAX_PLAYER_IN_ROOM 5
-
+#define MAX_STRING 256
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -105,11 +105,17 @@ void createRoom(int clientfd, Request *req, Response *res)
     USER *host = findUserByClientfd(clientfd);
     newRoom->host = host;
     newRoom->id = countRoom() + 1;
+    printf("\nRoom ID: %d\n", newRoom->id);
     newRoom->playerAmount = 0;
     newRoom->status = NOTSTARTED;
     insertRoom(newRoom);
     insertPlayer(newRoom->id, host);
     res->code = CREATE_ROOM_SUCCESS;
+    strcpy(res->data, host->username);
+    strcat(res->data, "-");
+    char buffer[33];
+    sprintf(buffer, "%d", newRoom->id);
+    strcat(res->data, buffer);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
 }
@@ -117,9 +123,8 @@ void createRoom(int clientfd, Request *req, Response *res)
 void sendInvite(int clientfd, Request *req, Response *res)
 {
     USER *user = findUserByUsername(req->message);
-    // USER *host = findUserByClientfd(clientfd);
-    ROOM *room = findRoomByClientfd(clientfd);
-    
+    USER *host = findUserByClientfd(clientfd);
+
     if (user == NULL || user->status != LOBBY)
     {
         res->code = INVITE_FAIL;
@@ -135,7 +140,7 @@ void sendInvite(int clientfd, Request *req, Response *res)
         sendRes(clientfd, res, sizeof(Response), 0);
         //send invitation to user
         res->code = INVITATION;
-        strcpy(res->data, room->host->username);
+        strcpy(res->data, host->username);
         setMessageResponse(res);
         sendRes(user->clientfd, res, sizeof(Response), 0);
     }
@@ -153,16 +158,43 @@ void kick(int clientfd, Request *req, Response *res)
     ROOM *room = findRoomByClientfd(clientfd);
     USER *user = findUserByUsername(req->message);
     detelePlayerFromRoom(room, user);
+
+    char buffer[MAX_STRING];
+    sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
+    strcat(buffer, " ");
+    char id[3];
+    sprintf(id, "%d", room->id);
+    strcat(buffer, id);
+    strcat(buffer, " ");
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        strcat(buffer, room->player[i]->username);
+        if (i == room->playerAmount - 1)
+            break;
+        else
+        {
+            strcat(buffer, "-");
+        }
+    }
     res->code = KICK_SUCCESS;
-    strcpy(res->data, req->message);
+    strcpy(res->data, user->username);
     setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
+
+    res->code = BE_KICKED;
+    strcpy(res->data, user->username);
+    setMessageResponse(res);
+    sendRes(user->clientfd, res, sizeof(Response), 0);
+
+    res->code = ROOM_CHANGED;
+    strcpy(res->data, buffer);
+    setMessageResponse(res);
+
     for (int i = 0; i < room->playerAmount; i++)
     {
         sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
     }
-    res->code = BE_KICKED;
-    setMessageResponse(res);
-    sendRes(user->clientfd, res, sizeof(Response), 0);
+    printf("\n%s", res->message);
 }
 
 void quickjoin(int clientfd, Request *req, Response *res)
@@ -170,31 +202,28 @@ void quickjoin(int clientfd, Request *req, Response *res)
     USER *user = findUserByClientfd(clientfd);
     int roomID = quickJoin(user);
     ROOM *room = findRoom(roomID);
-    char *buffer[MAX_LENGTH];
+    char buffer[MAX_STRING];
     if (roomID == -1)
     {
         res->code = QUICKJOIN_FAIL;
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);
     }
-    else if (roomID == 0)
-    {
-        res->code = NO_ROOM;
-        setMessageResponse(res);
-        sendRes(clientfd, res, sizeof(Response), 0);
-    }
     else
     {
-        sprintf(buffer, "%d", room->playerAmount);//Format: playerAmount username1-username2
+        sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
+        strcat(buffer, " ");
+        char id[3];
+        sprintf(id, "%d", roomID);
+        strcat(buffer, id);
         strcat(buffer, " ");
         for (int i = 0; i < room->playerAmount; i++)
         {
-            printf("\ni=%d", i);
-            printf("\n%s", room->player[i]->username);
             strcat(buffer, room->player[i]->username);
             if (i == room->playerAmount - 1)
                 break;
-            else{
+            else
+            {
                 strcat(buffer, "-");
             }
         }
@@ -203,11 +232,13 @@ void quickjoin(int clientfd, Request *req, Response *res)
             if (room->player[i]->clientfd == clientfd)
             {
                 res->code = QUICKJOIN_SUCCESS;
-                strcpy(res->data, user->username);
+                strcpy(res->data, buffer);
                 setMessageResponse(res);
                 sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
-            }else{
-                res->code = NEW_PLAYER_JOINED;
+            }
+            else
+            {
+                res->code = ROOM_CHANGED;
                 strcpy(res->data, buffer);
                 setMessageResponse(res);
                 sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
@@ -221,7 +252,8 @@ void join(int clientfd, Request *req, Response *res)
     int roomID = atoi(req->message);
     ROOM *room = findRoom(roomID);
     USER *user = findUserByClientfd(clientfd);
-
+    char buffer[MAX_STRING];
+    
     if (room == NULL || room->status == STARTED)
     {
         res->code = JOIN_FAIL;
@@ -239,14 +271,40 @@ void join(int clientfd, Request *req, Response *res)
         else
         {
             insertPlayer(roomID, user);
-            res->code = JOIN_SUCCESS;
-            strcpy(res->data, user->username);
-            setMessageResponse(res);
+
+            sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
+            strcat(buffer, " ");
+            char id[3];
+            sprintf(id, "%d", roomID);
+            strcat(buffer, id);
+            strcat(buffer, " ");
             for (int i = 0; i < room->playerAmount; i++)
             {
-                sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                strcat(buffer, room->player[i]->username);
+                if (i == room->playerAmount - 1)
+                    break;
+                else
+                {
+                    strcat(buffer, "-");
+                }
             }
-            printRoomPlayer(roomID);
+            for (int i = 0; i < room->playerAmount; i++)
+            {
+                if (room->player[i]->clientfd == clientfd)
+                {
+                    res->code = JOIN_SUCCESS;
+                    strcpy(res->data, buffer);
+                    setMessageResponse(res);
+                    sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                }
+                else
+                {
+                    res->code = ROOM_CHANGED;
+                    strcpy(res->data, buffer);
+                    setMessageResponse(res);
+                    sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                }
+            }
         }
     }
 }
@@ -257,28 +315,51 @@ void outRoom(int clientfd, Request *req, Response *res)
 {
     ROOM *room = findRoomByClientfd(clientfd);
     USER *user = findUserByClientfd(clientfd);
-    if (room->host->clientfd == clientfd)
+    char buffer[MAX_STRING];
+
+    if (room->host == user)
     {
-        if (room->playerAmount == 1)
-        {
+        if (room->playerAmount == 1){
+            room->playerAmount-=1;
+            res->code = OUT_ROOM_SUCCESS;
+            setMessageResponse(res);
+            sendRes(clientfd, res, sizeof(Response), 0);
+            detelePlayerFromRoom(room, user);
             deleteRoom(room->id);
-            printf("Room is deleted");
             return;
         }
         room->host = room->player[room->playerAmount - 1];
         res->code = NEW_HOST;
         setMessageResponse(res);
         sendRes(room->player[room->playerAmount - 1]->clientfd, res, sizeof(Response), 0);
-        return;
     }
-
     detelePlayerFromRoom(room, user);
+
+    sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
+    strcat(buffer, " ");
+    char id[3];
+    sprintf(id, "%d", room->id);
+    strcat(buffer, id);
+    strcat(buffer, " ");
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        strcat(buffer, room->player[i]->username);
+        if (i == room->playerAmount - 1)
+            break;
+        else
+        {
+            strcat(buffer, "-");
+        }
+    }
     res->code = OUT_ROOM_SUCCESS;
     strcpy(res->data, user->username);
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
     for (int i = 0; i < room->playerAmount; i++)
     {
+        res->code = ROOM_CHANGED;
+        strcpy(res->data, buffer);
+        setMessageResponse(res);
         sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
     }
     printf("Host: %s\n", room->host->username);
@@ -310,17 +391,42 @@ void acceptInvite(int clientfd, Request *req, Response *res)
 {
     USER *user = findUserByClientfd(clientfd);
     USER *host = findUserByUsername(req->message);
-    printf("%d\n", host->clientfd);
     ROOM *room = findRoomByClientfd(host->clientfd);
-
+    char buffer[MAX_STRING];
     insertPlayer(room->id, user);
-    printRoomPlayer(room->id);
-    res->code = ACCEPTED;
-    strcpy(res->data, user->username);
-    setMessageResponse(res);
+
+    sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
+    strcat(buffer, " ");
+    char id[3];
+    sprintf(id, "%d", room->id);
+    strcat(buffer, id);
+    strcat(buffer, " ");
     for (int i = 0; i < room->playerAmount; i++)
     {
-        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+        strcat(buffer, room->player[i]->username);
+        if (i == room->playerAmount - 1)
+            break;
+        else
+        {
+            strcat(buffer, "-");
+        }
+    }
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        if (room->player[i]->clientfd == clientfd)
+        {
+            res->code = ACCEPTED;
+            strcpy(res->data, buffer);
+            setMessageResponse(res);
+            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+        }
+        else
+        {
+            res->code = ROOM_CHANGED;
+            strcpy(res->data, buffer);
+            setMessageResponse(res);
+            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+        }
     }
 }
 //DECLINE_INVITE hoang

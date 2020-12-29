@@ -377,4 +377,5 @@ void *roomThreadFunc(void *arg)
             sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
         }
     }
+    return (void *)0;
 }

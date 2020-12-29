@@ -3,34 +3,34 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #define MAX_LENGTH 1024
 
 typedef enum REQ_OPCODE{
     REGISTER,
-    LOGIN,              // LOGIN username@pass
-    DETAIL,             //
+    LOGIN,
+    DETAIL,
     LOGOUT,
-    CREATE_ROOM,        // CREATE_ROOM
-    INVITE,             // INVITE username
-    ACCEPT_INVITE,      // ACCEPT_INVITE username
-    DECLINE_INVITE,     // -----------------------
-    KICK,               // KICK username
-    QUICKJOIN,          // QUICKJOIN
-    JOIN,               // JOIN roomid
-    OUT_ROOM,           // OUT_ROOM
+    CREATE_ROOM,
+    INVITE,
+    ACCEPT_INVITE_REQUEST,
+    DECLINE_INVITE_REQUEST,
+    KICK,
+    QUICKJOIN,
+    JOIN,
+    OUT_ROOM,
+    EXIT_GAME,
     PLAY,
     BINGO,
     PICK,
     READY1,
     UNREADY,
     CHECK_READY,
-    EXIT_GAME,
     RETURN_ROOM,
     TEST
 }REQ_OPCODE; 
 
 typedef enum RES_OPCODE{
+    ROOM_CHANGED,
     SYNTAX_ERROR,
     REGISTER_INPUT_WRONG,
     USERNAME_EXISTED,
@@ -77,7 +77,9 @@ typedef enum RES_OPCODE{
     SOMEONE_LEFT_GAME,
     ALL_PLAYERS_LEFT_GAME,
     RETURN_ROOM_SUCCESS,
-    DISCONNECTED
+    DISCONNECTED,
+    ACCEPT_INVITE,
+    DECLINE_INVITE
 }RES_OPCODE;
 
 typedef struct Request

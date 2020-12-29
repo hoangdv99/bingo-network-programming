@@ -16,4 +16,4 @@ ClientGUI.o: src/ClientGUI.c
 	$(CC) -c $(CCFLAGS) src/ClientGUI.c $(GTKLIB) -o ClientGUI.o
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f *.o

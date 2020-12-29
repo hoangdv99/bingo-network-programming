@@ -1,5 +1,6 @@
 #include "list.h"
 #include "helper.h"
+#define ROOM_MAX 100
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -161,11 +162,7 @@ USER *findUserByClientfd(int clientfd)
 {
     USER *curr = userListHead;
     if (userListHead == NULL)
-    {
-        printf("head null\n");
         return NULL;
-    }
-        
     while (curr->clientfd != clientfd)
     {
         if (curr->next == NULL)
@@ -276,12 +273,11 @@ ROOM *findRoomByClientfd(int clientfd){
 int insertPlayer(int id, USER *player)
 {
     ROOM *room = findRoom(id);
-
     if (room != NULL && room->playerAmount < ROOM_MAX)
     {
         player->status = INROOM;
         room->player[room->playerAmount] = player;
-        room->playerAmount++;
+        room->playerAmount = room->playerAmount + 1;
         return 1;
     }
     return 0;
@@ -306,9 +302,6 @@ void detelePlayerFromRoom(ROOM *room, USER* user){
 int quickJoin(USER *player)
 {
     ROOM *room = roomListHead;
-    if(room == NULL){
-        return 0;
-    }
     while (room != NULL)
     {
         if (room->playerAmount < ROOM_MAX)
@@ -343,15 +336,14 @@ int countRoom()
     while (curr != NULL)
     {
         if (curr->next == NULL)
-            return count;
+            return ++count;
         else
         {
             curr = curr->next;
             count++;
-            return count;
         }
     }
-    return 0;
+    return 0;//Not necessary but still need to avoid warning
 }
 
 ROOM *deleteRoom(int id){

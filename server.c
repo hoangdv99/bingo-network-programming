@@ -3,6 +3,7 @@
 //For inet_addr()
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 // For ..
 #include <string.h>
 #include <stdlib.h>
@@ -17,7 +18,6 @@ fd_set readfds;
 USER *userListHead = NULL;
 ROOM *roomListHead = NULL;
 ACCOUNT *accountListHead = NULL;
-int roomEndID = 0;
 
 int main(int argc, char *argv[])
 {
@@ -112,7 +112,6 @@ int main(int argc, char *argv[])
                         printf("New connection \n");
 
                         FD_SET(newCon, &masterfds); // Thêm vào masterfds set để check sự kiện.
-
                         if (newCon > max_fd)
                             max_fd = newCon;
                     }
@@ -161,12 +160,7 @@ int main(int argc, char *argv[])
                                 break;
                             case OUT_ROOM:
                                 outRoom(i, req, res);
-                                break;
-                            case ACCEPT_INVITE:
-                                acceptInvite(i, req, res);
-                                break;
-                            case DECLINE_INVITE:
-                                declineInvite(i, req, res);
+                    
                                 break;
                             case READY1:
                                 ready(i, req, res);
@@ -187,6 +181,12 @@ int main(int argc, char *argv[])
                                 break;
                             case RETURN_ROOM:
                                 returnRoom(i, req, res);
+                                break;
+                            case ACCEPT_INVITE_REQUEST:
+                                acceptInvite(i, req, res);
+                                break;
+                            case DECLINE_INVITE_REQUEST:
+                                declineInvite(i, req, res);
                                 break;
                             case EXIT_GAME:
                                 exitGame(i, req, res);
