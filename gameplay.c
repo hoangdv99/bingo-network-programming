@@ -116,16 +116,45 @@ int checkBingo(ROOM *room, USER *user) //return 1 if bingo
     return 0;
 }
 
+void sendBoardData(ROOM *room, Request *req, Response *res)
+{
+    char boardString[100];
+    char num[5];
+    
+    res->code = BOARD_DATA_GENERATED;
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        strcpy(boardString, "");
+        for (int m = 0; m < SIZE; m++)
+        {
+            for (int n = 0; n < SIZE; n++)
+            {
+                sprintf(num, "%d", room->player[i]->board[m][n]);
+                strcat(boardString, num);
+                strcat(boardString, "-");
+            }
+        }
+        boardString[strlen(boardString) - 1] = '\0';
+        strcpy(res->data, boardString);
+        setMessageResponse(res);
+        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+    }
+}
+
 void *roomThreadFunc(void *arg)
 {
     THREAD_DATA *threadData = (THREAD_DATA *)arg;
+    Request *req = (Request *)malloc(sizeof(Request));
+    Response *res = (Response *)malloc(sizeof(Response));
     ROOM *room = findRoomByClientfd(threadData->clientfd);
     initGame(room);
+    //gui bang cho tung player voi opcode BOARD_DATA_GENERATED
+    sendBoardData(room, req, res);
+
     int playingClientfd, remain_time = REMAIN_TIME, bingo = 0, turn = 0, activity, sd, max_sd;
     struct timeval timeout;
     time_t now, end_time;
-    Request *req = (Request *)malloc(sizeof(Request));
-    Response *res = (Response *)malloc(sizeof(Response));
+
     USER *winner;
     fd_set t_readfds;
     FD_SET(threadData->master_socket, &t_readfds);
@@ -226,7 +255,7 @@ void *roomThreadFunc(void *arg)
                         //code
                         char leftPlayerUsername[50];
                         strcpy(leftPlayerUsername, room->player[turn]->username);
-                        
+
                         FD_CLR(room->player[turn]->clientfd, &t_readfds);
                         detelePlayerFromRoom(room, room->player[turn]);
                         deleteUserByUsername(room->player[turn]->username);

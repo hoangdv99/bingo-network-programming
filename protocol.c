@@ -3,7 +3,8 @@
 #include "helper.h"
 #define BUFF_SIZE 255
 
-int recvReq(int socket, Request *buff, int size, int flags){
+int recvReq(int socket, Request *buff, int size, int flags)
+{
   int n;
 
   n = recv(socket, buff, size, flags);
@@ -39,8 +40,10 @@ int recvRes(int socket, Response *msg, int size, int flags)
   return n;
 }
 
-void setMessageResponse(Response *msg){
-  if(msg->code != -1){
+void setMessageResponse(Response *msg)
+{
+  if (msg->code != -1)
+  {
     switch (msg->code)
     {
     case ROOM_CHANGED:
@@ -133,14 +136,83 @@ void setMessageResponse(Response *msg){
       strcat(msg->data, " exited!");
       strcpy(msg->message, "");
       strcat(msg->message, msg->data);
+      break;
+    case GAME_START:
+      strcpy(msg->message, "Game started!");
+      break;
+    case YOUR_TURN:
+      strcpy(msg->message, "Your turn!");
+      break;
+    case BOARD_DATA_GENERATED:
+      //strcat("Board data: ", msg->data);
+      strcpy(msg->message, msg->data);
+      break;
+    case OTHER_PLAYER_TURN:
+      strcat(msg->data, " 's turn!");
+      strcpy(msg->message, msg->data);
+      break;
+    case BINGO_REAL:
+      strcpy(msg->message, "Bingo yoooooooo!!");
+      break;
+    case BINGO_FAKE:
+      strcpy(msg->message, "Dont xiaoliz!");
+      break;
+    case PICK_FAIL:
+      strcpy(msg->message, "Wrong number. Please pick another!");
+      break;
+    case PICK_SUCCESS:
+      strcat(msg->data, " is picked!");
+      strcpy(msg->message, msg->data);
+      break;
+    case YOU_WIN:
+      strcpy(msg->message, "You won!");
+      break;
+    case OTHER_PLAYER_WIN:
+      strcat(msg->data, " won!");
+      strcpy(msg->message, msg->data);
+      break;
+    case NO_ROOM:
+      strcpy(msg->message, "No room has been created! Please create a new room!");
+      break;
+    case READY_SUCCESS:
+      break;
+    case UNREADY_SUCCESS:
+      break;
+    case ALL_PLAYERS_READY:
+      strcpy(msg->message, "All players are ready!");
+      break;
+    case SOMEONE_UNREADY:
+      strcpy(msg->message, "Someone is not ready!");
+      break;
+    case PLAYER_NOT_ENOUGH:
+      strcpy(msg->message, "Not enough players! Invite someone!");
+      break;
+    case NEW_PLAYER_JOINED:
+      strcpy(msg->message, msg->data);
+      break;
+    case SOMEONE_LEFT_GAME:
+      strcat(msg->data, " has left the game!");
+      strcpy(msg->message, msg->data);
+      break;
+    case ALL_PLAYERS_LEFT_GAME:
+      strcpy(msg->message, "All players have left the game. Game ends!");
+      break;
+    case RETURN_ROOM_SUCCESS:
+      strcpy(msg->message, "Return room success!");
+      break;
+    case DISCONNECTED:
+      strcpy(msg->message, "You have been disconnected!");
+      break;
     default:
       break;
     }
   }
 }
 
-void readMessageReponse(Response *msg){
-  if(msg->code != -1){
+void readMessageReponse(Response *msg)
+{
+  if (msg->code != -1)
+  {
     printf("%s\n", msg->message);
     switch (msg->code)
     {
@@ -170,7 +242,8 @@ void readMessageReponse(Response *msg){
   }
 }
 
-void setOpcodeRequest(Request *req, char *input){
+void setOpcodeRequest(Request *req, char *input)
+{
   char code[BUFF_SIZE], data[BUFF_SIZE];
 
   splitMessage(input, code, data);
@@ -223,7 +296,7 @@ void setOpcodeRequest(Request *req, char *input){
   else if (strcmp(code, "ACCEPT_INVITE_REQUEST") == 0)
     req->code = ACCEPT_INVITE_REQUEST;
   else if (strcmp(code, "DECLINE_INVITE_REQUEST") == 0)
-    req->code = DECLINE_INVITE_REQUEST; 
+    req->code = DECLINE_INVITE_REQUEST;
   else if (strcmp(code, "EXIT_GAME") == 0)
     req->code = EXIT_GAME;
 }
@@ -231,7 +304,7 @@ void setOpcodeRequest(Request *req, char *input){
 int sendNum(int socket, int num, int size, int flags)
 {
   int n;
-  n = send(socket, (void*)&num, size, flags);
+  n = send(socket, (void *)&num, size, flags);
   if (n < 0)
     perror("Error: ");
   return n;
@@ -240,7 +313,7 @@ int sendNum(int socket, int num, int size, int flags)
 int recvNum(int socket, int num, int size, int flags)
 {
   int n;
-  n = recv(socket, (void*)&num, size, flags);
+  n = recv(socket, (void *)&num, size, flags);
   if (n < 0)
     perror("Error: ");
   return n;
