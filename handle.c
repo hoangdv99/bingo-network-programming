@@ -329,13 +329,13 @@ void outRoom(int clientfd, Request *req, Response *res)
             deleteRoom(room->id);
             return;
         }
-        room->host = room->player[1];
+        detelePlayerFromRoom(room, user);
+        room->host = room->player[0];
         res->code = NEW_HOST;
         setMessageResponse(res);
-        sendRes(room->player[room->playerAmount - 2]->clientfd, res, sizeof(Response), 0);
+        sendRes(room->player[0]->clientfd, res, sizeof(Response), 0);
     }
     detelePlayerFromRoom(room, user);
-
     sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
     strcat(buffer, " ");
     char id[3];
