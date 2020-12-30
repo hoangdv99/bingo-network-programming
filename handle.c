@@ -271,7 +271,7 @@ void join(int clientfd, Request *req, Response *res)
         else
         {
             insertPlayer(roomID, user);
-
+            printRoomPlayer(roomID);
             sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
             strcat(buffer, " ");
             char id[3];
@@ -307,6 +307,7 @@ void join(int clientfd, Request *req, Response *res)
             }
         }
     }
+    
 }
 
 //neu nguoi roi phong la host thi nguoi vao phong som nhat se thanh host va gui thong bao
@@ -328,10 +329,10 @@ void outRoom(int clientfd, Request *req, Response *res)
             deleteRoom(room->id);
             return;
         }
-        room->host = room->player[room->playerAmount - 1];
+        room->host = room->player[room->playerAmount - 2];
         res->code = NEW_HOST;
         setMessageResponse(res);
-        sendRes(room->player[room->playerAmount - 1]->clientfd, res, sizeof(Response), 0);
+        sendRes(room->player[room->playerAmount - 2]->clientfd, res, sizeof(Response), 0);
     }
     detelePlayerFromRoom(room, user);
 
@@ -362,7 +363,8 @@ void outRoom(int clientfd, Request *req, Response *res)
         setMessageResponse(res);
         sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
     }
-    printf("Host: %s\n", room->host->username);
+    // printf("Host: %s\n", room->host->username);
+    printRoomPlayer(room->id);
 }
 
 void exitGame(int clientfd, Request *req, Response *res)
