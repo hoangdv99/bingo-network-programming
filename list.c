@@ -276,13 +276,13 @@ int insertPlayer(int id, USER *player)
     if (room != NULL && room->playerAmount < ROOM_MAX)
     {
         player->status = INROOM;
-        // room->player[room->playerAmount] = player;
-        // room->playerAmount = room->playerAmount + 1;
-        for(int i = room->playerAmount; i >= 0; i--){
-            room->player[i+1] = room->player[i];
-        }
-        room->player[0] = player;
-        room->playerAmount++;
+        room->player[room->playerAmount] = player;
+        room->playerAmount = room->playerAmount + 1;
+        // for(int i = room->playerAmount; i >= 0; i--){
+        //     room->player[i+1] = room->player[i];
+        // }
+        // room->player[0] = player;
+        // room->playerAmount++;
         return 1;
     }
     return 0;

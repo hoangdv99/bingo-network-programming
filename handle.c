@@ -329,7 +329,7 @@ void outRoom(int clientfd, Request *req, Response *res)
             deleteRoom(room->id);
             return;
         }
-        room->host = room->player[room->playerAmount - 2];
+        room->host = room->player[1];
         res->code = NEW_HOST;
         setMessageResponse(res);
         sendRes(room->player[room->playerAmount - 2]->clientfd, res, sizeof(Response), 0);
