@@ -198,7 +198,7 @@ void *roomThreadFunc(void *arg)
         {
             printf("select error");
         }
-        else if (activity == 0)
+        else if (activity == 0) //time out
         {
             char leftPlayerUsername[50];
             strcpy(leftPlayerUsername, room->player[turn]->username);
@@ -207,7 +207,7 @@ void *roomThreadFunc(void *arg)
             sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
             FD_CLR(room->player[turn]->clientfd, &t_readfds);
             detelePlayerFromRoom(room, room->player[turn]);
-            deleteUserByClientfd(room->player[turn]->clientfd);
+            deleteUserByUsername(leftPlayerUsername);
             room->host = room->player[0];
             res->code = SOMEONE_LEFT_GAME;
             strcpy(res->data, leftPlayerUsername);
