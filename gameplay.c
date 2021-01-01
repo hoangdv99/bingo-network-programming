@@ -205,8 +205,9 @@ void *roomThreadFunc(void *arg)
             res->code = DISCONNECTED;
             setMessageResponse(res);
             sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
+            outRoom(room->player[turn]->clientfd, req, res);
             FD_CLR(room->player[turn]->clientfd, &t_readfds);
-            detelePlayerFromRoom(room, room->player[turn]);
+            //detelePlayerFromRoom(room, room->player[turn]);
             deleteUserByUsername(leftPlayerUsername);
             room->host = room->player[0];
             res->code = SOMEONE_LEFT_GAME;
@@ -380,6 +381,8 @@ void *roomThreadFunc(void *arg)
                     }
                     else if (req->code == TEST)
                     {
+                        bingo = 1;
+                        winner = room->player[i];
                     }
                     else
                     {
@@ -405,6 +408,9 @@ void *roomThreadFunc(void *arg)
             setMessageResponse(res);
             sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
         }
+        room->status = NOTSTARTED;
+        FD_CLR(room->player[i]->clientfd, &t_readfds);
+        FD_SET(room->player[i]->clientfd, &masterfds);
     }
     return (void *)0;
 }
