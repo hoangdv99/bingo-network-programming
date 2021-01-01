@@ -57,6 +57,17 @@ int logOut(int clientfd, char* username){
     return 1;
 }
 
+int logOutByX(int clientfd, char* username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createLogOutRequest("LOGOUT_BY_X", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
 int createRoom(int clientfd){
     Request *req = (Request *)malloc(sizeof(Request));
     createCreateRoomRequest("CREATE_ROOM", req);
@@ -177,6 +188,14 @@ void createDetailRequest(char *opcode, Request *req){
 }
 
 void createLogOutRequest(char *opcode, Request *req, char* username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createLogOutByXRequest(char *opcode, Request *req, char* username){
     char sendbuff[BUFF_SIZE];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
