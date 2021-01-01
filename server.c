@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     int port_number = atoi(port_char);
     struct sockaddr_in servaddr, clieaddr;
     ROOM *room;
+    USER *user;
     
     // Tao server socket
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -197,6 +198,13 @@ int main(int argc, char *argv[])
                         else
                         {
                             close_fd = 1;
+                            //Neu nguoi choi o trong phong thi xoa khoi phong
+                            room = findUserByClientfd(i);
+                            user = findUserByClientfd(i);
+                            if(user != NULL){
+                                outRoom(i, req, res);
+                            }
+                            deleteUserByClientfd(i);
                         }
                     }
                     if (close_fd == 1)
