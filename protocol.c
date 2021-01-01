@@ -278,7 +278,7 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = BINGO;
   else if (strcmp(code, "PICK") == 0)
     req->code = PICK;
-  else if (strcmp(code, "READY") == 0)
+  else if (strcmp(code, "READY1") == 0)
     req->code = READY1;
   else if (strcmp(code, "UNREADY") == 0)
     req->code = UNREADY;
