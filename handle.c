@@ -86,65 +86,6 @@ void logOut(int clientfd, Request *req, Response *res)
     sendRes(clientfd, res, sizeof(Response), 0);
 }
 
-void logOutByX(int clientfd, Request *req, Response *res)
-{
-    ROOM *room = findRoomByClientfd(clientfd);
-    USER *user = findUserByUsername(req->message);
-    detelePlayerFromRoom(room, user);
-
-    if (room->host == user)
-    {
-        if (room->playerAmount == 1){//phong chi co moi host thi xoa luon phong
-            room->playerAmount-=1;
-            res->code = LOGOUT_SUCCESS;
-            setMessageResponse(res);
-            sendRes(clientfd, res, sizeof(Response), 0);
-            detelePlayerFromRoom(room, user);
-            deleteRoom(room->id);
-            deleteUserByUsername(req->message);
-            printListUser();
-            return;
-        }
-        detelePlayerFromRoom(room, user);//phong co nhieu hon 1 nguoi chi chuyen quyen host cho nguoi dau
-        deleteUserByUsername(req->message);
-        printListUser();
-        room->host = room->player[0];
-        res->code = NEW_HOST;
-        setMessageResponse(res);
-        sendRes(room->player[0]->clientfd, res, sizeof(Response), 0);
-    }
-    detelePlayerFromRoom(room, user);
-    deleteUserByUsername(req->message);
-    printListUser();
-    res->code = LOGOUT_SUCCESS;
-    setMessageResponse(res);
-    sendRes(clientfd, res, sizeof(Response), 0);
-    //Send to other clients in room
-    char buffer[MAX_STRING];
-    sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
-    strcat(buffer, " ");
-    char id[3];
-    sprintf(id, "%d", room->id);
-    strcat(buffer, id);
-    strcat(buffer, " ");
-    for (int i = 0; i < room->playerAmount; i++)
-    {
-        strcat(buffer, room->player[i]->username);
-        if (i == room->playerAmount - 1)
-            break;
-        else
-        {
-            strcat(buffer, "-");
-        }
-    }
-    for (int i = 0; i < room->playerAmount; i++){
-        res->code = ROOM_CHANGED;
-        strcpy(res->data, buffer);
-        setMessageResponse(res);
-        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
-    }
-}
-
 void sendDetail(int clientfd, Request *req, Response *res)
 {
     FILE *f = fopen("game_rule.txt", "r");
@@ -512,6 +453,7 @@ void ready(int clientfd, Request *req, Response *res)
     ROOM *room = findRoomByClientfd(clientfd);
 
     user->status = READY;
+    printf("\n%d", user->status);
     res->code = READY_SUCCESS;
     strcpy(res->data, user->username);
     setMessageResponse(res);

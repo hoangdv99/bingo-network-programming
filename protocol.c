@@ -252,8 +252,6 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = DETAIL;
   else if (strcmp(code, "LOGOUT") == 0)
     req->code = LOGOUT;
-  else if (strcmp(code, "LOGOUT_BY_X") == 0)
-    req->code = LOGOUT_BY_X;
   else if (strcmp(code, "CREATE_ROOM") == 0)
     req->code = CREATE_ROOM;
   else if (strcmp(code, "QUICKJOIN") == 0)

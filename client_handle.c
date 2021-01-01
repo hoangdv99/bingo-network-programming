@@ -59,7 +59,7 @@ int logOut(int clientfd, char* username){
 
 int logOutByX(int clientfd, char* username){
     Request *req = (Request *)malloc(sizeof(Request));
-    createLogOutRequest("LOGOUT_BY_X", req, username);
+    createLogOutRequest("CLOSE", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -148,6 +148,28 @@ int backClient(int clientfd, char *username){
 int kickClient(int clientfd, char *username){
     Request *req = (Request *)malloc(sizeof(Request));
     createKickRequest("KICK", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int readyClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createKickRequest("READY1", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int unReadyClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createKickRequest("UNREADY", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -260,6 +282,22 @@ void createBackClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createKickRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createReadyClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createUnReadyClientRequest(char *opcode, Request *req, char *username){
     char sendbuff[BUFF_SIZE];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");

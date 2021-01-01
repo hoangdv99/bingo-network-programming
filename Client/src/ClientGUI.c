@@ -407,11 +407,11 @@ void on_btn_room_ready_clicked(GtkButton *button, app_widgets *app_wdgts)
     strcpy(tmp, gtk_button_get_label(app_wdgts->w_btn_room_ready));
     if (strcmp(tmp, READY) == 0)
     {
-        gtk_button_set_label(app_wdgts->w_btn_room_ready, NOT_READY);
+        readyClient(app_wdgts->serverfd , app_wdgts->currUser);
     }
     else
     {
-        gtk_button_set_label(app_wdgts->w_btn_room_ready, READY);
+        unReadyClient(app_wdgts->serverfd , app_wdgts->currUser);
     }
 }
 
@@ -671,7 +671,6 @@ gboolean handle_res(app_widgets *widgets)
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case NEW_HOST:
-        printf("\nTest");
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_start));
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), TRUE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), TRUE);
@@ -691,8 +690,11 @@ gboolean handle_res(app_widgets *widgets)
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
-    case EXIT_GAME_SUCCESS:
-
+    case READY_SUCCESS:
+        gtk_button_set_label(widgets->w_btn_room_ready, NOT_READY);
+        break;
+    case UNREADY_SUCCESS:
+        gtk_button_set_label(widgets->w_btn_room_ready, READY);
         break;
     default:
         break;
