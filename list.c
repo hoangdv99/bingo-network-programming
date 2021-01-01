@@ -1,6 +1,6 @@
 #include "list.h"
 #include "helper.h"
-#define ROOM_MAX 100
+#define ROOM_MAX 10
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -134,7 +134,7 @@ void printListUser()
     USER *ptr = userListHead;
     while (ptr != NULL)
     {
-        printf("%s %d\n", ptr->username, ptr->clientfd);
+        printf("Name: %s-Clientfd: %d\n", ptr->username, ptr->clientfd);
         ptr = ptr->next;
     }
 }
@@ -381,7 +381,7 @@ void printListRoom(){
     ROOM *ptr = roomListHead;
     while (ptr != NULL)
     {
-        printf("%d-%s-%d\n", ptr->id, ptr->host->username, ptr->playerAmount);
+        printf("Room list: id:%d-host:%s-player amount:%d\n", ptr->id, ptr->host->username, ptr->playerAmount);
         printRoomPlayer(ptr->id);
         ptr = ptr->next;
     }
