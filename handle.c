@@ -29,6 +29,7 @@ void signUp(int clientfd, Request *req, Response *res)
     }
     insertAcc(username, password, 1);
     writeToAccountFile();
+    insertUser(username, clientfd);
     res->code = REGISTER_SUCCESS;
     setMessageResponse(res);
     sendRes(clientfd, res, sizeof(Response), 0);
