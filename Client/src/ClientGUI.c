@@ -74,7 +74,7 @@ typedef struct
     int currentWindow;
     char *currUser;
     int serverfd;
-    Response *res;
+    Response res;
     GtkEntry *w_entry_menu_log_user, *w_entry_lobby_search, *w_entry_room_user, *w_entry_menu_log_pas, *w_entry_menu_reg_user, *w_entry_menu_reg_pas, *w_entry_menu_reg_con_pas;
     GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite, *w_lbl_room_id;
     GtkStack *w_stack_container, *w_stack_room, *w_stack_playing, *w_stack_menu;
@@ -509,7 +509,13 @@ static void load_css(void)
 
 gboolean handle_res(app_widgets *widgets)
 {
-    Response *res = widgets->res;
+    Response *res = &(widgets->res);
+    if (strcmp("", res->data) != 0)
+        {
+            printf("\nCode: %d\nMessage: %s\nData: %s\n", res->code, res->message, res->data);
+        }
+        else
+            printf("\nCode: %d\nMessage: %s\n", res->code, res->message);
     switch (res->code)
     {
     case SYNTAX_ERROR:
@@ -705,7 +711,7 @@ void *recv_handler(void *app_widget)
 {
     int serverfd;
     int rcvBytes;
-    Response *res = (Response *)malloc(sizeof(Response));
+    //Response *res = (Response *)malloc(sizeof(Response));
     pthread_detach(pthread_self());
     app_widgets *widgets = (app_widgets *)app_widget;
     serverfd = widgets->serverfd;
@@ -719,12 +725,12 @@ void *recv_handler(void *app_widget)
             // perror("\nError: ");
             // break;
         }
-        if (strcmp("", res->data) != 0)
+        if (strcmp("", widgets->res.data) != 0)
         {
-            printf("\nCode: %d\nMessage: %s\nData: %s\n", res->code, res->message, res->data);
+            printf("\nCode: %d\nMessage: %s\nData: %s\n", widgets->res.code, widgets->res.message, widgets->res.data);
         }
         else
-            printf("\nCode: %d\nMessage: %s\n", res->code, res->message);
+            printf("\nCode: %d\nMessage: %s\n", widgets->res.code, widgets->res.message);
         g_idle_add((GSourceFunc)handle_res, widgets);
         pthread_mutex_lock(&lock);
         pthread_mutex_unlock(&lock);
