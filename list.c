@@ -15,7 +15,6 @@ void printListAccount()
     }
 }
 
-
 void insertAcc(char* username, char *password, int status){
     ACCOUNT *acc = (ACCOUNT*)malloc(sizeof(ACCOUNT));
     strcpy(acc->username, username);
