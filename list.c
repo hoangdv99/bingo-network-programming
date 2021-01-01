@@ -235,8 +235,12 @@ void insertRoom(ROOM *room)
     if(roomListHead == NULL){
         roomListHead = room;
     }else{
-        room->next = roomListHead;
-        roomListHead = room;
+        ROOM *curRoom =  roomListHead;
+        while (curRoom->next != NULL)
+        {
+            curRoom = curRoom->next;
+        } 
+        curRoom->next = room;
     }
 }
 
