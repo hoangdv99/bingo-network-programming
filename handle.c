@@ -427,25 +427,14 @@ void outRoom(int clientfd, Request *req, Response *res)
     printRoomPlayer(room->id);
 }
 
-void exitGame(int clientfd, Request *req, Response *res)
+void closeGame(int clientfd, Request *req, Response *res)
 {
     ROOM *room = findRoomByClientfd(clientfd);
-    USER *user = findUserByClientfd(clientfd);
 
-    detelePlayerFromRoom(room, user);
-    deleteUserByClientfd(clientfd);
-    printRoomPlayer(room->id);
-    printListUser();
-    res->code = EXIT_GAME_SUCCESS;
-    strcpy(res->data, user->username);
-    setMessageResponse(res);
-    if (room != NULL)
-    {
-        for (int i = 0; i < room->playerAmount; i++)
-        {
-            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
-        }
+    if(room != NULL){
+        outRoom(clientfd, req, res);
     }
+    deleteUserByClientfd(clientfd);
 }
 
 //ACCEPT_INVITE hoang

@@ -310,6 +310,7 @@ void splitHostName(char *input, char *hostName){
     hostName[hostNameLength] = '\0';
 }
 
+//hoang test
 // #include "client_handle.h"
 // #define BUFF_SIZE 255
 
@@ -420,7 +421,7 @@ void splitHostName(char *input, char *hostName){
 //     // printf("Received string with length : %s\n",res->message);
 // }
 
-// void exitGameClie(int clientfd, Request *req, Response *res){
+// void closeGameClie(int clientfd, Request *req, Response *res){
 //     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
 //     // printf("Sent %d bytes to server\n", n_sent);
 //     // printf("Waiting for reply\n");

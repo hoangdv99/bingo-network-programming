@@ -198,7 +198,7 @@ void *roomThreadFunc(void *arg)
         {
             printf("select error");
         }
-        else if (activity == 0)
+        else if (activity == 0) //time out
         {
             char leftPlayerUsername[50];
             strcpy(leftPlayerUsername, room->player[turn]->username);
@@ -207,7 +207,7 @@ void *roomThreadFunc(void *arg)
             sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
             FD_CLR(room->player[turn]->clientfd, &t_readfds);
             detelePlayerFromRoom(room, room->player[turn]);
-            deleteUserByClientfd(room->player[turn]->clientfd);
+            deleteUserByUsername(leftPlayerUsername);
             room->host = room->player[0];
             res->code = SOMEONE_LEFT_GAME;
             strcpy(res->data, leftPlayerUsername);
@@ -249,16 +249,14 @@ void *roomThreadFunc(void *arg)
                     printf("Receive data in socket %d\n", sd);
                     int valread = recv(sd, req, sizeof(Request), 0);
                     printf("%d\n", req->code);
-                    if (valread == 0 || req->code == EXIT_GAME)
+                    if (valread == 0 || req->code == CLOSE)
                     {
                         //Somebody disconnected , get his details and print
-                        //code
                         char leftPlayerUsername[50];
-                        strcpy(leftPlayerUsername, room->player[turn]->username);
-
-                        FD_CLR(room->player[turn]->clientfd, &t_readfds);
-                        detelePlayerFromRoom(room, room->player[turn]);
-                        deleteUserByUsername(room->player[turn]->username);
+                        strcpy(leftPlayerUsername, room->player[i]->username);
+                        outRoom(room->player[i]->clientfd, req, res);
+                        FD_CLR(room->player[i]->clientfd, &t_readfds);
+                        deleteUserByUsername(room->player[i]->username);
 
                         res->code = SOMEONE_LEFT_GAME;
                         strcpy(res->data, leftPlayerUsername);
@@ -281,10 +279,12 @@ void *roomThreadFunc(void *arg)
                             }
                             return (void *)0;
                         }
-                        if (turn == room->playerAmount - 1)
-                            turn = 0;
-                        else
-                            turn++;
+                        if(i == turn){
+                            if (turn == room->playerAmount - 1)
+                                turn = 0;
+                            else
+                                turn++;
+                        }
                         printf(" timed out.  Bravo[%d] turn\n", room->player[turn]->clientfd);
                         remain_time = REMAIN_TIME;
                         continue;
