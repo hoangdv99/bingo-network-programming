@@ -186,8 +186,8 @@ int main(int argc, char const *argv[])
         case DECLINE_INVITE:
             declineInviteClie(sockfd, req, res);
             break;
-        case EXIT_GAME:
-            exitGameClie(sockfd, req, res);
+        case CLOSE:
+            closeGameClie(sockfd, req, res);
             break;
         case READY1:
             readyClie(sockfd, req, res);

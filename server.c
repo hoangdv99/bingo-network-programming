@@ -188,8 +188,8 @@ int main(int argc, char *argv[])
                             case DECLINE_INVITE_REQUEST:
                                 declineInvite(i, req, res);
                                 break;
-                            case EXIT_GAME:
-                                exitGame(i, req, res);
+                            case CLOSE:
+                                closeGame(i, req, res);
                                 break;
                             default:
                                 break;
@@ -199,9 +199,9 @@ int main(int argc, char *argv[])
                         {
                             close_fd = 1;
                             //Neu nguoi choi o trong phong thi xoa khoi phong
-                            room = findUserByClientfd(i);
+                            room = findRoomByClientfd(i);
                             user = findUserByClientfd(i);
-                            if(user != NULL){
+                            if(user != NULL && room != NULL){
                                 outRoom(i, req, res);
                             }
                             deleteUserByClientfd(i);

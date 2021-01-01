@@ -132,11 +132,6 @@ void setMessageResponse(Response *msg)
     case BE_KICKED:
       strcpy(msg->message, "You are be kicked!");
       break;
-    case EXIT_GAME_SUCCESS:
-      strcat(msg->data, " exited!");
-      strcpy(msg->message, "");
-      strcat(msg->message, msg->data);
-      break;
     case GAME_START:
       strcpy(msg->message, "Game started!");
       break;
@@ -275,8 +270,8 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = ACCEPT_INVITE;
   else if (strcmp(code, "DECLINE_INVITE") == 0)
     req->code = DECLINE_INVITE;
-  else if (strcmp(code, "EXIT_GAME") == 0)
-    req->code = EXIT_GAME;
+  else if (strcmp(code, "CLOSE") == 0)
+    req->code = CLOSE;
   else if (strcmp(code, "PLAY") == 0)
     req->code = PLAY;
   else if (strcmp(code, "BINGO") == 0)
@@ -297,8 +292,6 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = ACCEPT_INVITE_REQUEST;
   else if (strcmp(code, "DECLINE_INVITE_REQUEST") == 0)
     req->code = DECLINE_INVITE_REQUEST;
-  else if (strcmp(code, "EXIT_GAME") == 0)
-    req->code = EXIT_GAME;
 }
 
 int sendNum(int socket, int num, int size, int flags)

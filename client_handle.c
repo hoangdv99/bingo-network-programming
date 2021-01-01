@@ -402,7 +402,7 @@ void acceptInviteClie(int clientfd, Request *req, Response *res){
     // printf("Received string with length : %s\n",res->message);
 }
 
-void exitGameClie(int clientfd, Request *req, Response *res){
+void closeGameClie(int clientfd, Request *req, Response *res){
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     // printf("Sent %d bytes to server\n", n_sent);
     // printf("Waiting for reply\n");
