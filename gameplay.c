@@ -231,10 +231,8 @@ void *roomThreadFunc(void *arg)
                 }
                 return (void *)0;
             }
-            if (turn == room->playerAmount - 1)
+            if (turn == room->playerAmount)
                 turn = 0;
-            else
-                turn++;
             printf(" timed out.  Bravo[%d] turn\n", room->player[turn]->clientfd);
             remain_time = REMAIN_TIME;
             continue;
