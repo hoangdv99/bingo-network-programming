@@ -436,6 +436,7 @@ void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_playing_quit_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
+    logOutByX(app_wdgts->serverfd, app_wdgts->currUser);
     app_wdgts->currentWindow = app_wdgts->currentWindow - 2;
     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
 }
