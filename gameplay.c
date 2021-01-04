@@ -50,6 +50,9 @@ void initGame(ROOM *room)
         }
     }
     printf("Board generated!\n");
+    for (int i = 0; i < SIZE*SIZE; i++) {
+        room->pickedNumbers[i] = 0;
+    }
 }
 
 int pickNumber(ROOM *room, int number)
@@ -88,7 +91,12 @@ int checkBingo(ROOM *room, USER *user) //return 1 if bingo
     int sum_row, sum_col;
     int cross_1 = 0;
     int cross_2 = 0;
-
+    for (j = 0; j < SIZE; j++) {
+        for (k = 0; k < SIZE; k++) {
+            printf("%d\t", user->board[j][k]);
+        }
+        printf("\n");
+    }
     for (j = 0; j < SIZE; j++)
     {
         sum_row = 0;
@@ -107,11 +115,15 @@ int checkBingo(ROOM *room, USER *user) //return 1 if bingo
                 cross_2 += user->board[j][k];
             }
         }
-        if ((sum_col == 0) || (sum_row == 0) || (cross_1 == 0) || (cross_2 == 0))
+        if ((sum_col == 0) || (sum_row == 0))
         {
             printf("Player %s BINGO\n", user->username);
             return 1;
         }
+    }
+    if ( (cross_1 == 0) || (cross_2 == 0) ) {
+        printf("Player %s BINGO\n", user->username);
+        return 1;
     }
     return 0;
 }
@@ -248,14 +260,16 @@ void *roomThreadFunc(void *arg)
                     printf("Receive data in socket %d\n", sd);
                     int valread = recv(sd, req, sizeof(Request), 0);
                     printf("%d\n", req->code);
-                    if (valread == 0 || req->code == CLOSE)
+                    if (valread == 0 || req->code == CLOSE || req->code == QUIT)
                     {
                         //Somebody disconnected , get his details and print
                         char leftPlayerUsername[50];
                         strcpy(leftPlayerUsername, room->player[i]->username);
                         outRoom(room->player[i]->clientfd, req, res);
                         FD_CLR(room->player[i]->clientfd, &t_readfds);
-                        deleteUserByUsername(room->player[i]->username);
+                        if(req->code == CLOSE || valread == 0){
+                            deleteUserByUsername(room->player[i]->username);
+                        }
 
                         res->code = SOMEONE_LEFT_GAME;
                         strcpy(res->data, leftPlayerUsername);
@@ -381,6 +395,7 @@ void *roomThreadFunc(void *arg)
                         bingo = 1;
                         winner = room->player[i];
                     }
+
                     else
                     {
                         printf("error!!!\n");
