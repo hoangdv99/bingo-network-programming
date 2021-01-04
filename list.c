@@ -338,6 +338,7 @@ void printRoomPlayer(int roomID)
 
 int countRoom()
 {
+    /*
     int count = 0;
     ROOM *curr = roomListHead;
     if (curr == NULL)
@@ -350,6 +351,22 @@ int countRoom()
         {
             curr = curr->next;
             count++;
+        }
+    }
+    return 0;//Not necessary but still need to avoid warning
+    */
+    int newId[11];
+    ROOM *curr = roomListHead;
+    if (curr == NULL)
+        return 0;
+    while (curr != NULL)
+    {   
+        newId[curr->id - 1] = 1; 
+        curr = curr->next;
+    }
+    for(int i = 0; i < 10; i++) {
+        if(newId[i] != 1) {
+            return i;
         }
     }
     return 0;//Not necessary but still need to avoid warning

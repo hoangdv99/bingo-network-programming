@@ -574,12 +574,9 @@ void startGame(int sockfd, int clientfd, Request *req, Response *res)
 }
 
 void returnRoom(int clientfd, Request *req, Response *res){
-    ROOM *room = findRoomByClientfd(clientfd);
+    USER *user = findUserByClientfd(clientfd);
+    user->status = INROOM;
     res->code = RETURN_ROOM_SUCCESS;
     setMessageResponse(res);
-    for (int i = 0; i < room->playerAmount; i++)
-    {
-        room->player[i]->status = INROOM;
-        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
-    }
+    sendRes(clientfd, res, sizeof(Response), 0);
 }
