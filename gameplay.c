@@ -260,7 +260,7 @@ void *roomThreadFunc(void *arg)
                     printf("Receive data in socket %d\n", sd);
                     int valread = recv(sd, req, sizeof(Request), 0);
                     printf("%d\n", req->code);
-                    if (valread == 0 || req->code == CLOSE || req->code == QUIT)
+                    if (valread == 0 || req->code == CLOSE)
                     {
                         //Somebody disconnected , get his details and print
                         char leftPlayerUsername[50];
@@ -290,6 +290,43 @@ void *roomThreadFunc(void *arg)
                                 FD_CLR(room->player[i]->clientfd, &t_readfds);
                                 FD_SET(room->player[i]->clientfd, &masterfds);
                             }
+                            room->status = NOTSTARTED;
+                            return (void *)0;
+                        }
+                        if(i == turn){
+                            if (turn == room->playerAmount)
+                                turn = 0;
+                        }
+                        printf(" timed out.  Bravo[%d] turn\n", room->player[turn]->clientfd);
+                        remain_time = REMAIN_TIME;
+                        continue;
+                    }
+                    else if(req->code == QUIT){
+                        FD_CLR(room->player[i]->clientfd, &t_readfds);
+                        FD_SET(room->player[i]->clientfd, &masterfds);
+                        char leftPlayerUsername[50];
+                        strcpy(leftPlayerUsername, room->player[i]->username);
+                        outRoom(room->player[i]->clientfd, req, res);
+                        res->code = SOMEONE_LEFT_GAME;
+                        strcpy(res->data, leftPlayerUsername);
+                        setMessageResponse(res);
+
+                        for (int i = 0; i < room->playerAmount; i++)
+                        {
+                            sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                        }
+
+                        if (room->playerAmount == 1)
+                        {
+                            res->code = ALL_PLAYERS_LEFT_GAME;
+                            setMessageResponse(res);
+                            for (int i = 0; i < room->playerAmount; i++)
+                            {
+                                sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+                                FD_CLR(room->player[i]->clientfd, &t_readfds);
+                                FD_SET(room->player[i]->clientfd, &masterfds);
+                            }
+                            room->status = NOTSTARTED;
                             return (void *)0;
                         }
                         if(i == turn){
