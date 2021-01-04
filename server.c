@@ -180,6 +180,7 @@ int main(int argc, char *argv[])
                                 startGame(sockfd, i, req, res);
                                 break;
                             case RETURN_ROOM:
+                                printf("\nHello");
                                 returnRoom(i, req, res);
                                 break;
                             case ACCEPT_INVITE_REQUEST:

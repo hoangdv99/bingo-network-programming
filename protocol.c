@@ -156,8 +156,8 @@ void setMessageResponse(Response *msg)
       strcpy(msg->message, "Wrong number. Please pick another!");
       break;
     case PICK_SUCCESS:
-      strcat(msg->data, " is picked!");
       strcpy(msg->message, msg->data);
+      strcat(msg->message, " is picked");
       break;
     case YOU_WIN:
       strcpy(msg->message, "You won!");

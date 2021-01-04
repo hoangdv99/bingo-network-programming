@@ -158,7 +158,7 @@ int kickClient(int clientfd, char *username){
 
 int readyClient(int clientfd, char *username){
     Request *req = (Request *)malloc(sizeof(Request));
-    createKickRequest("READY1", req, username);
+    createReadyClientRequest("READY1", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -169,7 +169,51 @@ int readyClient(int clientfd, char *username){
 
 int unReadyClient(int clientfd, char *username){
     Request *req = (Request *)malloc(sizeof(Request));
-    createKickRequest("UNREADY", req, username);
+    createUnReadyClientRequest("UNREADY", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int startGameClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createStartGameClientRequest("PLAY", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int pickClient(int clientfd, char *pickedNumber){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createPickClientRequest("PICK", req, pickedNumber);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int bingoClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createBingoClientRequest("BINGO", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
+
+int playingBackClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createBingoClientRequest("RETURN_ROOM", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -305,6 +349,37 @@ void createUnReadyClientRequest(char *opcode, Request *req, char *username){
     setOpcodeRequest(req, sendbuff);
 }
 
+void createStartGameClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createPickClientRequest(char *opcode, Request *req, char *pickedNumber){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, pickedNumber);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createBingoClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
+void createPlayingBackClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
 void splitRoomID(char *input, char *username, char *id){
     int i, usernameLength = 0, idLength = 0;
     for (i = 0; input[i] != '-'; i++){
