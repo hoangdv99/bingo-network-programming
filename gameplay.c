@@ -255,7 +255,7 @@ void *roomThreadFunc(void *arg)
                         strcpy(leftPlayerUsername, room->player[i]->username);
                         outRoom(room->player[i]->clientfd, req, res);
                         FD_CLR(room->player[i]->clientfd, &t_readfds);
-                        if(req->code != QUIT){
+                        if(req->code == CLOSE || valread == 0){
                             deleteUserByUsername(room->player[i]->username);
                         }
 
