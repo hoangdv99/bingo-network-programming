@@ -260,7 +260,7 @@ void *roomThreadFunc(void *arg)
                     printf("Receive data in socket %d\n", sd);
                     int valread = recv(sd, req, sizeof(Request), 0);
                     printf("%d\n", req->code);
-                    if (valread == 0 || req->code == CLOSE)
+                    if (valread == 0 || req->code == CLOSE || req->code == QUIT)
                     {
                         //Somebody disconnected , get his details and print
                         char leftPlayerUsername[50];
@@ -392,6 +392,7 @@ void *roomThreadFunc(void *arg)
                         bingo = 1;
                         winner = room->player[i];
                     }
+
                     else
                     {
                         printf("error!!!\n");
