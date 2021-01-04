@@ -472,3 +472,10 @@ void splitHostName(char *input, char *hostName){
 // void testClie(int clientfd, Request *req, Response *res){
 //     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
 // }
+// void testClie(int clientfd, Request *req, Response *res){
+//     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+// }
+
+// void quitGameClie(int clientfd, Request *req, Response *res){
+//     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+// }

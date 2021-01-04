@@ -27,6 +27,7 @@ typedef enum REQ_OPCODE{
     UNREADY,
     CHECK_READY,
     RETURN_ROOM,
+    QUIT,
     TEST
 }REQ_OPCODE; 
 

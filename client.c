@@ -145,6 +145,7 @@ int main(int argc, char const *argv[])
 //         memset(res->data, '\0', BUFF_SIZE); //clear buff in res->data
 //         memset(res->message, '\0', BUFF_SIZE); //clear buff in res->message
         
+<<<<<<< HEAD
 //         inputRequest(sendbuff);
 //         setOpcodeRequest(req, sendbuff);
 //         printf("\n%d-%s-%s\n", req->code, req->message, sendbuff);
@@ -217,6 +218,83 @@ int main(int argc, char const *argv[])
 //             break;
 //         }
 //     }
+=======
+        inputRequest(sendbuff);
+        setOpcodeRequest(req, sendbuff);
+        printf("\n%d-%s-%s\n", req->code, req->message, sendbuff);
+        switch (req->code)
+        {
+        case REGISTER:
+            registerAccount(sockfd, req, res);
+            break;
+        case LOGIN:
+            login(sockfd, req, res);
+            break;
+        case DETAIL:
+            seeDetail(sockfd, req, res);
+            break;
+        case LOGOUT:
+            logOut(sockfd, req, res);
+            break;
+        case CREATE_ROOM:
+            createRoom(sockfd, req, res);
+            break;
+        case JOIN:
+            joinClie(sockfd, req, res);
+            break;
+        case QUICKJOIN:
+            quickJoinClie(sockfd, req, res);
+            break;
+        case INVITE:
+            inviteClie(sockfd, req, res);
+            break;
+        case KICK:
+            kickClie(sockfd, req, res);
+            break;
+        case OUT_ROOM:
+            outRoomClie(sockfd, req, res);
+            break;
+        case ACCEPT_INVITE:
+            acceptInviteClie(sockfd, req, res);
+            break;
+        case DECLINE_INVITE:
+            declineInviteClie(sockfd, req, res);
+            break;
+        case CLOSE:
+            closeGameClie(sockfd, req, res);
+            break;
+        case READY1:
+            readyClie(sockfd, req, res);
+            break;
+        case UNREADY:
+            unreadyClie(sockfd, req, res);
+            break;
+        case CHECK_READY:
+            checkReadyClie(sockfd, req, res);
+            break;
+        case PLAY:
+            playClie(sockfd, req, res);
+            break;
+        case BINGO:
+            bingoClie(sockfd, req, res);
+            break;
+        case PICK:
+            pickClie(sockfd, req, res);
+            break;
+        case RETURN_ROOM:
+            returnRoomClie(sockfd, req, res);
+            break;
+        case QUIT:
+            quitGameClie(sockfd, req, res);
+            break;
+        case TEST:
+            testClie(sockfd, req, res);
+            break;
+        default:
+            break;
+        }
+    }
+>>>>>>> hoang2
     
 //     return 0;
 // }

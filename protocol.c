@@ -289,6 +289,8 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = CHECK_READY;
   else if (strcmp(code, "RETURN_ROOM") == 0)
     req->code = RETURN_ROOM;
+  else if (strcmp(code, "QUIT") == 0)
+    req->code = QUIT;
   else if (strcmp(code, "TEST") == 0)
     req->code = TEST;
   else if (strcmp(code, "ACCEPT_INVITE_REQUEST") == 0)
