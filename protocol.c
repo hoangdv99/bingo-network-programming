@@ -2,6 +2,7 @@
 #include "protocol.h"
 #include "helper.h"
 #define BUFF_SIZE 255
+#define REMAIN_TIME 30
 
 int recvReq(int socket, Request *buff, int size, int flags)
 {
@@ -133,7 +134,7 @@ void setMessageResponse(Response *msg)
       strcpy(msg->message, "You are be kicked!");
       break;
     case GAME_START:
-      strcpy(msg->message, "Game started!");
+      strcpy(msg->message, "Game started! Each turn has a duration of 30 seconds..");
       break;
     case YOUR_TURN:
       strcpy(msg->message, "Your turn!");
