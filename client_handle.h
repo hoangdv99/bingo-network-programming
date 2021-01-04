@@ -80,5 +80,6 @@ void splitHostName(char *input, char *hostName);
 // void bingoClie(int clientfd, Request *req, Response *res);
 // void pickClie(int clientfd, Request *req, Response *res);
 // void returnRoomClie(int clientfd, Request *req, Response *res);
+// void quitGameClie(int clientfd, Request *req, Response *res);
 // void testClie(int clientfd, Request *req, Response *res);
 // #endif
