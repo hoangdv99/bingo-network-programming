@@ -117,7 +117,7 @@ static void load_css(void);
 gboolean showWindow(show_window *showWindow);
 show_window *setShowW(char *mes, GtkLabel *label, GtkWidget *window, void *data);
 void *recv_handler(void *app_widget);
-
+pthread_mutex_t lock;
 int clientGUI(int serverfd)
 {
     app_widgets *widgets;
@@ -465,9 +465,9 @@ gboolean on_window_reader_delete_event(GtkWidget *widget, GdkEvent *event, gpoin
     return TRUE;
 }
 
-void on_window_main_destroy(/*GtkWidget *widget, GdkEvent *event, gpointer data*/)
+void on_window_main_destroy(GtkWidget *widget, app_widgets *data)
 {
-    //logOut(data->serverfd, data->currUser);
+    logOutByX(data->serverfd, data->currUser);
     gtk_main_quit();
 }
 
@@ -697,6 +697,7 @@ gboolean handle_res(app_widgets *widgets)
     default:
         break;
     }
+    pthread_mutex_unlock(&lock);
     return FALSE;
 }
 
@@ -710,6 +711,7 @@ void *recv_handler(void *app_widget)
     serverfd = widgets->serverfd;
     while (1)
     {
+        pthread_mutex_lock(&lock);
         rcvBytes = recvRes(serverfd, res, sizeof(Response), 0);
         widgets->res = res;
         if (rcvBytes < 0)
@@ -724,6 +726,8 @@ void *recv_handler(void *app_widget)
         else
             printf("\nCode: %d\nMessage: %s\n", res->code, res->message);
         g_idle_add((GSourceFunc)handle_res, widgets);
+        pthread_mutex_lock(&lock);
+        pthread_mutex_unlock(&lock);
     }
     close(serverfd);
 }

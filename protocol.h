@@ -10,6 +10,7 @@ typedef enum REQ_OPCODE{
     LOGIN,
     DETAIL,
     LOGOUT,
+    LOGOUT_BY_X,
     CREATE_ROOM,
     INVITE,
     ACCEPT_INVITE_REQUEST,

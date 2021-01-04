@@ -19,6 +19,7 @@ typedef struct THREAD_DATA{
 void signUp(int clientfd, Request *req, Response* res);
 void logIn(int clientfd, Request *req, Response *res);
 void logOut(int clientfd, Request *req, Response *res);
+void logOutByX(int clientfd, Request *req, Response *res);
 void sendDetail(int clientfd, Request *req, Response *res);
 void createRoom(int clientfd, Request *req, Response *res);
 void quickjoin(int clientfd, Request *req, Response *res);
