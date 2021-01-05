@@ -208,15 +208,15 @@ void sendInvite(int clientfd, Request *req, Response *res)
 
 void kick(int clientfd, Request *req, Response *res)
 {
-    if (strcmp(req->message, "") == 0)
+    ROOM *room = findRoomByClientfd(clientfd);
+    USER *user = findUserByUsername(req->message);
+    if (strcmp(req->message, "") == 0 || strcmp(req->message, room->host->username) == 0)
     {
         res->code = KICK_FAIL;
         setMessageResponse(res);
         sendRes(clientfd, res, sizeof(Response), 0);
         return;
     }
-    ROOM *room = findRoomByClientfd(clientfd);
-    USER *user = findUserByUsername(req->message);
     detelePlayerFromRoom(room, user);
 
     char buffer[MAX_STRING];
