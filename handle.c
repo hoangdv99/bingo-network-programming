@@ -367,13 +367,68 @@ void outRoom(int clientfd, Request *req, Response *res)
     // printf("Host: %s\n", room->host->username);
     printRoomPlayer(room->id);
 }
+//giong ham outRoom, chi khac ko gui OUT_ROOM_SUCCESS cho thang ra khoi phong
+void outRoomNotSendRespond(int clientfd, Request *req, Response *res)
+{
+    ROOM *room = findRoomByClientfd(clientfd);
+    USER *user = findUserByClientfd(clientfd);
+    char buffer[MAX_STRING];
+
+    if (room->host == user)
+    {
+        if (room->playerAmount == 1){//phong chi co moi host thi xoa luon phong
+            room->playerAmount-=1;
+            //res->code = OUT_ROOM_SUCCESS;
+            //setMessageResponse(res);
+            //sendRes(clientfd, res, sizeof(Response), 0);
+            detelePlayerFromRoom(room, user);
+            deleteRoom(room->id);
+            return;
+        }
+        detelePlayerFromRoom(room, user);//phong co nhieu hon 1 nguoi chi chuyen quyen host cho nguoi dau
+        room->host = room->player[0];
+        res->code = NEW_HOST;
+        setMessageResponse(res);
+        sendRes(room->player[0]->clientfd, res, sizeof(Response), 0);
+    }
+    detelePlayerFromRoom(room, user);
+    sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
+    strcat(buffer, " ");
+    char id[3];
+    sprintf(id, "%d", room->id);
+    strcat(buffer, id);
+    strcat(buffer, " ");
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        strcat(buffer, room->player[i]->username);
+        if (i == room->playerAmount - 1)
+            break;
+        else
+        {
+            strcat(buffer, "-");
+        }
+    }
+    //res->code = OUT_ROOM_SUCCESS;
+    //strcpy(res->data, user->username);
+    //setMessageResponse(res);
+    //sendRes(clientfd, res, sizeof(Response), 0);
+    for (int i = 0; i < room->playerAmount; i++)
+    {
+        res->code = ROOM_CHANGED;
+        strcpy(res->data, buffer);
+        setMessageResponse(res);
+        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
+    }
+    // printf("Host: %s\n", room->host->username);
+    printRoomPlayer(room->id);
+}
 
 void closeGame(int clientfd, Request *req, Response *res)
 {
     ROOM *room = findRoomByClientfd(clientfd);
 
     if(room != NULL){
-        outRoom(clientfd, req, res);
+        outRoomNotSendRespond(clientfd, req, res);
     }
     deleteUserByClientfd(clientfd);
 }

@@ -617,6 +617,7 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
@@ -638,6 +639,7 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
@@ -662,6 +664,7 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
@@ -781,7 +784,9 @@ gboolean handle_res(app_widgets *widgets)
     case RETURN_ROOM_SUCCESS:
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
-
+        if (gtk_widget_get_visible(GTK_WIDGET(widgets->w_btn_room_ready))){
+            gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
+        }
         break;
     default:
         break;

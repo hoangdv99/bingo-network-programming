@@ -219,7 +219,7 @@ void *roomThreadFunc(void *arg)
             res->code = DISCONNECTED;
             setMessageResponse(res);
             sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
-            outRoom(room->player[turn]->clientfd, req, res);    
+            outRoomNotSendRespond(room->player[turn]->clientfd, req, res);    
             //detelePlayerFromRoom(room, room->player[turn]);
             deleteUserByUsername(leftPlayerUsername);
             room->host = room->player[0];
@@ -266,7 +266,7 @@ void *roomThreadFunc(void *arg)
                         //Somebody disconnected , get his details and print
                         char leftPlayerUsername[50];
                         strcpy(leftPlayerUsername, room->player[i]->username);
-                        outRoom(room->player[i]->clientfd, req, res);
+                        outRoomNotSendRespond(room->player[i]->clientfd, req, res);
                         FD_CLR(room->player[i]->clientfd, &t_readfds);
                         deleteUserByUsername(leftPlayerUsername);
                         res->code = SOMEONE_LEFT_GAME;
@@ -304,7 +304,7 @@ void *roomThreadFunc(void *arg)
                         FD_SET(room->player[i]->clientfd, &masterfds);
                         char leftPlayerUsername[50];
                         strcpy(leftPlayerUsername, room->player[i]->username);
-                        outRoom(room->player[i]->clientfd, req, res);
+                        outRoomNotSendRespond(room->player[i]->clientfd, req, res);
                         res->code = SOMEONE_LEFT_GAME;
                         strcpy(res->data, leftPlayerUsername);
                         setMessageResponse(res);
