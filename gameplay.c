@@ -141,7 +141,7 @@ void sendBoardData(ROOM *room, Request *req, Response *res)
         {
             for (int n = 0; n < SIZE; n++)
             {
-                sprintf(num, "%d", room->player[i]->board[m][n]);
+                sprintf(num, "%d", room->player[i]->board[n][m]);
                 strcat(boardString, num);
                 strcat(boardString, "-");
             }
@@ -373,6 +373,7 @@ void *roomThreadFunc(void *arg)
                             int pickedNumber = atoi(req->message);
                             if (pickNumber(room, pickedNumber) == 0)
                             {
+                                sprintf(res->data, "%d", pickedNumber);
                                 res->code = PICK_FAIL;
                                 setMessageResponse(res);
                                 sendRes(sd, res, sizeof(Response), 0);

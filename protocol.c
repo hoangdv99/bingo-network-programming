@@ -157,8 +157,8 @@ void setMessageResponse(Response *msg)
       strcpy(msg->message, "Wrong number. Please pick another!");
       break;
     case PICK_SUCCESS:
-      strcat(msg->data, " is picked!");
       strcpy(msg->message, msg->data);
+      strcat(msg->message, " is picked");
       break;
     case YOU_WIN:
       strcpy(msg->message, "You won!");
@@ -173,6 +173,7 @@ void setMessageResponse(Response *msg)
     case READY_SUCCESS:
       break;
     case UNREADY_SUCCESS:
+      strcpy(msg->message, "Unready successfully!");
       break;
     case ALL_PLAYERS_READY:
       strcpy(msg->message, "All players are ready!");
@@ -253,8 +254,6 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = DETAIL;
   else if (strcmp(code, "LOGOUT") == 0)
     req->code = LOGOUT;
-  else if (strcmp(code, "LOGOUT_BY_X") == 0)
-    req->code = LOGOUT_BY_X;
   else if (strcmp(code, "CREATE_ROOM") == 0)
     req->code = CREATE_ROOM;
   else if (strcmp(code, "QUICKJOIN") == 0)
@@ -281,7 +280,7 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = BINGO;
   else if (strcmp(code, "PICK") == 0)
     req->code = PICK;
-  else if (strcmp(code, "READY") == 0)
+  else if (strcmp(code, "READY1") == 0)
     req->code = READY1;
   else if (strcmp(code, "UNREADY") == 0)
     req->code = UNREADY;

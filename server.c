@@ -144,11 +144,6 @@ int main(int argc, char *argv[])
                             case LOGOUT:
                                 logOut(i, req, res);
                                 break;
-                            case LOGOUT_BY_X:
-                                printListRoom();
-                                logOutByX(i, req, res);
-                                printListRoom();
-                                break;
                             case CREATE_ROOM:
                                 createRoom(i, req, res);
                                 break;
@@ -185,6 +180,7 @@ int main(int argc, char *argv[])
                                 startGame(sockfd, i, req, res);
                                 break;
                             case RETURN_ROOM:
+                                printf("\nHello");
                                 returnRoom(i, req, res);
                                 break;
                             case ACCEPT_INVITE_REQUEST:
