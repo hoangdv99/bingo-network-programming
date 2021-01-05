@@ -516,31 +516,9 @@ void startGame(int sockfd, int clientfd, Request *req, Response *res)
 }
 
 void returnRoom(int clientfd, Request *req, Response *res){
-    char buffer[MAX_STRING];
-    ROOM *room = findRoomByClientfd(clientfd);
+    USER *user = findUserByClientfd(clientfd);
+    user->status = INROOM;
     res->code = RETURN_ROOM_SUCCESS;
-    
-    sprintf(buffer, "%d", room->playerAmount); //Format: playerAmount roomID username1-username2
-    strcat(buffer, " ");
-    char id[3];
-    sprintf(id, "%d", room->id);
-    strcat(buffer, id);
-    strcat(buffer, " ");
-    for (int i = 0; i < room->playerAmount; i++)
-    {
-        strcat(buffer, room->player[i]->username);
-        if (i == room->playerAmount - 1)
-            break;
-        else
-        {
-            strcat(buffer, "-");
-        }
-    }
-    strcpy(res->data, buffer);
-    for (int i = 0; i < room->playerAmount; i++)
-    {
-        room->player[i]->status = INROOM;
-        setMessageResponse(res);
-        sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
-    }
+    setMessageResponse(res);
+    sendRes(clientfd, res, sizeof(Response), 0);
 }

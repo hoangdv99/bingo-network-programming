@@ -435,7 +435,7 @@ void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 }
 
 void on_btn_playing_quit_clicked(GtkButton *button, app_widgets *app_wdgts)
-{
+{//chua viet lai theo ham quit moi
     logOutByX(app_wdgts->serverfd, app_wdgts->currUser);
     app_wdgts->currentWindow = app_wdgts->currentWindow - 2;
     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
@@ -782,27 +782,6 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
 
-        char playerAmount_RRS[MAX_STRING], usernameList_RRS[MAX_STRING], roomID_RRS[3], buffer_RRS[MAX_STRING];
-        splitPlayerAmountUsernameListRoomID(res->data, playerAmount_RRS, roomID_RRS, usernameList_RRS);
-        int amount_RRS = atoi(playerAmount_RRS);
-        strcpy(buffer_RRS, "ID: ");
-        strcat(buffer_RRS, roomID_RRS);
-        gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_RRS);
-        char *token_RRS;
-        token_RRS = (char *)malloc(sizeof(char) * MAX_STRING);
-        token_RRS = strtok(usernameList_RRS, "-");
-        for (int i = 0; i < 5; i++)
-        {
-            if (i < amount_RRS)
-            {
-                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_RRS);
-                token_RRS = strtok(NULL, "-");
-            }
-            else
-            {
-                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), "Empty");
-            }
-        }
         break;
     default:
         break;

@@ -173,6 +173,7 @@ void setMessageResponse(Response *msg)
     case READY_SUCCESS:
       break;
     case UNREADY_SUCCESS:
+      strcpy(msg->message, "Unready successfully!")
       break;
     case ALL_PLAYERS_READY:
       strcpy(msg->message, "All players are ready!");
