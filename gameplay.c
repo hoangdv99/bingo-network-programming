@@ -212,13 +212,14 @@ void *roomThreadFunc(void *arg)
         }
         else if (activity == 0) //time out
         {
+            FD_CLR(room->player[turn]->clientfd, &t_readfds);
+            FD_SET(room->player[turn]->clientfd, &masterfds);
             char leftPlayerUsername[50];
             strcpy(leftPlayerUsername, room->player[turn]->username);
             res->code = DISCONNECTED;
             setMessageResponse(res);
             sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
             outRoom(room->player[turn]->clientfd, req, res);
-            FD_CLR(room->player[turn]->clientfd, &t_readfds);
             //detelePlayerFromRoom(room, room->player[turn]);
             deleteUserByUsername(leftPlayerUsername);
             room->host = room->player[0];
@@ -267,9 +268,7 @@ void *roomThreadFunc(void *arg)
                         strcpy(leftPlayerUsername, room->player[i]->username);
                         outRoom(room->player[i]->clientfd, req, res);
                         FD_CLR(room->player[i]->clientfd, &t_readfds);
-                        if(req->code == CLOSE || valread == 0){
-                            deleteUserByUsername(room->player[i]->username);
-                        }
+                        deleteUserByUsername(leftPlayerUsername);
 
                         res->code = SOMEONE_LEFT_GAME;
                         strcpy(res->data, leftPlayerUsername);
