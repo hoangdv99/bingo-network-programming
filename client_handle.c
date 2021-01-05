@@ -221,6 +221,17 @@ int playingBackClient(int clientfd, char *username){
     printf("Waiting for reply\n");
     return 1;
 }
+
+int playingQuitClient(int clientfd, char *username){
+    Request *req = (Request *)malloc(sizeof(Request));
+    createBingoClientRequest("QUIT", req, username);
+    int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
+    if (n_sent < 0)
+        return n_sent;
+    printf("Sent %d bytes to server\n", n_sent);
+    printf("Waiting for reply\n");
+    return 1;
+}
 /*Create request*/
 
 void createLoginRequest(char *opcode, char *username, char *pass, Request *req){
@@ -380,6 +391,15 @@ void createPlayingBackClientRequest(char *opcode, Request *req, char *username){
     strcat(sendbuff, username);
     setOpcodeRequest(req, sendbuff);
 }
+
+void createPlayingQuitClientRequest(char *opcode, Request *req, char *username){
+    char sendbuff[BUFF_SIZE];
+    strcpy(sendbuff, opcode);
+    strcat(sendbuff, " ");
+    strcat(sendbuff, username);
+    setOpcodeRequest(req, sendbuff);
+}
+
 void splitRoomID(char *input, char *username, char *id){
     int i, usernameLength = 0, idLength = 0;
     for (i = 0; input[i] != '-'; i++){

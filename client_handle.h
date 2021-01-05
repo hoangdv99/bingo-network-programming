@@ -25,6 +25,7 @@ void createStartGameClientRequest(char *opcode, Request *req, char *username);
 void createPickClientRequest(char *opcode, Request *req, char *pickedNumber);
 void createBingoClientRequest(char *opcode, Request *req, char *username);
 void createPlayingBackClientRequest(char *opcode, Request *req, char *username);
+void createPlayingQuitClientRequest(char *opcode, Request *req, char *username);
 
 int login(int clientfd, char* username, char* password);
 int registerAccount(int clientfd, char* username, char* password, char* confirm_pass);
@@ -45,6 +46,7 @@ int startGameClient(int clientfd, char *username);
 int pickClient(int clientfd, char *pickedNumber);
 int bingoClient(int clientfd, char *username);
 int playingBackClient(int clientfd, char *username);
+int playingQuitClient(int clientfd, char *username);
 
 void splitRoomID(char *input, char *username, char *id);
 void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *roomID, char *usernameList);
