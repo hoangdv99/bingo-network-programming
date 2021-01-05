@@ -27,6 +27,7 @@ void join(int clientfd, Request *req, Response *res);
 void sendInvite(int clientfd, Request *req, Response *res);
 void kick(int clientfd, Request *req, Response *res);
 void outRoom(int clientfd, Request *req, Response *res);
+void outRoomNotSendRespond(int clientfd, Request *req, Response *res);
 void closeGame(int clientfd, Request *req, Response *res);
 void acceptInvite(int clientfd, Request *req, Response *res);
 void declineInvite(int clientfd, Request *req, Response *res);
