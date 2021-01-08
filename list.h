@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "protocol.h"
-#define PLAYER_MAX 100
+#define PLAYER_MAX 10
 #define SIZE 5
 #define ROOM_PLAYER_MAX 5
 #define ROOM_MAX 10
@@ -72,9 +72,10 @@ USER *findUserByClientfd(int clientfd);
 int changeUserStatus(int state, char *username); // Change status of a player - return player's state | 0 if that player doesn't exist
 USER *deleteUserByUsername(char *username);
 USER *deleteUserByClientfd(int clientfd);
+int countUser();
 
 // Room init
-void insertRoom(ROOM *room); // create a new room with host name and id - return 1 if success | 0 if fail
+int insertRoom(ROOM *room); // create a new room with host name and id - return 1 if success | 0 if fail
 ROOM *findRoom(int id);
 ROOM *findRoomByClientfd(int clientfd);             
 int insertPlayer(int id, USER *player);  // insert a player to a known room - return 1 if success | 0 if room is full

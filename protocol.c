@@ -200,6 +200,12 @@ void setMessageResponse(Response *msg)
     case DISCONNECTED:
       strcpy(msg->message, "You have been disconnected!");
       break;
+    case FULL_ROOM:
+      strcpy(msg->message, "Full of rooms!");
+      break;
+    case FULL_USER:
+      strcpy(msg->message, "Full of users!");
+      break;
     default:
       break;
     }
