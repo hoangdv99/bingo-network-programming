@@ -312,7 +312,7 @@ int quickJoin(USER *player)
     ROOM *room = roomListHead;
     while (room != NULL)
     {
-        if (room->playerAmount < ROOM_MAX)
+        if (room->playerAmount < ROOM_MAX && room->status == NOTSTARTED)
         {
             insertPlayer(room->id, player);
             return room->id;
