@@ -242,6 +242,7 @@ void *roomThreadFunc(void *arg)
                     FD_CLR(room->player[i]->clientfd, &t_readfds);
                     FD_SET(room->player[i]->clientfd, &masterfds);
                 }
+                room->status = NOTSTARTED;
                 return (void *)0;
             }
             if (turn == room->playerAmount)
