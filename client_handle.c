@@ -1,12 +1,12 @@
 // #include "client_handle.h"
 // #include "protocol.h"
 // #include "helper.h"
-// #define BUFF_SIZE 255
+// #define MAX_LENGTH 255
 
 // void inputRequest(char *sendbuff){
 //     printf("Please enter the message: ");
 //     fflush(stdin);
-//     fgets(sendbuff,BUFF_SIZE,stdin); //enter data
+//     fgets(sendbuff,MAX_LENGTH,stdin); //enter data
 //     sendbuff[strlen(sendbuff) - 1] = '\0';
 // }
 
@@ -158,7 +158,7 @@
 // /*Create request*/
 
 // void createLoginRequest(char *opcode, char *username, char *pass, Request *req){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -168,7 +168,7 @@
 // }
 
 // void createRegisterRequest(char *opcode, char *username, char *pass, char *confirm_pass, Request *req){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -180,7 +180,7 @@
 // }
  
 // void createDetailRequest(char *opcode, Request *req){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, "detail");
@@ -188,7 +188,7 @@
 // }
 
 // void createLogOutRequest(char *opcode, Request *req, char* username){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -196,7 +196,7 @@
 // }
 
 // void createLogOutByXRequest(char *opcode, Request *req, char* username){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -204,7 +204,7 @@
 // }
 
 // void createCreateRoomRequest(char *opcode, Request *req){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, "create_room");
@@ -212,7 +212,7 @@
 // }
 
 // void createQuickJoinClientRequest(char *opcode, Request *req){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, "quick_join");
@@ -220,7 +220,7 @@
 // }
 
 // void createInviteRequest(char *opcode, Request *req, char *username){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -228,7 +228,7 @@
 // }
 
 // void createJoinClientRequest(char *opcode, Request *req, char *roomID){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, roomID);
@@ -236,7 +236,7 @@
 // }
 
 // void createAcceptInviteClientRequest(char *opcode, Request *req, char *hostName){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, hostName);
@@ -244,7 +244,7 @@
 // }
 
 // void createDeclineInviteClientRequest(char *opcode, Request *req, char *hostName){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, hostName);
@@ -252,7 +252,7 @@
 // }
 
 // void createBackClientRequest(char *opcode, Request *req, char *username){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -260,7 +260,7 @@
 // }
 
 // void createKickRequest(char *opcode, Request *req, char *username){
-//     char sendbuff[BUFF_SIZE];
+//     char sendbuff[MAX_LENGTH];
 //     strcpy(sendbuff, opcode);
 //     strcat(sendbuff, " ");
 //     strcat(sendbuff, username);
@@ -312,12 +312,11 @@
 
 //hoang test
 #include "client_handle.h"
-#define BUFF_SIZE 255
 
 void inputRequest(char *sendbuff){
     //printf("Please enter the message: ");
     fflush(stdin);
-    fgets(sendbuff,BUFF_SIZE,stdin); //enter data
+    fgets(sendbuff,MAX_LENGTH,stdin); //enter data
     sendbuff[strlen(sendbuff) - 1] = '\0';
 }
 

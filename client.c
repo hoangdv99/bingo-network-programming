@@ -11,7 +11,7 @@
 // #include "protocol.h"
 // #include "helper.h"
 // #include "client_handle.h"
-// #define BUFF_SIZE 255
+// #define MAX_LENGTH 255
 
 // int clientGUI(int serverfd);
 
@@ -67,7 +67,6 @@
 #include "protocol.h"
 #include "helper.h"
 #include "client_handle.h"
-#define BUFF_SIZE 255
 
 //int clientGUI();
 
@@ -134,16 +133,16 @@ int main(int argc, char const *argv[])
     // Gio ta se giao tiep voi server qua clientSocket
     // Gui mot message den servser
     //char message[100];
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     //clientGUI();
     pthread_t tid;
 	pthread_create(&tid, NULL, &client_handler,(void *) &sockfd);
 
     while (1)
     {
-        memset(sendbuff, '\0', BUFF_SIZE); //initialize buffer
-        memset(res->data, '\0', BUFF_SIZE); //clear buff in res->data
-        memset(res->message, '\0', BUFF_SIZE); //clear buff in res->message
+        memset(sendbuff, '\0', MAX_LENGTH); //initialize buffer
+        memset(res->data, '\0', MAX_LENGTH); //clear buff in res->data
+        memset(res->message, '\0', MAX_LENGTH); //clear buff in res->message
         
         inputRequest(sendbuff);
         setOpcodeRequest(req, sendbuff);

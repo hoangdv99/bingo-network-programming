@@ -1,7 +1,6 @@
 #include <sys/socket.h>
 #include "protocol.h"
 #include "helper.h"
-#define BUFF_SIZE 255
 #define REMAIN_TIME 30
 
 int recvReq(int socket, Request *buff, int size, int flags)
@@ -151,14 +150,14 @@ void setMessageResponse(Response *msg)
       strcpy(msg->message, "Bingo yoooooooo!!");
       break;
     case BINGO_FAKE:
-      strcpy(msg->message, "Dont xiaoliz!");
+      strcpy(msg->message, "Do not lie!");
       break;
     case PICK_FAIL:
       strcpy(msg->message, "Wrong number. Please pick another!");
       break;
     case PICK_SUCCESS:
-      strcat(msg->data, " is picked!");
       strcpy(msg->message, msg->data);
+      strcat(msg->message, " is picked");
       break;
     case YOU_WIN:
       strcpy(msg->message, "You won!");
@@ -173,6 +172,7 @@ void setMessageResponse(Response *msg)
     case READY_SUCCESS:
       break;
     case UNREADY_SUCCESS:
+      strcpy(msg->message, "Unready successfully!");
       break;
     case ALL_PLAYERS_READY:
       strcpy(msg->message, "All players are ready!");
@@ -240,7 +240,7 @@ void readMessageReponse(Response *msg)
 
 void setOpcodeRequest(Request *req, char *input)
 {
-  char code[BUFF_SIZE], data[BUFF_SIZE];
+  char code[MAX_LENGTH], data[MAX_LENGTH];
 
   splitMessage(input, code, data);
   printf("\n%s-%s\n", code, data);
@@ -253,8 +253,6 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = DETAIL;
   else if (strcmp(code, "LOGOUT") == 0)
     req->code = LOGOUT;
-  else if (strcmp(code, "LOGOUT_BY_X") == 0)
-    req->code = LOGOUT_BY_X;
   else if (strcmp(code, "CREATE_ROOM") == 0)
     req->code = CREATE_ROOM;
   else if (strcmp(code, "QUICKJOIN") == 0)
@@ -281,7 +279,7 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = BINGO;
   else if (strcmp(code, "PICK") == 0)
     req->code = PICK;
-  else if (strcmp(code, "READY") == 0)
+  else if (strcmp(code, "READY1") == 0)
     req->code = READY1;
   else if (strcmp(code, "UNREADY") == 0)
     req->code = UNREADY;
@@ -297,6 +295,9 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = ACCEPT_INVITE_REQUEST;
   else if (strcmp(code, "DECLINE_INVITE_REQUEST") == 0)
     req->code = DECLINE_INVITE_REQUEST;
+  else{
+    req->code = -1;
+  }
 }
 
 int sendNum(int socket, int num, int size, int flags)

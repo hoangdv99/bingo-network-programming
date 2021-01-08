@@ -3,14 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define MAX_LENGTH 1024
+#define MAX_LENGTH 255
 
 typedef enum REQ_OPCODE{
     REGISTER,
     LOGIN,
     DETAIL,
     LOGOUT,
-    LOGOUT_BY_X,
     CREATE_ROOM,
     INVITE,
     ACCEPT_INVITE_REQUEST,

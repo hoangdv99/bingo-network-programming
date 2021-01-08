@@ -141,7 +141,7 @@ void sendBoardData(ROOM *room, Request *req, Response *res)
         {
             for (int n = 0; n < SIZE; n++)
             {
-                sprintf(num, "%d", room->player[i]->board[m][n]);
+                sprintf(num, "%d", room->player[i]->board[n][m]);
                 strcat(boardString, num);
                 strcat(boardString, "-");
             }
@@ -219,7 +219,11 @@ void *roomThreadFunc(void *arg)
             res->code = DISCONNECTED;
             setMessageResponse(res);
             sendRes(room->player[turn]->clientfd, res, sizeof(Response), 0);
+<<<<<<< HEAD
             outRoom(room->player[turn]->clientfd, req, res);
+=======
+            outRoomNotSendRespond(room->player[turn]->clientfd, req, res);    
+>>>>>>> 79b930d6ea0bbcc6c5dad90186ede38a773d24c5
             //detelePlayerFromRoom(room, room->player[turn]);
             deleteUserByUsername(leftPlayerUsername);
             room->host = room->player[0];
@@ -242,6 +246,7 @@ void *roomThreadFunc(void *arg)
                     FD_CLR(room->player[i]->clientfd, &t_readfds);
                     FD_SET(room->player[i]->clientfd, &masterfds);
                 }
+                room->status = NOTSTARTED;
                 return (void *)0;
             }
             if (turn == room->playerAmount)
@@ -266,10 +271,13 @@ void *roomThreadFunc(void *arg)
                         //Somebody disconnected , get his details and print
                         char leftPlayerUsername[50];
                         strcpy(leftPlayerUsername, room->player[i]->username);
-                        outRoom(room->player[i]->clientfd, req, res);
+                        outRoomNotSendRespond(room->player[i]->clientfd, req, res);
                         FD_CLR(room->player[i]->clientfd, &t_readfds);
                         deleteUserByUsername(leftPlayerUsername);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 79b930d6ea0bbcc6c5dad90186ede38a773d24c5
                         res->code = SOMEONE_LEFT_GAME;
                         strcpy(res->data, leftPlayerUsername);
                         setMessageResponse(res);
@@ -305,7 +313,7 @@ void *roomThreadFunc(void *arg)
                         FD_SET(room->player[i]->clientfd, &masterfds);
                         char leftPlayerUsername[50];
                         strcpy(leftPlayerUsername, room->player[i]->username);
-                        outRoom(room->player[i]->clientfd, req, res);
+                        outRoomNotSendRespond(room->player[i]->clientfd, req, res);
                         res->code = SOMEONE_LEFT_GAME;
                         strcpy(res->data, leftPlayerUsername);
                         setMessageResponse(res);
@@ -374,6 +382,7 @@ void *roomThreadFunc(void *arg)
                             int pickedNumber = atoi(req->message);
                             if (pickNumber(room, pickedNumber) == 0)
                             {
+                                sprintf(res->data, "%d", pickedNumber);
                                 res->code = PICK_FAIL;
                                 setMessageResponse(res);
                                 sendRes(sd, res, sizeof(Response), 0);

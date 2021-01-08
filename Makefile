@@ -27,7 +27,7 @@
 # 	rm -f *.o client server main test *~
 
 
-### hoang test
+## hoang test
 CFLAGS = -c -Wall
 CC = gcc
 LIBS =  -lm 

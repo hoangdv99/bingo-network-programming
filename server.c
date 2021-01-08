@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include "protocol.h"
 #include "handle.h"
-#define MAX_LENGTH 1024
 #define MAX_CLIENT 20
 fd_set masterfds;
 fd_set readfds;
@@ -144,11 +143,6 @@ int main(int argc, char *argv[])
                             case LOGOUT:
                                 logOut(i, req, res);
                                 break;
-                            case LOGOUT_BY_X:
-                                printListRoom();
-                                logOutByX(i, req, res);
-                                printListRoom();
-                                break;
                             case CREATE_ROOM:
                                 createRoom(i, req, res);
                                 break;
@@ -211,6 +205,8 @@ int main(int argc, char *argv[])
                             }
                             deleteUserByClientfd(i);
                         }
+                        free(req);
+                        free(res);
                     }
                     if (close_fd == 1)
                     {

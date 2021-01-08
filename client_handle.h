@@ -19,6 +19,13 @@
 // void createDeclineInviteClientRequest(char *opcode, Request *req, char *hostName);
 // void createBackClientRequest(char *opcode, Request *req, char *username);
 // void createKickRequest(char *opcode, Request *req, char *username);
+// void createReadyClientRequest(char *opcode, Request *req, char *username);
+// void createUnReadyClientRequest(char *opcode, Request *req, char *username);
+// void createStartGameClientRequest(char *opcode, Request *req, char *username);
+// void createPickClientRequest(char *opcode, Request *req, char *pickedNumber);
+// void createBingoClientRequest(char *opcode, Request *req, char *username);
+// void createPlayingBackClientRequest(char *opcode, Request *req, char *username);
+// void createPlayingQuitClientRequest(char *opcode, Request *req, char *username);
 
 // int login(int clientfd, char* username, char* password);
 // int registerAccount(int clientfd, char* username, char* password, char* confirm_pass);
@@ -33,6 +40,13 @@
 // int declineInviteClient(int clientfd, char *hostName);
 // int backClient(int clientfd, char *username);
 // int kickClient(int clientfd, char *username);
+// int readyClient(int clientfd, char *username);
+// int unReadyClient(int clientfd, char *username);
+// int startGameClient(int clientfd, char *username);
+// int pickClient(int clientfd, char *pickedNumber);
+// int bingoClient(int clientfd, char *username);
+// int playingBackClient(int clientfd, char *username);
+// int playingQuitClient(int clientfd, char *username);
 
 // void splitRoomID(char *input, char *username, char *id);
 // void splitPlayerAmountUsernameListRoomID(char *input, char *playerAmount, char *roomID, char *usernameList);

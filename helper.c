@@ -1,5 +1,4 @@
 #include "helper.h"
-#define MAX_LENGTH 2048
 void splitMessage(char *input, char *code, char *data)
 {
 	int i, codeLength = 0, dataLength = 0;

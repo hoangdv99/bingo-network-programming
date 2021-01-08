@@ -9,7 +9,7 @@
 #include <pthread.h>
 #define BUFF_SIZE 255
 
-#define MAX_STRING 256
+#define MAX_STRING 255
 #define NUMBER_CONTAINER 4
 #define TABLE_NUMBER 25
 #define ROOM_PLAYER 5
@@ -38,6 +38,8 @@
 #define LBL_INVITE "lbl_invite"
 #define LBL_MENU_TITLE "lbl_menu_title"
 #define LBL_ROOM_ID "lbl_room_id"
+#define LBL_PLAYING_INFO "lbl_playing_info"
+#define LBL_PLAYING_COUNTDOWN "lbl_playing_countdown"
 //ID Entry
 #define ENTRY_MENU_LOG_USER "entry_menu_log_user"
 #define ENTRY_LOBBY_SEARCH "entry_lobby_search"
@@ -76,10 +78,10 @@ typedef struct
     int serverfd;
     Response *res;
     GtkEntry *w_entry_menu_log_user, *w_entry_lobby_search, *w_entry_room_user, *w_entry_menu_log_pas, *w_entry_menu_reg_user, *w_entry_menu_reg_pas, *w_entry_menu_reg_con_pas;
-    GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite, *w_lbl_room_id;
+    GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite, *w_lbl_room_id, *w_lbl_playing_info, *w_lbl_playing_countdown;
     GtkStack *w_stack_container, *w_stack_room, *w_stack_playing, *w_stack_menu;
     GtkWidget *w_container_list[NUMBER_CONTAINER], *w_read_window, *w_err_window, *w_bingo_window, *w_invite_window, *w_container_menu_log, *w_container_menu_reg;
-    GtkToggleButton *w_tog_btn_table[TABLE_NUMBER], *w_tog_btn_player[ROOM_PLAYER];
+    GtkToggleButton *w_tog_btn_table[TABLE_NUMBER], *w_tog_btn_player[ROOM_PLAYER], *w_tog_btn_table_win[TABLE_NUMBER];
     GtkButton *w_btn_room_start, *w_btn_room_ready, *w_btn_room_kick, *w_btn_room_invite, *w_btn_playing_quit, *w_btn_playing_back;
     GtkTextBuffer *w_txt_buf;
 } app_widgets;
@@ -94,6 +96,7 @@ typedef struct
 
 char container_name[NUMBER_CONTAINER][MAX_STRING] = {"container_menu", "container_lobby", "container_room", "container_playing"};
 char tog_btn_table_name[TABLE_NUMBER][MAX_STRING] = {"tog_btn_table_0", "tog_btn_table_1", "tog_btn_table_2", "tog_btn_table_3", "tog_btn_table_4", "tog_btn_table_5", "tog_btn_table_6", "tog_btn_table_7", "tog_btn_table_8", "tog_btn_table_9", "tog_btn_table_10", "tog_btn_table_11", "tog_btn_table_12", "tog_btn_table_13", "tog_btn_table_14", "tog_btn_table_15", "tog_btn_table_16", "tog_btn_table_17", "tog_btn_table_18", "tog_btn_table_19", "tog_btn_table_20", "tog_btn_table_21", "tog_btn_table_22", "tog_btn_table_23", "tog_btn_table_24"};
+char tog_btn_table_name_win[TABLE_NUMBER][MAX_STRING] = {"tog_btn_table_25", "tog_btn_table_26", "tog_btn_table_27", "tog_btn_table_28", "tog_btn_table_29", "tog_btn_table_30", "tog_btn_table_31", "tog_btn_table_32", "tog_btn_table_33", "tog_btn_table_34", "tog_btn_table_35", "tog_btn_table_36", "tog_btn_table_37", "tog_btn_table_38", "tog_btn_table_39", "tog_btn_table_40", "tog_btn_table_41", "tog_btn_table_42", "tog_btn_table_43", "tog_btn_table_44", "tog_btn_table_45", "tog_btn_table_46", "tog_btn_table_47", "tog_btn_table_48", "tog_btn_table_49"};
 char tog_btn_player_name[ROOM_PLAYER][MAX_STRING] = {
     "tog_btn_player0",
     "tog_btn_player1",
@@ -103,8 +106,10 @@ char tog_btn_player_name[ROOM_PLAYER][MAX_STRING] = {
 };
 char btn_all_name[][MAX_STRING] = {"btn_bingo_ok", "btn_error_ok", "btn_menu_login", "btn_lobby_log_out", "btn_lobby_create", "btn_lobby_quick_join", "btn_lobby_join", "btn_room_back", "btn_playing_bingo", "btn_invite_accept", "btn_invite_decline", BTN_ROOM_START, BTN_ROOM_READY, BTN_ROOM_KICK, BTN_ROOM_INVITE, BTN_PLAYING_QUIT, BTN_PLAYING_BACK, "btn_menu_reg"};
 char entry_all_name[][MAX_STRING] = {ENTRY_MENU_LOG_USER, ENTRY_LOBBY_SEARCH, ENTRY_ROOM_SEARCH, ENTRY_MENU_LOG_PAS, ENTRY_MENU_REG_PAS, ENTRY_MENU_REG_USER, ENTRY_MENU_REG_CON_PAS};
-char label_all_name[][MAX_STRING] = {"lbl_menu_log_user", "lbl_menu_log_pas", "lbl_menu_reg_user", "lbl_menu_reg_pas", "lbl_menu_reg_con_pas", "lbl_room_id", "lbl_menu_reg", "lbl_playing_info", LBL_ERR, LBL_BINGO, LBL_INVITE};
+char label_all_name[][MAX_STRING] = {"lbl_menu_log_user", "lbl_menu_log_pas", "lbl_menu_reg_user", "lbl_menu_reg_pas", "lbl_menu_reg_con_pas", "lbl_room_id", "lbl_menu_reg", "lbl_playing_info", LBL_ERR, LBL_BINGO, LBL_INVITE, LBL_PLAYING_COUNTDOWN};
 char window_all_name[][MAX_STRING] = {WINDOW_READER, WINDOW_INVITE, WINDOW_NAME, WINDOW_BINGO, WINDOW_ERR, WINDOW_LOG, WINDOW_REG};
+int sec_expired;
+gboolean timeout_countdown_status; 
 
 GtkBuilder *builder;
 GtkWidget *window;
@@ -118,6 +123,8 @@ gboolean showWindow(show_window *showWindow);
 show_window *setShowW(char *mes, GtkLabel *label, GtkWidget *window, void *data);
 void *recv_handler(void *app_widget);
 pthread_mutex_t lock;
+gboolean label_update(GtkLabel *label);
+
 int clientGUI(int serverfd)
 {
     app_widgets *widgets;
@@ -174,6 +181,8 @@ int clientGUI(int serverfd)
     widgets->w_lbl_bingo = GTK_LABEL(gtk_builder_get_object(builder, LBL_BINGO));
     widgets->w_lbl_invite = GTK_LABEL(gtk_builder_get_object(builder, LBL_INVITE));
     widgets->w_lbl_room_id = GTK_LABEL(gtk_builder_get_object(builder, LBL_ROOM_ID));
+    widgets->w_lbl_playing_info = GTK_LABEL(gtk_builder_get_object(builder, LBL_PLAYING_INFO));
+    widgets->w_lbl_playing_countdown = GTK_LABEL(gtk_builder_get_object(builder, LBL_PLAYING_COUNTDOWN));
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(builder, LBL_MENU_LOG))), "title2");
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(builder, LBL_MENU_REG))), "title2");
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(gtk_builder_get_object(builder, LBL_MENU_TITLE))), "title1");
@@ -184,7 +193,9 @@ int clientGUI(int serverfd)
     for (int i = 0; i < TABLE_NUMBER; i++)
     {
         widgets->w_tog_btn_table[i] = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, tog_btn_table_name[i]));
+        widgets->w_tog_btn_table_win[i] = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, tog_btn_table_name_win[i]));
         gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(widgets->w_tog_btn_table[i])), "tog_btn_table");
+        gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(widgets->w_tog_btn_table_win[i])), "tog_btn_table");
     }
     for (int i = 0; i < ROOM_PLAYER; i++)
     {
@@ -301,6 +312,11 @@ void on_btn_back_clicked(GtkButton *button, app_widgets *app_wdgts)
     backClient(app_wdgts->serverfd, app_wdgts->currUser);
 }
 
+void on_btn_playing_back_clicked(GtkButton *button, app_widgets *app_wdgts)
+{
+    playingBackClient(app_wdgts->serverfd, app_wdgts->currUser);
+}
+
 void on_btn_error_ok_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
     gtk_widget_hide(app_wdgts->w_err_window);
@@ -354,7 +370,8 @@ void on_btn_lobby_join_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
     char id[MAX_STRING] = "\0";
     strcpy(id, gtk_entry_get_text(app_wdgts->w_entry_lobby_search));
-    if (strcmp(id, "") == 0){
+    if (strcmp(id, "") == 0)
+    {
         showWindow(setShowW("You did not enter room id", app_wdgts->w_lbl_err, app_wdgts->w_err_window, NULL));
         return;
     }
@@ -371,14 +388,16 @@ void on_btn_room_kick_clicked(GtkButton *button, app_widgets *app_wdgts)
     {
         if (gtk_toggle_button_get_active(app_wdgts->w_tog_btn_player[i]))
         {
-            if (i == 0){
+            if (i == 0)
+            {
                 showWindow(setShowW("Host can't be kicked!", app_wdgts->w_lbl_err, app_wdgts->w_err_window, NULL));
                 gtk_toggle_button_set_active(app_wdgts->w_tog_btn_player[i], FALSE);
                 continue;
             }
             //check = TRUE;
             strcpy(username, gtk_button_get_label(GTK_BUTTON(app_wdgts->w_tog_btn_player[i])));
-            if (strcmp("Empty", username) == 0){
+            if (strcmp("Empty", username) == 0)
+            {
                 gtk_toggle_button_set_active(app_wdgts->w_tog_btn_player[i], FALSE);
                 continue;
             }
@@ -407,38 +426,42 @@ void on_btn_room_ready_clicked(GtkButton *button, app_widgets *app_wdgts)
     strcpy(tmp, gtk_button_get_label(app_wdgts->w_btn_room_ready));
     if (strcmp(tmp, READY) == 0)
     {
-        gtk_button_set_label(app_wdgts->w_btn_room_ready, NOT_READY);
+        readyClient(app_wdgts->serverfd, app_wdgts->currUser);
     }
     else
     {
-        gtk_button_set_label(app_wdgts->w_btn_room_ready, READY);
+        unReadyClient(app_wdgts->serverfd, app_wdgts->currUser);
     }
 }
 
 void on_btn_room_start_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    app_wdgts->currentWindow = app_wdgts->currentWindow + 1;
-    gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
-    gtk_stack_set_visible_child(app_wdgts->w_stack_playing, GTK_WIDGET(app_wdgts->w_btn_playing_quit));
+    startGameClient(app_wdgts->serverfd, app_wdgts->currUser);
+
     return;
 }
 
 void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    //showBingo(MES_BINGO1, app_wdgts->w_lbl_bingo, app_wdgts->w_bingo_window);
-    gtk_stack_set_visible_child(app_wdgts->w_stack_playing, GTK_WIDGET(app_wdgts->w_btn_playing_back));
+    bingoClient(app_wdgts->serverfd, app_wdgts->currUser);
+    //gtk_stack_set_visible_child(app_wdgts->w_stack_playing, GTK_WIDGET(app_wdgts->w_btn_playing_back));
 }
 
 void on_btn_playing_quit_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
+    playingQuitClient(app_wdgts->serverfd, app_wdgts->currUser);
     app_wdgts->currentWindow = app_wdgts->currentWindow - 2;
     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
 }
 
-void on_tog_btn_table_toggled(GtkToggleButton *toggle_button, app_widgets *app_wdgts)
+void on_tog_btn_table_released(GtkToggleButton *toggle_button, app_widgets *app_wdgts)
 {
-    if (!gtk_toggle_button_get_active(toggle_button))
-        gtk_toggle_button_set_active(toggle_button, TRUE);
+    char pickedNumber[3];
+    strcpy(pickedNumber, gtk_button_get_label(GTK_BUTTON(toggle_button)));
+    printf("%d\n", gtk_toggle_button_get_active(toggle_button));
+    gtk_toggle_button_set_active(toggle_button, FALSE);
+    pickClient(app_wdgts->serverfd, pickedNumber);
+    return;
 }
 
 gboolean on_window_error_delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
@@ -509,6 +532,7 @@ static void load_css(void)
 
 gboolean handle_res(app_widgets *widgets)
 {
+    char pickedNumber_PS[3];
     Response *res = widgets->res;
     switch (res->code)
     {
@@ -602,6 +626,7 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
@@ -623,6 +648,7 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
@@ -647,6 +673,7 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow + 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_ready));
+        gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), FALSE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_entry_room_user), FALSE);
@@ -671,7 +698,6 @@ gboolean handle_res(app_widgets *widgets)
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case NEW_HOST:
-        printf("\nTest");
         gtk_stack_set_visible_child(widgets->w_stack_room, GTK_WIDGET(widgets->w_btn_room_start));
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_kick), TRUE);
         gtk_widget_set_visible(GTK_WIDGET(widgets->w_btn_room_invite), TRUE);
@@ -691,8 +717,106 @@ gboolean handle_res(app_widgets *widgets)
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
-    case EXIT_GAME_SUCCESS:
-
+    case READY_SUCCESS:
+        gtk_button_set_label(widgets->w_btn_room_ready, NOT_READY);
+        break;
+    case UNREADY_SUCCESS:
+        gtk_button_set_label(widgets->w_btn_room_ready, READY);
+        break;
+    case PLAYER_NOT_ENOUGH:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case SOMEONE_UNREADY:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case GAME_START:
+        widgets->currentWindow = widgets->currentWindow + 1;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+        gtk_stack_set_visible_child(widgets->w_stack_playing, GTK_WIDGET(widgets->w_btn_playing_quit));
+        for (int i = 0; i < TABLE_NUMBER; i++)
+        {
+            gtk_toggle_button_set_active(widgets->w_tog_btn_table[i], FALSE);
+        }
+        timeout_countdown_status = TRUE;
+        sec_expired = 0;
+        g_timeout_add_seconds(1, G_SOURCE_FUNC(label_update), widgets->w_lbl_playing_countdown);
+        break;
+    case BOARD_DATA_GENERATED:;
+        char number_list[MAX_STRING];
+        char *token_BDG;
+        strcpy(number_list, res->data);
+        token_BDG = strtok(number_list, "-");
+        for (int i = 0; i < TABLE_NUMBER; i++)
+        {
+            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_table[i]), token_BDG);
+            token_BDG = strtok(NULL, "-");
+        }
+    case YOUR_TURN:
+        gtk_label_set_text(GTK_LABEL(widgets->w_lbl_playing_info), res->message);
+        break;
+    case OTHER_PLAYER_TURN:
+        gtk_label_set_text(GTK_LABEL(widgets->w_lbl_playing_info), res->message);
+        break;
+    case BINGO_REAL:
+        break;
+    case BINGO_FAKE:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case DISCONNECTED:
+        timeout_countdown_status = FALSE;
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        widgets->currentWindow = widgets->currentWindow - 3;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+        break;
+    case SOMEONE_LEFT_GAME:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case ALL_PLAYERS_LEFT_GAME:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        widgets->currentWindow = widgets->currentWindow - 1;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+        break;
+    case PICK_SUCCESS:;
+        for (int i = 0; i < TABLE_NUMBER; i++)
+        {
+            strcpy(pickedNumber_PS, gtk_button_get_label(GTK_BUTTON(widgets->w_tog_btn_table[i])));
+            if (strcmp(pickedNumber_PS, res->data) == 0)
+            {
+                gtk_toggle_button_set_active(widgets->w_tog_btn_table[i], TRUE);
+                break;
+            }
+        }
+        sec_expired = 0;
+        break;
+    case PICK_FAIL:;
+        for (int i = 0; i < TABLE_NUMBER; i++)
+        {
+            strcpy(pickedNumber_PS, gtk_button_get_label(GTK_BUTTON(widgets->w_tog_btn_table[i])));
+            if (strcmp(pickedNumber_PS, res->data) == 0)
+            {
+                gtk_toggle_button_set_active(widgets->w_tog_btn_table[i], TRUE);
+                break;
+            }
+        }
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
+    case YOU_WIN:
+        timeout_countdown_status = FALSE;
+        showWindow(setShowW(res->message, widgets->w_lbl_bingo, widgets->w_bingo_window, NULL));
+        gtk_stack_set_visible_child(widgets->w_stack_playing, GTK_WIDGET(widgets->w_btn_playing_back));
+        break;
+    case OTHER_PLAYER_WIN:
+        timeout_countdown_status = FALSE;
+        showWindow(setShowW(res->message, widgets->w_lbl_bingo, widgets->w_bingo_window, NULL));
+        gtk_stack_set_visible_child(widgets->w_stack_playing, GTK_WIDGET(widgets->w_btn_playing_back));
+        break;
+    case RETURN_ROOM_SUCCESS:
+        widgets->currentWindow = widgets->currentWindow - 1;
+        gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
+        if (gtk_widget_get_visible(GTK_WIDGET(widgets->w_btn_room_ready)))
+        {
+            gtk_button_set_label(GTK_BUTTON(widgets->w_btn_room_ready), READY);
+        }
         break;
     default:
         break;
@@ -730,4 +854,13 @@ void *recv_handler(void *app_widget)
         pthread_mutex_unlock(&lock);
     }
     close(serverfd);
+}
+
+gboolean label_update(GtkLabel *label)
+{
+    char buf[MAX_STRING];
+    memset(&buf, 0x0, MAX_STRING);
+    snprintf(buf, 255, "Time left: %d secs", 30 - (++sec_expired));
+    gtk_label_set_label(label, buf);
+    return timeout_countdown_status;
 }
