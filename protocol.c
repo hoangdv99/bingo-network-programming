@@ -151,7 +151,7 @@ void setMessageResponse(Response *msg)
       strcpy(msg->message, "Bingo yoooooooo!!");
       break;
     case BINGO_FAKE:
-      strcpy(msg->message, "Dont xiaoliz!");
+      strcpy(msg->message, "Do not lie!");
       break;
     case PICK_FAIL:
       strcpy(msg->message, "Wrong number. Please pick another!");

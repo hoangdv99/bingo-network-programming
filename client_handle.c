@@ -1,12 +1,11 @@
 #include "client_handle.h"
 #include "protocol.h"
 #include "helper.h"
-#define BUFF_SIZE 255
 
 void inputRequest(char *sendbuff){
     printf("Please enter the message: ");
     fflush(stdin);
-    fgets(sendbuff,BUFF_SIZE,stdin); //enter data
+    fgets(sendbuff,MAX_LENGTH,stdin); //enter data
     sendbuff[strlen(sendbuff) - 1] = '\0';
 }
 
@@ -235,7 +234,7 @@ int playingQuitClient(int clientfd, char *username){
 /*Create request*/
 
 void createLoginRequest(char *opcode, char *username, char *pass, Request *req){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -245,7 +244,7 @@ void createLoginRequest(char *opcode, char *username, char *pass, Request *req){
 }
 
 void createRegisterRequest(char *opcode, char *username, char *pass, char *confirm_pass, Request *req){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -257,7 +256,7 @@ void createRegisterRequest(char *opcode, char *username, char *pass, char *confi
 }
  
 void createDetailRequest(char *opcode, Request *req){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, "detail");
@@ -265,7 +264,7 @@ void createDetailRequest(char *opcode, Request *req){
 }
 
 void createLogOutRequest(char *opcode, Request *req, char* username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -273,7 +272,7 @@ void createLogOutRequest(char *opcode, Request *req, char* username){
 }
 
 void createLogOutByXRequest(char *opcode, Request *req, char* username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -281,7 +280,7 @@ void createLogOutByXRequest(char *opcode, Request *req, char* username){
 }
 
 void createCreateRoomRequest(char *opcode, Request *req){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, "create_room");
@@ -289,7 +288,7 @@ void createCreateRoomRequest(char *opcode, Request *req){
 }
 
 void createQuickJoinClientRequest(char *opcode, Request *req){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, "quick_join");
@@ -297,7 +296,7 @@ void createQuickJoinClientRequest(char *opcode, Request *req){
 }
 
 void createInviteRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -305,7 +304,7 @@ void createInviteRequest(char *opcode, Request *req, char *username){
 }
 
 void createJoinClientRequest(char *opcode, Request *req, char *roomID){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, roomID);
@@ -313,7 +312,7 @@ void createJoinClientRequest(char *opcode, Request *req, char *roomID){
 }
 
 void createAcceptInviteClientRequest(char *opcode, Request *req, char *hostName){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, hostName);
@@ -321,7 +320,7 @@ void createAcceptInviteClientRequest(char *opcode, Request *req, char *hostName)
 }
 
 void createDeclineInviteClientRequest(char *opcode, Request *req, char *hostName){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, hostName);
@@ -329,7 +328,7 @@ void createDeclineInviteClientRequest(char *opcode, Request *req, char *hostName
 }
 
 void createBackClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -337,7 +336,7 @@ void createBackClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createKickRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -345,7 +344,7 @@ void createKickRequest(char *opcode, Request *req, char *username){
 }
 
 void createReadyClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -353,7 +352,7 @@ void createReadyClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createUnReadyClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -361,7 +360,7 @@ void createUnReadyClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createStartGameClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -369,7 +368,7 @@ void createStartGameClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createPickClientRequest(char *opcode, Request *req, char *pickedNumber){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, pickedNumber);
@@ -377,7 +376,7 @@ void createPickClientRequest(char *opcode, Request *req, char *pickedNumber){
 }
 
 void createBingoClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -385,7 +384,7 @@ void createBingoClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createPlayingBackClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -393,7 +392,7 @@ void createPlayingBackClientRequest(char *opcode, Request *req, char *username){
 }
 
 void createPlayingQuitClientRequest(char *opcode, Request *req, char *username){
-    char sendbuff[BUFF_SIZE];
+    char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
     strcat(sendbuff, username);
@@ -445,12 +444,12 @@ void splitHostName(char *input, char *hostName){
 
 //hoang test
 // #include "client_handle.h"
-// #define BUFF_SIZE 255
+// #define MAX_LENGTH 255
 
 // void inputRequest(char *sendbuff){
 //     //printf("Please enter the message: ");
 //     fflush(stdin);
-//     fgets(sendbuff,BUFF_SIZE,stdin); //enter data
+//     fgets(sendbuff,MAX_LENGTH,stdin); //enter data
 //     sendbuff[strlen(sendbuff) - 1] = '\0';
 // }
 
