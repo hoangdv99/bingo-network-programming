@@ -1,6 +1,5 @@
 #include "list.h"
 #include "helper.h"
-#define ROOM_MAX 10
 extern ACCOUNT *accountListHead;
 extern USER *userListHead;
 extern ROOM *roomListHead;
@@ -276,7 +275,7 @@ ROOM *findRoomByClientfd(int clientfd){
 int insertPlayer(int id, USER *player)
 {
     ROOM *room = findRoom(id);
-    if (room != NULL && room->playerAmount < ROOM_MAX)
+    if (room != NULL && room->playerAmount < ROOM_PLAYER_MAX)
     {
         player->status = INROOM;
         room->player[room->playerAmount] = player;
@@ -312,7 +311,7 @@ int quickJoin(USER *player)
     ROOM *room = roomListHead;
     while (room != NULL)
     {
-        if (room->playerAmount < ROOM_MAX && room->status == NOTSTARTED)
+        if (room->playerAmount < ROOM_PLAYER_MAX && room->status == NOTSTARTED)
         {
             insertPlayer(room->id, player);
             return room->id;
