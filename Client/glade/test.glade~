@@ -106,7 +106,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">10</property>
         <child>
-          <object class="GtkStack">
+          <object class="GtkStack" id="stack_win">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -122,8 +122,8 @@
             </child>
             <child>
               <object class="GtkGrid">
-                <property name="width_request">250</property>
-                <property name="height_request">250</property>
+                <property name="width_request">350</property>
+                <property name="height_request">350</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">center</property>
@@ -131,7 +131,7 @@
                 <property name="row_homogeneous">True</property>
                 <property name="column_homogeneous">True</property>
                 <child>
-                  <object class="GtkButton" id="btn_table_25">
+                  <object class="GtkToggleButton" id="tog_btn_table_25">
                     <property name="label" translatable="yes">1</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -143,8 +143,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_26">
-                    <property name="label" translatable="yes">6</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_26">
+                    <property name="label" translatable="yes">2</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -155,8 +155,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_27">
-                    <property name="label" translatable="yes">11</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_27">
+                    <property name="label" translatable="yes">3</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -167,8 +167,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_28">
-                    <property name="label" translatable="yes">16</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_28">
+                    <property name="label" translatable="yes">4</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -179,8 +179,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_29">
-                    <property name="label" translatable="yes">21</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_29">
+                    <property name="label" translatable="yes">5</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -191,8 +191,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_30">
-                    <property name="label" translatable="yes">2</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_30">
+                    <property name="label" translatable="yes">6</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -203,7 +203,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_31">
+                  <object class="GtkToggleButton" id="tog_btn_table_31">
                     <property name="label" translatable="yes">7</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -215,8 +215,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_32">
-                    <property name="label" translatable="yes">12</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_32">
+                    <property name="label" translatable="yes">8</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -227,8 +227,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_33">
-                    <property name="label" translatable="yes">17</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_33">
+                    <property name="label" translatable="yes">9</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -239,8 +239,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_34">
-                    <property name="label" translatable="yes">22</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_34">
+                    <property name="label" translatable="yes">10</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -251,8 +251,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_35">
-                    <property name="label" translatable="yes">3</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_35">
+                    <property name="label" translatable="yes">11</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -263,8 +263,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_36">
-                    <property name="label" translatable="yes">8</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_36">
+                    <property name="label" translatable="yes">12</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -275,7 +275,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_37">
+                  <object class="GtkToggleButton" id="tog_btn_table_37">
                     <property name="label" translatable="yes">13</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -287,8 +287,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_38">
-                    <property name="label" translatable="yes">18</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_38">
+                    <property name="label" translatable="yes">14</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -299,8 +299,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_39">
-                    <property name="label" translatable="yes">23</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_39">
+                    <property name="label" translatable="yes">15</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -311,8 +311,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_40">
-                    <property name="label" translatable="yes">4</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_40">
+                    <property name="label" translatable="yes">16</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -323,8 +323,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_41">
-                    <property name="label" translatable="yes">9</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_41">
+                    <property name="label" translatable="yes">17</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -335,8 +335,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_42">
-                    <property name="label" translatable="yes">14</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_42">
+                    <property name="label" translatable="yes">18</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -347,7 +347,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_43">
+                  <object class="GtkToggleButton" id="tog_btn_table_43">
                     <property name="label" translatable="yes">19</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -359,8 +359,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_44">
-                    <property name="label" translatable="yes">24</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_44">
+                    <property name="label" translatable="yes">20</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -371,8 +371,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_45">
-                    <property name="label" translatable="yes">5</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_45">
+                    <property name="label" translatable="yes">21</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -383,8 +383,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_46">
-                    <property name="label" translatable="yes">10</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_46">
+                    <property name="label" translatable="yes">22</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -395,8 +395,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_47">
-                    <property name="label" translatable="yes">15</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_47">
+                    <property name="label" translatable="yes">23</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -407,8 +407,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_48">
-                    <property name="label" translatable="yes">20</property>
+                  <object class="GtkToggleButton" id="tog_btn_table_48">
+                    <property name="label" translatable="yes">24</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -419,7 +419,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_table_49">
+                  <object class="GtkToggleButton" id="tog_btn_table_49">
                     <property name="label" translatable="yes">25</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -1420,7 +1420,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="halign">start</property>
-                    <signal name="clicked" handler="on_btn_back_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_btn_playing_back_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="name">page0</property>
@@ -1446,25 +1446,12 @@
                 <property name="row_homogeneous">True</property>
                 <property name="column_homogeneous">True</property>
                 <child>
-                  <object class="GtkToggleButton" id="tog_btn_table_0">
-                    <property name="label" translatable="yes">1</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkToggleButton" id="tog_btn_table_1">
                     <property name="label" translatable="yes">2</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -1477,7 +1464,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -1490,7 +1477,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -1503,7 +1490,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -1516,7 +1503,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1529,7 +1516,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1542,7 +1529,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1555,7 +1542,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1568,7 +1555,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1581,7 +1568,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1594,7 +1581,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1607,7 +1594,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1620,7 +1607,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1633,7 +1620,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1646,7 +1633,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -1659,7 +1646,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -1672,7 +1659,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -1685,7 +1672,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -1698,7 +1685,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -1711,7 +1698,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">4</property>
@@ -1724,7 +1711,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">4</property>
@@ -1737,7 +1724,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">4</property>
@@ -1750,7 +1737,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">4</property>
@@ -1763,11 +1750,24 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="toggled" handler="on_tog_btn_table_toggled" swapped="no"/>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">4</property>
                     <property name="top_attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="tog_btn_table_0">
+                    <property name="label" translatable="yes">1</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="released" handler="on_tog_btn_table_released" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
               </object>
