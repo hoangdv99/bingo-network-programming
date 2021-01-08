@@ -70,7 +70,9 @@
 #define MES_INVITE "You have been invited to a game!"
 #define READY "Ready"
 #define NOT_READY "Not Ready"
-
+//ID Stack Win
+#define IMAGE_CONGRATULATION "image_congratulation"
+#define GRID_WIN "grid_win"
 typedef struct
 {
     int currentWindow;
@@ -84,6 +86,8 @@ typedef struct
     GtkToggleButton *w_tog_btn_table[TABLE_NUMBER], *w_tog_btn_player[ROOM_PLAYER], *w_tog_btn_table_win[TABLE_NUMBER];
     GtkButton *w_btn_room_start, *w_btn_room_ready, *w_btn_room_kick, *w_btn_room_invite, *w_btn_playing_quit, *w_btn_playing_back;
     GtkTextBuffer *w_txt_buf;
+    GtkImage *w_image_congratulation;
+    GtkGrid *w_grid_win;
 } app_widgets;
 
 typedef struct
@@ -109,7 +113,7 @@ char entry_all_name[][MAX_STRING] = {ENTRY_MENU_LOG_USER, ENTRY_LOBBY_SEARCH, EN
 char label_all_name[][MAX_STRING] = {"lbl_menu_log_user", "lbl_menu_log_pas", "lbl_menu_reg_user", "lbl_menu_reg_pas", "lbl_menu_reg_con_pas", "lbl_room_id", "lbl_menu_reg", "lbl_playing_info", LBL_ERR, LBL_BINGO, LBL_INVITE, LBL_PLAYING_COUNTDOWN};
 char window_all_name[][MAX_STRING] = {WINDOW_READER, WINDOW_INVITE, WINDOW_NAME, WINDOW_BINGO, WINDOW_ERR, WINDOW_LOG, WINDOW_REG};
 int sec_expired;
-gboolean timeout_countdown_status; 
+gboolean timeout_countdown_status;
 
 GtkBuilder *builder;
 GtkWidget *window;
@@ -221,7 +225,10 @@ int clientGUI(int serverfd)
 
     //Get text buffer
     widgets->w_txt_buf = GTK_TEXT_BUFFER(gtk_builder_get_object(builder, TXT_BUF));
-
+    //Get stack_win widgets
+    widgets->w_image_congratulation = GTK_IMAGE(gtk_builder_get_object(builder, IMAGE_CONGRATULATION));
+    widgets->w_grid_win = GTK_GRID(gtk_builder_get_object(builder, GRID_WIN));
+    
     widgets->currentWindow = 0;
     widgets->currUser = (char *)malloc(sizeof(char) * MAX_STRING);
     widgets->currUser = "\0";
@@ -449,6 +456,7 @@ void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_playing_quit_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
+    timeout_countdown_status = FALSE;
     playingQuitClient(app_wdgts->serverfd, app_wdgts->currUser);
     app_wdgts->currentWindow = app_wdgts->currentWindow - 2;
     gtk_stack_set_visible_child(app_wdgts->w_stack_container, app_wdgts->w_container_list[app_wdgts->currentWindow]);
@@ -739,7 +747,7 @@ gboolean handle_res(app_widgets *widgets)
         }
         timeout_countdown_status = TRUE;
         sec_expired = 0;
-        g_timeout_add_seconds(1, G_SOURCE_FUNC(label_update), widgets->w_lbl_playing_countdown);
+        g_timeout_add_seconds(1, label_update, widgets->w_lbl_playing_countdown);
         break;
     case BOARD_DATA_GENERATED:;
         char number_list[MAX_STRING];
@@ -770,6 +778,7 @@ gboolean handle_res(app_widgets *widgets)
         break;
     case SOMEONE_LEFT_GAME:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        sec_expired = 0;
         break;
     case ALL_PLAYERS_LEFT_GAME:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
