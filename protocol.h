@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define MAX_LENGTH 1024
+#define MAX_LENGTH 255
 
 typedef enum REQ_OPCODE{
     REGISTER,

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
-#define MAX_LENGTH 1024
 #define MAX_CLIENT 20
 #include "protocol.h"
 #include "list.h"

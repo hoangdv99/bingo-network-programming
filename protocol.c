@@ -296,6 +296,9 @@ void setOpcodeRequest(Request *req, char *input)
     req->code = ACCEPT_INVITE_REQUEST;
   else if (strcmp(code, "DECLINE_INVITE_REQUEST") == 0)
     req->code = DECLINE_INVITE_REQUEST;
+  else{
+    req->code = -1;
+  }
 }
 
 int sendNum(int socket, int num, int size, int flags)
