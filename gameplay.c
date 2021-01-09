@@ -155,6 +155,7 @@ void sendBoardData(ROOM *room, Request *req, Response *res)
 
 void *roomThreadFunc(void *arg)
 {
+    char wonBoardString[200];
     THREAD_DATA *threadData = (THREAD_DATA *)arg;
     Request *req = (Request *)malloc(sizeof(Request));
     Response *res = (Response *)malloc(sizeof(Response));
@@ -354,6 +355,7 @@ void *roomThreadFunc(void *arg)
                             sendRes(sd, res, sizeof(Response), 0);
                             bingo = 1;
                             winner = room->player[check];
+                            strcpy(wonBoardString, req->message);
                         }
                         else
                         {
@@ -451,9 +453,21 @@ void *roomThreadFunc(void *arg)
         }
         else
         {
+            char num[5];
             res->code = OTHER_PLAYER_WIN;
             strcpy(res->data, winner->username);
             setMessageResponse(res);
+            //send won player's normal board and won board
+            strcat(wonBoardString, "#");
+            for (int m = 0; m < SIZE; m++){
+                for (int n = 0; n < SIZE; n++){
+                    sprintf(num, "%d", winner->board[n][m]);
+                    strcat(wonBoardString, num);
+                    strcat(wonBoardString, "-");
+                }
+            }
+            wonBoardString[strlen(wonBoardString) - 1] = '\0';
+            strcpy(res->data, wonBoardString);
             sendRes(room->player[i]->clientfd, res, sizeof(Response), 0);
         }
         room->status = NOTSTARTED;

@@ -171,6 +171,8 @@ void setMessageResponse(Response *msg)
       strcpy(msg->message, "No room has been created! Please create a new room!");
       break;
     case READY_SUCCESS:
+      strcpy(msg->message, msg->data);
+      strcat(msg->message, ": is ready");
       break;
     case UNREADY_SUCCESS:
       strcpy(msg->message, "Unready successfully!");

@@ -30,6 +30,7 @@
 #define STACK_MENU "stack_menu"
 #define STACK_ROOM "stack_room"
 #define STACK_PLAYING "stack_playing"
+#define STACK_WIN "stack_win"
 //ID Label
 #define LBL_MENU_LOG "lbl_menu_log"
 #define LBL_MENU_REG "lbl_menu_reg"
@@ -81,7 +82,7 @@ typedef struct
     Response *res;
     GtkEntry *w_entry_menu_log_user, *w_entry_lobby_search, *w_entry_room_user, *w_entry_menu_log_pas, *w_entry_menu_reg_user, *w_entry_menu_reg_pas, *w_entry_menu_reg_con_pas;
     GtkLabel *w_lbl_err, *w_lbl_bingo, *w_lbl_invite, *w_lbl_room_id, *w_lbl_playing_info, *w_lbl_playing_countdown;
-    GtkStack *w_stack_container, *w_stack_room, *w_stack_playing, *w_stack_menu;
+    GtkStack *w_stack_container, *w_stack_room, *w_stack_playing, *w_stack_menu, *w_stack_win;
     GtkWidget *w_container_list[NUMBER_CONTAINER], *w_read_window, *w_err_window, *w_bingo_window, *w_invite_window, *w_container_menu_log, *w_container_menu_reg;
     GtkToggleButton *w_tog_btn_table[TABLE_NUMBER], *w_tog_btn_player[ROOM_PLAYER], *w_tog_btn_table_win[TABLE_NUMBER];
     GtkButton *w_btn_room_start, *w_btn_room_ready, *w_btn_room_kick, *w_btn_room_invite, *w_btn_playing_quit, *w_btn_playing_back;
@@ -162,6 +163,7 @@ int clientGUI(int serverfd)
     widgets->w_stack_room = GTK_STACK(gtk_builder_get_object(builder, STACK_ROOM));
     widgets->w_stack_playing = GTK_STACK(gtk_builder_get_object(builder, STACK_PLAYING));
     widgets->w_stack_menu = GTK_STACK(gtk_builder_get_object(builder, STACK_MENU));
+    widgets->w_stack_win = GTK_STACK(gtk_builder_get_object(builder, STACK_WIN));
 
     //Get container
     for (int i = 0; i < NUMBER_CONTAINER; i++)
@@ -450,7 +452,14 @@ void on_btn_room_start_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
-    bingoClient(app_wdgts->serverfd, app_wdgts->currUser);
+    char boardString[100], num[3];
+    for (int i = 0; i < TABLE_NUMBER; i++){
+        strcpy(num, gtk_button_get_label(GTK_BUTTON(app_wdgts->w_tog_btn_table[i])));
+        strcat(boardString, num);
+        strcat(boardString, "-");
+    }
+    boardString[strlen(boardString) - 1] = '\0';
+    bingoClient(app_wdgts->serverfd, boardString);
     //gtk_stack_set_visible_child(app_wdgts->w_stack_playing, GTK_WIDGET(app_wdgts->w_btn_playing_back));
 }
 
@@ -813,11 +822,28 @@ gboolean handle_res(app_widgets *widgets)
         timeout_countdown_status = FALSE;
         showWindow(setShowW(res->message, widgets->w_lbl_bingo, widgets->w_bingo_window, NULL));
         gtk_stack_set_visible_child(widgets->w_stack_playing, GTK_WIDGET(widgets->w_btn_playing_back));
+        gtk_stack_set_visible_child(widgets->w_stack_win, GTK_WIDGET(widgets->w_image_congratulation));
         break;
     case OTHER_PLAYER_WIN:
         timeout_countdown_status = FALSE;
         showWindow(setShowW(res->message, widgets->w_lbl_bingo, widgets->w_bingo_window, NULL));
         gtk_stack_set_visible_child(widgets->w_stack_playing, GTK_WIDGET(widgets->w_btn_playing_back));
+        gtk_stack_set_visible_child(widgets->w_stack_win, GTK_WIDGET(widgets->w_grid_win));
+        char normalBoard[100], wonBoard[100];
+        split2Board(res->data, normalBoard, wonBoard);
+        char *token_OPW;
+        token_OPW = strtok(normalBoard, "-");
+        for (int i = 0; i < TABLE_NUMBER; i++){
+            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_table_win[i]), token_OPW);
+            token_OPW = strtok(NULL, "-");
+        }
+        token_OPW = strtok(wonBoard, "-");
+        for (int i = 0; i < TABLE_NUMBER; i++){
+            if (strcmp("0", token_OPW) == 0){
+                gtk_toggle_button_set_active(widgets->w_tog_btn_table_win[i], TRUE);
+            }
+            token_OPW = strtok(NULL, "-");
+        }
         break;
     case RETURN_ROOM_SUCCESS:
         widgets->currentWindow = widgets->currentWindow - 1;
