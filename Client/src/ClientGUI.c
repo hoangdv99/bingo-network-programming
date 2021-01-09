@@ -573,6 +573,9 @@ gboolean handle_res(app_widgets *widgets)
     case ACCOUNT_BUSY:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
+    case FULL_USER:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
+        break;
     case LOGIN_SUCCESS:
         widgets->currUser = strdup(gtk_entry_get_text(widgets->w_entry_menu_log_user));
         widgets->currentWindow = widgets->currentWindow + 1;
@@ -585,6 +588,9 @@ gboolean handle_res(app_widgets *widgets)
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
         gtk_stack_set_visible_child(widgets->w_stack_menu, widgets->w_container_menu_log);
+        break;
+    case FULL_ROOM:
+        showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         break;
     case CREATE_ROOM_SUCCESS:;
         widgets->currentWindow = widgets->currentWindow + 1;
@@ -655,10 +661,14 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_QS);
         char *token_QS;
         token_QS = strtok(usernameList_QS, "-");
-        for (int i = 0; i < amount_QS; i++)
-        {
-            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_QS);
-            token_QS = strtok(NULL, "-");
+        for (int i = 0; i < 5; i++){
+            if (i < amount_QS){
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_QS);
+                token_QS = strtok(NULL, "-");
+            }
+            else{
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), "Empty");
+            }
         }
         break;
     case JOIN_SUCCESS:
@@ -677,10 +687,14 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_JS);
         char *token_JS;
         token_JS = strtok(usernameList_JS, "-");
-        for (int i = 0; i < amount_JS; i++)
-        {
-            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_JS);
-            token_JS = strtok(NULL, "-");
+        for (int i = 0; i < 5; i++){
+            if (i < amount_JS){
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_JS);
+                token_JS = strtok(NULL, "-");
+            }
+            else{
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), "Empty");
+            }
         }
         break;
     case JOIN_FAIL:
@@ -702,10 +716,14 @@ gboolean handle_res(app_widgets *widgets)
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_room_id), buffer_A);
         char *token_A;
         token_A = strtok(usernameList_A, "-");
-        for (int i = 0; i < amount_A; i++)
-        {
-            gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_A);
-            token_A = strtok(NULL, "-");
+        for (int i = 0; i < 5; i++){
+            if (i < amount_A){
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), token_A);
+                token_A = strtok(NULL, "-");
+            }
+            else{
+                gtk_button_set_label(GTK_BUTTON(widgets->w_tog_btn_player[i]), "Empty");
+            }
         }
         break;
     case DECLINED:
