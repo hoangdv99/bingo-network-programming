@@ -105,7 +105,7 @@ void printUser(USER *acc)
 
 USER *insertUser(char *username, int clientfd)
 {
-    if (findUserByUsername(username) != NULL)
+    if (findUserByUsername(username) != NULL )
     {
         return NULL;
     }
@@ -229,11 +229,16 @@ USER *deleteUserByClientfd(int clientfd)
 
 // ROOM FUNCTION
 
-void insertRoom(ROOM *room)
+int insertRoom(ROOM *room)
 {
     if(roomListHead == NULL){
         roomListHead = room;
     }else{
+        if (countRoom() >= ROOM_MAX)
+        {
+            return 0;
+        }
+        
         ROOM *curRoom =  roomListHead;
         while (curRoom->next != NULL)
         {
@@ -241,6 +246,7 @@ void insertRoom(ROOM *room)
         } 
         curRoom->next = room;
     }
+    return 1;
 }
 
 ROOM *findRoom(int id)
@@ -333,6 +339,24 @@ void printRoomPlayer(int roomID)
     }
     printf("\nhost: %s", room->host->username);
     printf("\n-----------------------\n");
+}
+
+int countUser(){
+    int count = 0;
+    USER *curr = userListHead;
+    if (curr == NULL)
+        return 0;
+    while (curr != NULL)
+    {
+        if (curr->next == NULL)
+            return ++count;
+        else
+        {
+            curr = curr->next;
+            count++;
+        }
+    }
+    return 0;
 }
 
 int countRoom()

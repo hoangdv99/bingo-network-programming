@@ -60,6 +60,12 @@ void logIn(int clientfd, Request *req, Response *res) //neu username da ton tai 
                 setMessageResponse(res);
                 sendRes(clientfd, res, sizeof(Response), 0);
             }
+            else if(countUser() > PLAYER_MAX){
+                deleteUserByClientfd(clientfd);
+                res->code = FULL_USER;
+                setMessageResponse(res);
+                sendRes(clientfd, res, sizeof(Response), 0);
+            }
             else
             {
                 printListUser();
@@ -106,10 +112,14 @@ void createRoom(int clientfd, Request *req, Response *res)
     USER *host = findUserByClientfd(clientfd);
     newRoom->host = host;
     newRoom->id = countRoom() + 1;
-    printf("\nRoom ID: %d\n", newRoom->id);
     newRoom->playerAmount = 0;
     newRoom->status = NOTSTARTED;
-    insertRoom(newRoom);
+    if(insertRoom(newRoom) == 0){
+        res->code = FULL_ROOM;
+        setMessageResponse(res);
+        sendRes(clientfd, res, sizeof(Response), 0);
+        return;
+    }
     insertPlayer(newRoom->id, host);
     res->code = CREATE_ROOM_SUCCESS;
     strcpy(res->data, host->username);
