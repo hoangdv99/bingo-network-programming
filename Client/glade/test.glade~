@@ -71,6 +71,8 @@
                 <property name="can_focus">True</property>
                 <property name="border_width">10</property>
                 <property name="editable">False</property>
+                <property name="wrap_mode">word-char</property>
+                <property name="justification">fill</property>
                 <property name="cursor_visible">False</property>
                 <property name="buffer">txt_buf</property>
                 <property name="monospace">True</property>
