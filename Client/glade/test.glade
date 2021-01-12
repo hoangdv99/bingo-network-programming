@@ -7,6 +7,7 @@
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
     <property name="title" translatable="yes">Game rule</property>
+    <property name="resizable">False</property>
     <property name="default_width">640</property>
     <property name="default_height">480</property>
     <signal name="delete-event" handler="on_window_reader_delete_event" swapped="no"/>
@@ -71,6 +72,8 @@
                 <property name="can_focus">True</property>
                 <property name="border_width">10</property>
                 <property name="editable">False</property>
+                <property name="wrap_mode">word-char</property>
+                <property name="justification">fill</property>
                 <property name="cursor_visible">False</property>
                 <property name="buffer">txt_buf</property>
                 <property name="monospace">True</property>
