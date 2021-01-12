@@ -110,7 +110,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkImage">
+              <object class="GtkImage" id="image_congratulation">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="pixbuf">../res/Congartulation.resized.jpg</property>
@@ -121,7 +121,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid">
+              <object class="GtkGrid" id="grid_win">
                 <property name="width_request">350</property>
                 <property name="height_request">350</property>
                 <property name="visible">True</property>

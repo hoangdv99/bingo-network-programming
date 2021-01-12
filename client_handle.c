@@ -199,9 +199,9 @@ int pickClient(int clientfd, char *pickedNumber){
     return 1;
 }
 
-int bingoClient(int clientfd, char *username){
+int bingoClient(int clientfd, char *boardString){
     Request *req = (Request *)malloc(sizeof(Request));
-    createBingoClientRequest("BINGO", req, username);
+    createBingoClientRequest("BINGO", req, boardString);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -212,7 +212,7 @@ int bingoClient(int clientfd, char *username){
 
 int playingBackClient(int clientfd, char *username){
     Request *req = (Request *)malloc(sizeof(Request));
-    createBingoClientRequest("RETURN_ROOM", req, username);
+    createPlayingBackClientRequest("RETURN_ROOM", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -223,7 +223,7 @@ int playingBackClient(int clientfd, char *username){
 
 int playingQuitClient(int clientfd, char *username){
     Request *req = (Request *)malloc(sizeof(Request));
-    createBingoClientRequest("QUIT", req, username);
+    createPlayingQuitClientRequest("QUIT", req, username);
     int n_sent = sendReq(clientfd, req, sizeof(Request), 0);
     if (n_sent < 0)
         return n_sent;
@@ -375,11 +375,11 @@ void createPickClientRequest(char *opcode, Request *req, char *pickedNumber){
     setOpcodeRequest(req, sendbuff);
 }
 
-void createBingoClientRequest(char *opcode, Request *req, char *username){
+void createBingoClientRequest(char *opcode, Request *req, char *boardString){
     char sendbuff[MAX_LENGTH];
     strcpy(sendbuff, opcode);
     strcat(sendbuff, " ");
-    strcat(sendbuff, username);
+    strcat(sendbuff, boardString);
     setOpcodeRequest(req, sendbuff);
 }
 
@@ -440,4 +440,17 @@ void splitHostName(char *input, char *hostName){
         hostName[hostNameLength++] = input[i];
     }
     hostName[hostNameLength] = '\0';
+}
+
+void split2Board(char *input, char *normalBoard, char *wonBoard){
+    int i, normalBoardLength = 0, wonBoardLength = 0;
+    for (i = 0; input[i] != '#'; i++){
+        normalBoard[normalBoardLength++] = input[i];
+    }
+    normalBoard[normalBoardLength] = '\0';
+    i++;
+    for (; i < strlen(input); i++){
+        wonBoard[wonBoardLength++] = input[i];
+    }
+    wonBoard[wonBoardLength] = '\0';
 }
