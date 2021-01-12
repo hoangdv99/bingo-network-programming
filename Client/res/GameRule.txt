@@ -1,1 +1,4 @@
-Game Rule
+Game Play
+    * To start game, the server generates a board of numbers to each player
+    * When it is your turn, you have 30 seconds to choose the number, the selected number will be marked on the board of all other players. If you do not respond for more than 30 seconds, you will be kicked out of the game.
+    * When your board has a row or a vertical row or a diagonal of highlighted numbers, you can press the Bingo button to notify other players that you have won. If more than one player achieves Bingo, whoever presses Bingo faster then that player wins

@@ -1,1 +1,7 @@
-About Us
+Team members:
+    * Nguyen Bao Duc
+    * Nguyen Minh Hieu
+    * Doan Viet Hoang
+    * Do Thanh Nam
+
+Github link: https://github.com/hoangdv99/bingo-network-programming
