@@ -333,6 +333,9 @@ void on_btn_error_ok_clicked(GtkButton *button, app_widgets *app_wdgts)
 
 void on_btn_bingo_ok_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
+    for (int i = 0; i < TABLE_NUMBER; i++){
+        gtk_toggle_button_set_active(app_wdgts->w_tog_btn_table_win[i], FALSE);
+    }
     gtk_widget_hide(app_wdgts->w_bingo_window);
 }
 
@@ -453,6 +456,7 @@ void on_btn_room_start_clicked(GtkButton *button, app_widgets *app_wdgts)
 void on_btn_playing_bingo_clicked(GtkButton *button, app_widgets *app_wdgts)
 {
     char boardString[100], num[3];
+    boardString[0] = '\0';
     for (int i = 0; i < TABLE_NUMBER; i++){
         strcpy(num, gtk_button_get_label(GTK_BUTTON(app_wdgts->w_tog_btn_table[i])));
         strcat(boardString, num);
