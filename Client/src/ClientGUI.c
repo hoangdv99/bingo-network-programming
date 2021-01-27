@@ -779,6 +779,7 @@ gboolean handle_res(app_widgets *widgets)
         }
         timeout_countdown_status = TRUE;
         sec_expired = 0;
+        curr_player_turn = "\0";
         g_timeout_add_seconds(1, label_update, widgets->w_lbl_playing_countdown);
         break;
     case BOARD_DATA_GENERATED:;
