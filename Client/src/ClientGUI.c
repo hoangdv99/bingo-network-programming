@@ -129,6 +129,7 @@ show_window *setShowW(char *mes, GtkLabel *label, GtkWidget *window, void *data)
 void *recv_handler(void *app_widget);
 pthread_mutex_t lock;
 gboolean label_update(GtkLabel *label);
+char curr_player_turn[MAX_STRING] = "\0";
 
 int clientGUI(int serverfd)
 {
@@ -791,9 +792,17 @@ gboolean handle_res(app_widgets *widgets)
             token_BDG = strtok(NULL, "-");
         }
     case YOUR_TURN:
+        if (strcmp(res->data, curr_player_turn) != 0) {
+            strcpy(curr_player_turn, res->data);
+            sec_expired = 0;
+        }
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_playing_info), res->message);
         break;
     case OTHER_PLAYER_TURN:
+        if (strcmp(res->data, curr_player_turn) != 0) {
+            strcpy(curr_player_turn, res->data);
+            sec_expired = 0;
+        }
         gtk_label_set_text(GTK_LABEL(widgets->w_lbl_playing_info), res->message);
         break;
     case BINGO_REAL:
@@ -809,9 +818,9 @@ gboolean handle_res(app_widgets *widgets)
         break;
     case SOMEONE_LEFT_GAME:
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
-        sec_expired = 0;
         break;
     case ALL_PLAYERS_LEFT_GAME:
+        timeout_countdown_status = FALSE;
         showWindow(setShowW(res->message, widgets->w_lbl_err, widgets->w_err_window, NULL));
         widgets->currentWindow = widgets->currentWindow - 1;
         gtk_stack_set_visible_child(widgets->w_stack_container, widgets->w_container_list[widgets->currentWindow]);
@@ -826,7 +835,6 @@ gboolean handle_res(app_widgets *widgets)
                 break;
             }
         }
-        sec_expired = 0;
         break;
     case PICK_FAIL:;
         for (int i = 0; i < TABLE_NUMBER; i++)
